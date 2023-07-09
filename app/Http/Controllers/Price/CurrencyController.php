@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Price;
 
 use App\Models\Currency\CurrencyPrice;
 use App\Models\Currency\CurrencyType;
-use App\Services\PoeNinjaService\PoeNinjaService;
 use Illuminate\Routing\Controller as BaseController;
 
 class CurrencyController extends BaseController
