@@ -31,11 +31,6 @@ class DivineCommand extends SystemCommand
     protected $version = '1.0';
 
     /**
-     * @var bool
-     */
-    protected $private_only = true;
-
-    /**
      * Main command execution
      *
      * @return ServerResponse
@@ -50,8 +45,8 @@ class DivineCommand extends SystemCommand
 
         return $this->replyToChat(
             'Estimated price: ' . $price->chaos_equivalent . PHP_EOL .
-            'Buy price: ' . $price->buy_price ?? 'Unknown' . PHP_EOL .
-            'Sell price: ' . $price->sell_price ?? 'Unknown'
+            'Buy price: ' . ($price->buy_price ?? 'Unknown') . PHP_EOL .
+            'Sell price: ' . ($price->sell_price ?? 'Unknown') . PHP_EOL
         , ['parse_mode' => 'markdown']);
     }
 }

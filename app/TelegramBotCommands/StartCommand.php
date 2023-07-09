@@ -29,11 +29,6 @@ class StartCommand extends SystemCommand
     protected $version = '1.0';
 
     /**
-     * @var bool
-     */
-    protected $private_only = true;
-
-    /**
      * Main command execution
      *
      * @return ServerResponse
@@ -41,9 +36,6 @@ class StartCommand extends SystemCommand
      */
     public function execute(): ServerResponse
     {
-        // If you use deep-linking, get the parameter like this:
-        // $deep_linking_parameter = $this->getMessage()->getText(true);
-
         return $this->replyToChat(
             'Fuck off!' . PHP_EOL .
             'Type /help to see all commands!'
