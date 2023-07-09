@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Price\CurrencyController;
+use App\Http\Controllers\Telegram\TelegramBotController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,5 +21,9 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'v1'], function () {
     Route::group(['prefix' => 'price' ], function () {
         Route::get('currency/{ninjaDetailsId}', [CurrencyController::class, 'showPrice']);
+    });
+
+    Route::group(['prefix' => 'telegram' ], function () {
+        Route::get('set', [TelegramBotController::class, 'set']);
     });
 });
