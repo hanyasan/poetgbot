@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Price\DivineController;
+use App\Http\Controllers\Price\CurrencyController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,6 +19,6 @@ use Illuminate\Support\Facades\Route;
 //});
 Route::group(['prefix' => 'v1'], function () {
     Route::group(['prefix' => 'price' ], function () {
-        Route::get('divine', [DivineController::class, 'showPrices']);
+        Route::get('currency/{ninjaDetailsId}', [CurrencyController::class, 'showPrice']);
     });
 });
