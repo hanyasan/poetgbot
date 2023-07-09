@@ -41,7 +41,9 @@ class DivineCommand extends SystemCommand
         $price = CurrencyPrice::where(
             'currency_type_id',
             CurrencyType::where('currency_ninja_details_id', 'divine-orb')->firstOrFail()->id
-        )->firstOrFail();
+        )
+            ->orderBy('created_at', 'desc')
+            ->firstOrFail();
 
         return $this->replyToChat(
             'Estimated price: ' . $price->chaos_equivalent . PHP_EOL .

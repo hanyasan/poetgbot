@@ -2,9 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Currency\CurrencyPrice;
 use App\Models\Currency\CurrencyType;
-use App\Services\PoeNinjaService\PoeNinjaService;
+use App\Services\PoeNinjaService\PoeNinjaServiceContract;
 use Illuminate\Console\Command;
 
 class CheckCurrencyPrice extends Command
@@ -28,7 +27,7 @@ class CheckCurrencyPrice extends Command
      */
     public function handle()
     {
-        $prices = app(PoeNinjaService::class)->getCurrencyPrices();
+        $prices = app(PoeNinjaServiceContract::class)->getCurrencyPrices();
 
         foreach (CurrencyType::all() as $currencyType) {
             try {
