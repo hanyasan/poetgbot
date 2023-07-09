@@ -21,7 +21,7 @@ class HookController extends BaseController
 //            $telegram->enableAdmins($config['admins']);
 
             // Add commands paths containing your custom commands
-//            $telegram->addCommandsPaths($config['commands']['paths']);
+            $telegram->addCommandsPaths([ app_path() . '/TelegramBotCommands' ]);
 
             // Requests Limiter (tries to prevent reaching Telegram API limits)
 //            $telegram->enableLimiter($config['limiter']);
