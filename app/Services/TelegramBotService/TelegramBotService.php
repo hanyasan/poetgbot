@@ -24,7 +24,7 @@ class TelegramBotService implements TelegramBotContract
     {
         return $this
             ->getTelegram()
-            ->addCommandsPaths([ config('telegram.commands.paths') ])
+            ->addCommandsPaths(config('telegram.commands.paths'))
             ->enableAdmins(config('telegram.admins'));
     }
 }
