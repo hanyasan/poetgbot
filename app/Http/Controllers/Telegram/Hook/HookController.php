@@ -2,32 +2,24 @@
 
 namespace App\Http\Controllers\Telegram\Hook;
 
+use App\Services\TelegramBotService\TelegramBotContract;
 use Illuminate\Routing\Controller as BaseController;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Exception\TelegramLogException;
-use Longman\TelegramBot\Telegram;
 
 class HookController extends BaseController
 {
+    public function __construct(
+        protected TelegramBotContract $telegramBot
+    ) {}
+
     public function handle()
     {
         try {
-            $telegram = new Telegram(
-                '5919634038:AAG3HaPoe_cwX2gJJtidajsgQBWEbOsZ-E8',
-                '@poeninja_price_checker_bot'
-            );
-
-            // Enable admin users
-//            $telegram->enableAdmins($config['admins']);
-
-            // Add commands paths containing your custom commands
-            $telegram->addCommandsPaths([ app_path() . '/TelegramBotCommands' ]);
-
-            // Requests Limiter (tries to prevent reaching Telegram API limits)
-//            $telegram->enableLimiter($config['limiter']);
-
-            // Handle telegram webhook request
-            $telegram->handle();
+            $this
+                ->telegramBot
+                ->getTelegramWithCommands()
+                ->handle();
         } catch (TelegramException $e) {
             // Log telegram errors
 //            Longman\TelegramBot\TelegramLog::error($e);
