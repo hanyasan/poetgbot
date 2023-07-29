@@ -13,6 +13,7 @@ class CurrencyPrice extends Model
         'chaos_equivalent',
         'sell_price',
         'buy_price',
+        'currency_type_id',
     ];
 
     public function type(): HasOne

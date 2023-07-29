@@ -13,8 +13,6 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
          $schedule->command('app:check-currency-price')->everyMinute();
-
-         $schedule->command('app:purge-currency-price')->everyFiveMinutes();
     }
 
     /**
