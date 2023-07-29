@@ -2,10 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Currency\CurrencyPrice;
-use App\Models\Currency\CurrencyType;
+use App\Services\DataServices\CurrencyPriceService\CurrencyPriceServiceContract;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 
 class FreshCurrencyPrice extends Command
 {
@@ -28,7 +26,7 @@ class FreshCurrencyPrice extends Command
      */
     public function handle()
     {
-        CurrencyPrice::truncate();
+        app(CurrencyPriceServiceContract::class)->truncate();
 
         $this->call('app:check-currency-price');
     }

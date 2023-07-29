@@ -2,9 +2,7 @@
 
 namespace App\TelegramBotCommands;
 
-use App\Models\Currency\CurrencyPrice;
-use App\Models\Currency\CurrencyType;
-use App\Services\DataServices\CurrencyTypeService\CurrencyTypeServiceContract;
+use App\Services\DataServices\CurrencyPriceService\CurrencyPriceServiceContract;
 use Longman\TelegramBot\Commands\SystemCommand;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Exception\TelegramException;
@@ -39,12 +37,7 @@ class DivineCommand extends SystemCommand
      */
     public function execute(): ServerResponse
     {
-        $price = CurrencyPrice::where(
-            'currency_type_id',
-            app(CurrencyTypeServiceContract::class)->findByDetail('divine-orb')->id
-        )
-            ->orderBy('created_at', 'desc')
-            ->firstOrFail();
+        $price = app(CurrencyPriceServiceContract::class)->findByTypeDetailId('divine-orb');
 
         return $this->replyToChat(
             'Estimated price: ' . $price->chaos_equivalent . PHP_EOL .

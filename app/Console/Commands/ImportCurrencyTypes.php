@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Services\DataServices\CurrencyTypeService\CurrencyTypeServiceContract;
-use App\Services\PoeNinjaService\PoeNinjaServiceContract;
 use Illuminate\Console\Command;
 
 class ImportCurrencyTypes extends Command
@@ -27,23 +26,8 @@ class ImportCurrencyTypes extends Command
      */
     public function handle()
     {
-        $currencyPrices = app(PoeNinjaServiceContract::class)->getCurrencyPrices();
-        $currencyPricesDetail = collect($currencyPrices->currencyDetails);
+        app(CurrencyTypeServiceContract::class)->updateOrCreateManyByNinja();
 
-        collect($currencyPrices->lines)
-            ->unique('currencyTypeName')
-            ->each(
-                function ($priceType) use ($currencyPricesDetail) {
-                    app(CurrencyTypeServiceContract::class)->updateOrCreate([
-                        'currency_type_name' => $priceType->currencyTypeName,
-                        'currency_trade_id'=> $currencyPricesDetail->where(
-                            'name',
-                            $priceType->currencyTypeName
-                        )->first()->tradeId,
-                        'currency_ninja_details_id'=> $priceType->detailsId,
-                    ]);
-                }
-            )
-        ;
+        $this->info('The command was successful!');
     }
 }

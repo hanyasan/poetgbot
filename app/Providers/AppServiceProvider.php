@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
+use App\Repositories\CurrencyPrice\CurrencyPriceRepository;
+use App\Repositories\CurrencyPrice\CurrencyPriceRepositoryContract;
 use App\Repositories\CurrencyType\CurrencyTypeRepository;
 use App\Repositories\CurrencyType\CurrencyTypeRepositoryContract;
+use App\Services\DataServices\CurrencyPriceService\CurrencyPriceService;
+use App\Services\DataServices\CurrencyPriceService\CurrencyPriceServiceContract;
 use App\Services\DataServices\CurrencyTypeService\CurrencyTypeService;
 use App\Services\DataServices\CurrencyTypeService\CurrencyTypeServiceContract;
 use App\Services\Mapper\MapperService;
@@ -21,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
         CurrencyTypeRepositoryContract::class => CurrencyTypeRepository::class,
         MapperService::class => MapperService::class,
         CurrencyTypeServiceContract::class => CurrencyTypeService::class,
+        CurrencyPriceRepositoryContract::class => CurrencyPriceRepository::class,
+        CurrencyPriceServiceContract::class => CurrencyPriceService::class,
     ];
 
     /**

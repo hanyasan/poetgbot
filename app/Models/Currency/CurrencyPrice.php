@@ -16,8 +16,14 @@ class CurrencyPrice extends Model
         'currency_type_id',
     ];
 
+    protected $casts = [
+        'chaos_equivalent' => 'float',
+        'buy_price' => 'float',
+        'sell_price' => 'float',
+    ];
+
     public function type(): HasOne
     {
-        return $this->hasOne(CurrencyType::class);
+        return $this->hasOne(CurrencyType::class, 'id', 'currency_type_id');
     }
 }
