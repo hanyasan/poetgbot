@@ -2,8 +2,8 @@
 
 namespace App\Repositories\CurrencyType;
 
-use App\DataTransferObjects\CurrencyRepository\Currency;
-use App\Models\Currency\CurrencyType;
+use App\DataTransferObjects\Repository\CurrencyType;
+use App\Models\Currency\CurrencyType as CurrencyTypeModel;
 use App\Repositories\BaseEloquentRepository;
 use App\Services\Mapper\MapperService;
 use Illuminate\Support\Collection;
@@ -11,16 +11,16 @@ use Illuminate\Support\Collection;
 final class CurrencyTypeRepository extends BaseEloquentRepository implements CurrencyTypeRepositoryContract
 {
     public function __construct(
-        CurrencyType $model,
+        CurrencyTypeModel $model,
         MapperService $mapper
     ) {
         parent::__construct($model, $mapper);
     }
 
-    public function findByDetailId(string $detailId): Currency
+    public function findByDetailId(string $detailId): CurrencyType
     {
         return $this->mapper->mapFromArray(
-            Currency::class,
+            CurrencyType::class,
             $this
                 ->getQuery()
                 ->where( 'currency_ninja_details_id', $detailId)
@@ -36,7 +36,7 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
         $this->getQuery()->get()->each(function ($priceType) use ($result) {
             $result->add(
                 $this->mapper->mapFromArray(
-                    Currency::class,
+                    CurrencyType::class,
                     $priceType->toArray()
                 )
             );
@@ -45,26 +45,26 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
         return $result;
     }
 
-    public function find(int $id): Currency
+    public function find(int $id): CurrencyType
     {
         return $this->mapper->mapFromArray(
-            Currency::class,
+            CurrencyType::class,
             parent::find($id)->toArray()
         );
     }
 
-    public function create(array $params): Currency
+    public function create(array $params): CurrencyType
     {
         return $this->mapper->mapFromArray(
-            Currency::class,
+            CurrencyType::class,
             parent::create($params)->toArray()
         );
     }
 
-    public function updateOrCreate(array $params): Currency
+    public function updateOrCreate(array $params): CurrencyType
     {
         return $this->mapper->mapFromArray(
-            Currency::class,
+            CurrencyType::class,
             parent::updateOrCreate($params)->toArray()
         );
     }

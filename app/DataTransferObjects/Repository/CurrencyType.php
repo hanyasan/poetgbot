@@ -1,10 +1,10 @@
 <?php
 
-namespace App\DataTransferObjects\CurrencyRepository;
+namespace App\DataTransferObjects\Repository;
 
 use Illuminate\Support\Carbon;
 
-class Currency
+class CurrencyType
 {
     public function __construct(
         public readonly int $id,

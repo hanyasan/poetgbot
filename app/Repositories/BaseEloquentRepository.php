@@ -25,6 +25,11 @@ class BaseEloquentRepository implements BaseRepositoryContract
         return $this->find($id)->delete();
     }
 
+    public function truncate(): void
+    {
+        $this->getQuery()->truncate();
+    }
+
     /**
      * @throws ModelNotFoundException<Model>
      */
