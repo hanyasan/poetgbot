@@ -4,6 +4,7 @@ namespace App\TelegramBotCommands;
 
 use App\Models\Currency\CurrencyPrice;
 use App\Models\Currency\CurrencyType;
+use App\Services\DataServices\CurrencyTypeService\CurrencyTypeServiceContract;
 use Longman\TelegramBot\Commands\SystemCommand;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Exception\TelegramException;
@@ -40,7 +41,7 @@ class DivineCommand extends SystemCommand
     {
         $price = CurrencyPrice::where(
             'currency_type_id',
-            CurrencyType::where('currency_ninja_details_id', 'divine-orb')->firstOrFail()->id
+            app(CurrencyTypeServiceContract::class)->findByDetail('divine-orb')->id
         )
             ->orderBy('created_at', 'desc')
             ->firstOrFail();

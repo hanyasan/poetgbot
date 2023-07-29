@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Currency\CurrencyType;
+use App\Repositories\CurrencyType\CurrencyTypeRepositoryContract;
 use Illuminate\Database\Seeder;
 
 class CurrencyTypeSeeder extends Seeder
@@ -29,8 +29,10 @@ class CurrencyTypeSeeder extends Seeder
      */
     public function run(): void
     {
+        $currencyTypeRepository = app(CurrencyTypeRepositoryContract::class);
+
         foreach ($this->currencyTypes as $currencyType) {
-            CurrencyType::create($currencyType);
+            $currencyTypeRepository->create($currencyType);
         }
     }
 }

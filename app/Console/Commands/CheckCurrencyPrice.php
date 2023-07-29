@@ -2,7 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Currency\CurrencyType;
+use App\Models\Currency\CurrencyPrice;
+use App\Services\DataServices\CurrencyTypeService\CurrencyTypeServiceContract;
 use App\Services\PoeNinjaService\PoeNinjaServiceContract;
 use Illuminate\Console\Command;
 
@@ -29,18 +30,19 @@ class CheckCurrencyPrice extends Command
     {
         $prices = app(PoeNinjaServiceContract::class)->getCurrencyPrices();
 
-        foreach (CurrencyType::all() as $currencyType) {
+        foreach (app(CurrencyTypeServiceContract::class)->getAll() as $currencyType) {
             try {
                 $price = collect($prices->lines)
                     ->firstWhere('currencyTypeName', $currencyType->currency_type_name);
 
-                $currencyType
-                    ->prices()
-                    ->create([
+                CurrencyPrice::updateOrCreate(
+                    ['currency_type_id' => $currencyType->id],
+                    [
                         'chaos_equivalent' => $price->chaosEquivalent,
-                        'sell_price' => $price->receive?->value,
-                        'buy_price' => $price->pay->value ? (1 / $price->pay->value) : null,
-                    ]);
+                        'sell_price' => $price->pay?->value ? (1 / $price->pay->value) : null,
+                        'buy_price' => $price->receive?->value,
+                    ]
+                );
             } catch (\Exception) {
                 continue;
             }

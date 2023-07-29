@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Repositories\CurrencyType\CurrencyTypeRepository;
+use App\Repositories\CurrencyType\CurrencyTypeRepositoryContract;
+use App\Services\DataServices\CurrencyTypeService\CurrencyTypeService;
+use App\Services\DataServices\CurrencyTypeService\CurrencyTypeServiceContract;
+use App\Services\Mapper\MapperService;
 use App\Services\PoeNinjaService\PoeNinjaService;
 use App\Services\PoeNinjaService\PoeNinjaServiceContract;
 use App\Services\TelegramBotService\TelegramBotContract;
@@ -13,6 +18,9 @@ class AppServiceProvider extends ServiceProvider
     public array $singletons = [
         PoeNinjaServiceContract::class => PoeNinjaService::class,
         TelegramBotContract::class => TelegramBotService::class,
+        CurrencyTypeRepositoryContract::class => CurrencyTypeRepository::class,
+        MapperService::class => MapperService::class,
+        CurrencyTypeServiceContract::class => CurrencyTypeService::class,
     ];
 
     /**

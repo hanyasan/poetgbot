@@ -5,15 +5,16 @@ namespace App\Console\Commands;
 use App\Models\Currency\CurrencyPrice;
 use App\Models\Currency\CurrencyType;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 
-class PurgeCurrencyPrice extends Command
+class FreshCurrencyPrice extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'app:purge-currency-price';
+    protected $signature = 'app:fresh-currency-price';
 
     /**
      * The console command description.
@@ -27,14 +28,8 @@ class PurgeCurrencyPrice extends Command
      */
     public function handle()
     {
-        foreach (CurrencyType::all() as $currencyType) {
-            CurrencyPrice::where('currency_type_id', $currencyType->id)
-                ->orderBy('created_at', 'desc')
-                ->offset(1)
-                ->get()
-                ->each(function ($row) {
-                    $row->delete();
-                });
-        }
+        CurrencyPrice::truncate();
+
+        $this->call('app:check-currency-price');
     }
 }
