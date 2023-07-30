@@ -63,15 +63,15 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
         );
     }
 
-    public function updateOrCreate(array $params): CurrencyType
+    public function updateOrCreate(array $paramsToMatch, array $params): CurrencyType
     {
         Cache::tags([
-            'currency_type_detail:' . $params['currency_ninja_details_id'] ?? 'zero',
-            'currency_type_id:' . $params['id'] ?? 'zero',
+            'currency_type_detail:' . ($params['currency_ninja_details_id'] ?? 'zero'),
+            'currency_type_id:' . ($params['id'] ?? 'zero'),
             'currency_type_get',
         ])->flush();
 
-        return $this->repository->updateOrCreate($params);
+        return $this->repository->updateOrCreate($paramsToMatch, $params);
     }
 
     public function updateOrCreateManyByNinja(): void
@@ -83,14 +83,19 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
             ->unique('currencyTypeName')
             ->each(
                 function ($priceType) use ($currencyPricesDetail) {
-                    $this->updateOrCreate([
+                    $this->updateOrCreate(
+                        [
+                            'currency_type_name' => $priceType->currencyTypeName,
+                        ],
+                        [
                         'currency_type_name' => $priceType->currencyTypeName,
                         'currency_trade_id'=> $currencyPricesDetail->where(
                             'name',
                             $priceType->currencyTypeName
                         )->first()->tradeId,
                         'currency_ninja_details_id'=> $priceType->detailsId,
-                    ]);
+                    ]
+                    );
                 }
             )
         ;

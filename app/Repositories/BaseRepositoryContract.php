@@ -14,7 +14,7 @@ interface BaseRepositoryContract
 
     public function updateOne(int $id, array $params): bool;
 
-    public function updateOrCreate(array $params);
+    public function updateOrCreate(array $paramsToMatch, array $params);
 
     public function truncate(): void;
 }

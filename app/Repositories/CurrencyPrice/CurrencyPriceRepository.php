@@ -51,11 +51,11 @@ final class CurrencyPriceRepository extends BaseEloquentRepository implements Cu
         );
     }
 
-    public function updateOrCreate(array $params): CurrencyPrice
+    public function updateOrCreate(array $paramsToMatch, array $params): CurrencyPrice
     {
         return $this->mapper->mapFromArray(
             CurrencyPrice::class,
-            parent::updateOrCreate($params)->toArray()
+            parent::updateOrCreate($paramsToMatch, $params)->toArray()
         );
     }
 

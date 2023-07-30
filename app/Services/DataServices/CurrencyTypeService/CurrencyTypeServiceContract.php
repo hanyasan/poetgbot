@@ -15,7 +15,7 @@ interface CurrencyTypeServiceContract
 
     public function getAll(): Collection;
 
-    public function updateOrCreate(array $params): CurrencyType;
+    public function updateOrCreate(array $paramsToMatch, array $params): CurrencyType;
 
     public function updateOrCreateManyByNinja(): void;
 }

@@ -16,5 +16,5 @@ interface CurrencyTypeRepositoryContract extends BaseRepositoryContract
 
     public function create(array $params): CurrencyType;
 
-    public function updateOrCreate(array $params): CurrencyType;
+    public function updateOrCreate(array $paramsToMatch, array $params): CurrencyType;
 }

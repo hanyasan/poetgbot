@@ -50,14 +50,14 @@ final class CurrencyPriceService implements CurrencyPriceServiceContract
         );
     }
 
-    public function updateOrCreate(array $params): CurrencyPrice
+    public function updateOrCreate(array $paramsToMatch, array $params): CurrencyPrice
     {
         Cache::tags([
             'currency_price_get',
-            'currency_price_type:' . $params['currency_type_id'] ?? 'zero',
+            'currency_price_type:' . ($params['currency_type_id'] ?? 'zero'),
         ])->flush();
 
-        return $this->repository->updateOrCreate($params);
+        return $this->repository->updateOrCreate($paramsToMatch, $params);
     }
 
     public function truncate(): void
@@ -78,12 +78,17 @@ final class CurrencyPriceService implements CurrencyPriceServiceContract
                 $price = collect($prices->lines)
                     ->firstWhere('currencyTypeName', $currencyType->currency_type_name);
 
-                $this->repository->updateOrCreate([
-                    'currency_type_id' => $currencyType->id,
-                    'chaos_equivalent' => $price->chaosEquivalent,
-                    'sell_price' => $price->pay?->value ? (1 / $price->pay->value) : null,
-                    'buy_price' => $price->receive?->value,
-                ]);
+                $this->repository->updateOrCreate(
+                    [
+                        'currency_type_id' => $currencyType->id,
+                    ],
+                    [
+                        'currency_type_id' => $currencyType->id,
+                        'chaos_equivalent' => $price->chaosEquivalent,
+                        'sell_price' => $price->pay?->value ? (1 / $price->pay->value) : null,
+                        'buy_price' => $price->receive?->value,
+                    ]
+                );
             } catch (\Exception) {
                 continue;
             }
