@@ -61,11 +61,11 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
         );
     }
 
-    public function updateOrCreate(array $params): CurrencyType
+    public function updateOrCreate(array $paramsToMatch, array $params): CurrencyType
     {
         return $this->mapper->mapFromArray(
             CurrencyType::class,
-            parent::updateOrCreate($params)->toArray()
+            parent::updateOrCreate($paramsToMatch, $params)->toArray()
         );
     }
 }

@@ -51,8 +51,8 @@ class BaseEloquentRepository implements BaseRepositoryContract
         return $this->find($id)->updateOrFail($params);
     }
 
-    public function updateOrCreate(array $params): object
+    public function updateOrCreate(array $paramsToMatch, array $params): object
     {
-        return $this->getQuery()->updateOrCreate($params);
+        return $this->getQuery()->updateOrCreate($paramsToMatch, $params);
     }
 }

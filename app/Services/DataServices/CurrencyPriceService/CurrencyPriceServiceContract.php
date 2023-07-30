@@ -15,7 +15,7 @@ interface CurrencyPriceServiceContract
 
     public function getAll(): CurrencyPrice;
 
-    public function updateOrCreate(array $params): CurrencyPrice;
+    public function updateOrCreate(array $paramsToMatch, array $params): CurrencyPrice;
 
     public function truncate(): void;
 

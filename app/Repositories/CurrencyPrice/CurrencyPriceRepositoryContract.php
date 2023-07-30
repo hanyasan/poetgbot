@@ -14,7 +14,7 @@ interface CurrencyPriceRepositoryContract extends BaseRepositoryContract
 
     public function create(array $params): CurrencyPrice;
 
-    public function updateOrCreate(array $params): CurrencyPrice;
+    public function updateOrCreate(array $paramsToMatch, array $params): CurrencyPrice;
 
     public function findByCurrencyTypeId(int $currencyPriceTypeId): CurrencyPriceWithType;
 }
