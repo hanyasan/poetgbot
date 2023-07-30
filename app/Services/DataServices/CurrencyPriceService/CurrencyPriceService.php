@@ -78,7 +78,7 @@ final class CurrencyPriceService implements CurrencyPriceServiceContract
                 $price = collect($prices->lines)
                     ->firstWhere('currencyTypeName', $currencyType->currency_type_name);
 
-                $this->repository->updateOrCreate(
+                $this->updateOrCreate(
                     [
                         'currency_type_id' => $currencyType->id,
                     ],
