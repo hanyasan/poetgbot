@@ -1,9 +1,0 @@
-version: '2'
-
-services:
-  redis:
-    image: 'bitnami/redis:latest'
-    environment:
-      - REDIS_PASSWORD=pricingredis
-    ports:
-      - "6379:6379"
