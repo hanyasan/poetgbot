@@ -15,7 +15,7 @@ class PoeNinjaService implements PoeNinjaServiceContract
         $client = new Client();
         $response = $client->get( 'https://poe.ninja/api/data/currencyoverview', [
            'query' => [
-              'league' => 'Crucible',
+              'league' => config('poe.current_league'),
               'type' => 'Currency'
            ]
         ])->getBody()->getContents();
