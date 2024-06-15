@@ -43,7 +43,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Response::macro('okResponse', function (string $value) {
+        Response::macro('okResponse', function ($value) {
             return [
                 'success' => true,
                 'data' => $value,
