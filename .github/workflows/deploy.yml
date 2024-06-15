@@ -1,0 +1,17 @@
+name: Deploy main
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+jobs:
+  if_merged:
+    if: github.event.pull_request.merged == true
+    name: Pull main branch
+    runs-on: self-hosted
+    steps:
+    - run: |
+        git checkout main
+        git pull origin main
+      working-directory: /var/www/poetgbot
