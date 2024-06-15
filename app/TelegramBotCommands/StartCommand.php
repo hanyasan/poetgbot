@@ -37,7 +37,7 @@ class StartCommand extends UserCommand
     public function execute(): ServerResponse
     {
         return $this->replyToChat(
-            'Fuck off!' . PHP_EOL .
+            'Hello dude' . PHP_EOL .
             'Type /help to see all commands!'
         );
     }
