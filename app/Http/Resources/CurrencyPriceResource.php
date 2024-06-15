@@ -17,6 +17,7 @@ class CurrencyPriceResource extends JsonResource
             'updated_at' => $price->updated_at?->toDateTimeString(),
             'sell_price' => round($price->sell_price ?? 0, 2),
             'buy_price' => round($price->buy_price ?? 0, 2),
+            'type' => CurrencyTypeResource::make($price->type),
         ];
     }
 }
