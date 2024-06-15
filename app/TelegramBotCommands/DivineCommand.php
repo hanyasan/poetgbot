@@ -29,6 +29,10 @@ class DivineCommand extends SystemCommand
      */
     protected $version = '1.0';
 
+    protected $show_in_help = true;
+
+    protected $enabled = true;
+
     /**
      * Main command execution
      *
@@ -40,9 +44,9 @@ class DivineCommand extends SystemCommand
         $price = app(CurrencyPriceServiceContract::class)->findByTypeDetailId('divine-orb');
 
         return $this->replyToChat(
-            'Estimated price: ' . $price->chaos_equivalent . PHP_EOL .
-            'Buy price: ' . ($price->buy_price ?? 'Unknown') . PHP_EOL .
-            'Sell price: ' . ($price->sell_price ?? 'Unknown') . PHP_EOL
+            'Estimated price: ' . ($price->chaos_equivalent ? round($price->chaos_equivalent, 2) : 'Unknown') . PHP_EOL .
+            'Buy price: ' . ($price->buy_price ? round($price->buy_price, 2) : 'Unknown') . PHP_EOL .
+            'Sell price: ' . ($price->sell_price ? round($price->sell_price, 2) : 'Unknown') . PHP_EOL
         , ['parse_mode' => 'markdown']);
     }
 }
