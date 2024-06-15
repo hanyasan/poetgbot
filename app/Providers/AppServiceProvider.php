@@ -15,6 +15,7 @@ use App\Services\PoeNinjaService\PoeNinjaService;
 use App\Services\PoeNinjaService\PoeNinjaServiceContract;
 use App\Services\TelegramBotService\TelegramBotContract;
 use App\Services\TelegramBotService\TelegramBotService;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -42,6 +43,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Response::macro('okResponse', function (string $value) {
+            return [
+                'success' => true,
+                'data' => $value,
+            ];
+        });
     }
 }
