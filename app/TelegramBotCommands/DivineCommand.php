@@ -4,10 +4,11 @@ namespace App\TelegramBotCommands;
 
 use App\Services\DataServices\CurrencyPriceService\CurrencyPriceServiceContract;
 use Longman\TelegramBot\Commands\SystemCommand;
+use Longman\TelegramBot\Commands\UserCommand;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Exception\TelegramException;
 
-class DivineCommand extends SystemCommand
+class DivineCommand extends UserCommand
 {
     /**
      * @var string
