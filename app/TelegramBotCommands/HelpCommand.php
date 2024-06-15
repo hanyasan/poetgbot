@@ -37,26 +37,17 @@ class HelpCommand extends UserCommand
      */
     public function execute(): ServerResponse
     {
-        $message     = $this->getMessage();
-        $command_str = trim($message->getText(true));
+        $message = $this->getMessage();
+        $commandStr = trim($message->getText(true));
 
-        // Admin commands shouldn't be shown in group chats
-        $safe_to_show = $message->getChat()->isPrivateChat();
-
-        [$all_commands, $user_commands, $admin_commands] = $this->getUserAndAdminCommands();
+        $userCommands = $this->getUserCommands();
 
         // If no command parameter is passed, show the list.
-        if ($command_str === '') {
+        if ($commandStr === '') {
             $text = '*Commands List*:' . PHP_EOL;
-            foreach ($user_commands as $user_command) {
-                $text .= '/' . $user_command->getName() . ' - ' . $user_command->getDescription() . PHP_EOL;
-            }
 
-            if ($safe_to_show && count($admin_commands) > 0) {
-                $text .= PHP_EOL . '*Admin Commands List*:' . PHP_EOL;
-                foreach ($admin_commands as $admin_command) {
-                    $text .= '/' . $admin_command->getName() . ' - ' . $admin_command->getDescription() . PHP_EOL;
-                }
+            foreach ($userCommands as $userCommand) {
+                $text .= '/' . $userCommand->getName() . ' - ' . $userCommand->getDescription() . PHP_EOL;
             }
 
             $text .= PHP_EOL . 'For exact command help type: /help <command>';
@@ -64,9 +55,10 @@ class HelpCommand extends UserCommand
             return $this->replyToChat($text, ['parse_mode' => 'markdown']);
         }
 
-        $command_str = str_replace('/', '', $command_str);
-        if (isset($all_commands[$command_str]) && ($safe_to_show || !$all_commands[$command_str]->isAdminCommand())) {
-            $command = $all_commands[$command_str];
+        $commandStr = str_replace('/', '', $commandStr);
+
+        if (isset($userCommands[$commandStr])) {
+            $command = $userCommands[$commandStr];
 
             return $this->replyToChat(sprintf(
                 'Command: %s (v%s)' . PHP_EOL .
@@ -79,39 +71,32 @@ class HelpCommand extends UserCommand
             ), ['parse_mode' => 'markdown']);
         }
 
-        return $this->replyToChat('No help available: Command `/' . $command_str . '` not found', ['parse_mode' => 'markdown']);
+        return $this->replyToChat('No help available: Command `/' . $commandStr . '` not found', ['parse_mode' => 'markdown']);
     }
 
     /**
      * Get all available User and Admin commands to display in the help list.
      *
-     * @return Command[][]
+     * @return Command[]
      * @throws TelegramException
      */
-    protected function getUserAndAdminCommands(): array
+    protected function getUserCommands(): array
     {
-        /** @var Command[] $all_commands */
-        $all_commands = $this->telegram->getCommandsList();
+        /** @var Command[] $allCommands */
+        $allCommands = $this->telegram->getCommandsList();
 
         // Only get enabled Admin and User commands that are allowed to be shown.
-        $commands = array_filter($all_commands, function ($command): bool {
-            return !$command->isSystemCommand() && $command->showInHelp() && $command->isEnabled();
+        $commands = array_filter($allCommands, function ($command): bool {
+            return ! $command->isSystemCommand() && $command->showInHelp() && $command->isEnabled();
         });
 
         // Filter out all User commands
-        $user_commands = array_filter($commands, function ($command): bool {
+        $userCommands = array_filter($commands, function ($command): bool {
             return $command->isUserCommand();
         });
 
-        // Filter out all Admin commands
-        $admin_commands = array_filter($commands, function ($command): bool {
-            return $command->isAdminCommand();
-        });
+        ksort($userCommands);
 
-        ksort($commands);
-        ksort($user_commands);
-        ksort($admin_commands);
-
-        return [$commands, $user_commands, $admin_commands];
+        return $userCommands;
     }
 }
