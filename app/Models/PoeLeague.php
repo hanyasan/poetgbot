@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Currency;
+namespace App\Models;
 
 use App\Enums\PoeVersionEnum;
 use Carbon\Carbon;

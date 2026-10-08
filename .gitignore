@@ -20,3 +20,4 @@ yarn-error.log
 /.vscode
 /actions-runner
 CLAUDE.md
+/.claude

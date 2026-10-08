@@ -4,13 +4,17 @@ namespace App\Repositories\PoeLeague;
 
 use App\DataTransferObjects\Repository\PoeLeague;
 use App\Enums\PoeVersionEnum;
-use App\Models\Currency\PoeLeague as PoeLeagueModel;
+use App\Models\PoeLeague as PoeLeagueModel;
 use App\Repositories\BaseEloquentRepository;
 use App\Services\Mapper\MapperService;
 use Illuminate\Support\Collection;
 
 final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLeagueRepositoryContract
 {
+    /**
+     * @param  PoeLeagueModel  $model  Eloquent model the repository queries
+     * @param  MapperService  $mapper  Maps raw model arrays into PoeLeague DTOs
+     */
     public function __construct(
         PoeLeagueModel $model,
         MapperService $mapper
@@ -18,6 +22,9 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
         parent::__construct($model, $mapper);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getAll(): Collection
     {
         return $this->getQuery()->get()->map(
@@ -25,6 +32,9 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
         );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getByVersion(PoeVersionEnum $version): Collection
     {
         return $this->getQuery()
@@ -33,6 +43,9 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
             ->map(fn ($league) => $this->mapper->mapFromArray(PoeLeague::class, $league->toArray()));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function find(int $id): PoeLeague
     {
         return $this->mapper->mapFromArray(
@@ -41,6 +54,9 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
         );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function create(array $params): PoeLeague
     {
         return $this->mapper->mapFromArray(
@@ -49,6 +65,9 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
         );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function updateOrCreate(array $paramsToMatch, array $params): PoeLeague
     {
         return $this->mapper->mapFromArray(

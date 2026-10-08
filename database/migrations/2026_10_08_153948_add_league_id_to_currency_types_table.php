@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('currency_types', function (Blueprint $table) {
-            $table->foreignIdFor(\App\Models\Currency\PoeLeague::class, 'poe_league_id')->constrained();
+            $table->foreignIdFor(\App\Models\PoeLeague::class, 'poe_league_id')->constrained();
         });
     }
 

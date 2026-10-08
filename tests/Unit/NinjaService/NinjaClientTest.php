@@ -8,7 +8,7 @@ use App\Services\PoeNinjaService\PoeNinjaService;
 use PHPUnit\Framework\TestCase;
 use Tests\CreatesApplication;
 
-class CurrencyTest extends TestCase
+class NinjaClientTest extends TestCase
 {
     use CreatesApplication;
 
@@ -28,7 +28,7 @@ class CurrencyTest extends TestCase
 
         $response = $service->getCurrencyPrices(
             PoeVersionEnum::POE_2,
-            'Forbidden Rites',
+            'Standard',
             new NinjaClient(),
         );
 

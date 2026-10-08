@@ -22,7 +22,7 @@ class BaseEloquentRepository implements BaseRepositoryContract
 
     public function delete(int $id): bool
     {
-        return $this->find($id)->delete();
+        return $this->getQuery()->findOrFail($id)->delete();
     }
 
     public function truncate(): void
@@ -48,7 +48,7 @@ class BaseEloquentRepository implements BaseRepositoryContract
      */
     public function updateOne(int $id, array $params): bool
     {
-        return $this->find($id)->updateOrFail($params);
+        return $this->getQuery()->findOrFail($id)->updateOrFail($params);
     }
 
     public function updateOrCreate(array $paramsToMatch, array $params): object
