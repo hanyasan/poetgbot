@@ -2,29 +2,27 @@
 
 namespace App\Services\PoeNinjaService;
 
-use App\DataTransferObjects\Currency\PoeNinjaCurrencyResponse;
+use App\DataTransferObjects\Currency\PoeNinjaExchangeResponse;
+use App\Enums\PoeVersionEnum;
+use App\Services\HTTPClientServices\NinjaClientContract;
 use CuyZ\Valinor\MapperBuilder;
-use GuzzleHttp\Client;
 use CuyZ\Valinor\Mapper\Source\Source;
 
 class PoeNinjaService implements PoeNinjaServiceContract
 {
 
-    public function getCurrencyPrices(): PoeNinjaCurrencyResponse
-    {
-        $client = new Client();
-        $response = $client->get( 'https://poe.ninja/api/data/currencyoverview', [
-           'query' => [
-              'league' => config('poe.current_league'),
-              'type' => 'Currency'
-           ]
-        ])->getBody()->getContents();
+    public function getCurrencyPrices(
+        PoeVersionEnum $version,
+        string $league,
+        NinjaClientContract $client,
+    ): PoeNinjaExchangeResponse {
+        $response = $client->getCurrencyPrices($version, $league);
 
         return (new MapperBuilder())
             ->allowSuperfluousKeys()
             ->mapper()
             ->map(
-                PoeNinjaCurrencyResponse::class,
+                PoeNinjaExchangeResponse::class,
                 Source::json($response)->camelCaseKeys()
             );
     }
