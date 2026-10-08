@@ -3,7 +3,7 @@
 namespace App\Repositories\CurrencyType;
 
 use App\DataTransferObjects\Repository\CurrencyType;
-use App\Models\Currency\CurrencyType as CurrencyTypeModel;
+use App\Models\Currency\PoeLeague as CurrencyTypeModel;
 use App\Repositories\BaseEloquentRepository;
 use App\Services\Mapper\MapperService;
 use Illuminate\Support\Collection;
