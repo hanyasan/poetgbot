@@ -2,7 +2,7 @@
 
 namespace App\Repositories\CurrencyPrice;
 use App\DataTransferObjects\Repository\CurrencyPrice;
-use App\DataTransferObjects\Repository\CurrencyPriceWithType;
+use App\DataTransferObjects\Repository\PoeLeague;
 use App\Repositories\BaseRepositoryContract;
 use Illuminate\Support\Collection;
 
@@ -16,5 +16,5 @@ interface CurrencyPriceRepositoryContract extends BaseRepositoryContract
 
     public function updateOrCreate(array $paramsToMatch, array $params): CurrencyPrice;
 
-    public function findByCurrencyTypeId(int $currencyPriceTypeId): CurrencyPriceWithType;
+    public function findByCurrencyTypeId(int $currencyPriceTypeId): PoeLeague;
 }

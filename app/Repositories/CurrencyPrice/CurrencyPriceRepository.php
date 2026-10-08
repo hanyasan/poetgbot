@@ -3,7 +3,7 @@
 namespace App\Repositories\CurrencyPrice;
 
 use App\DataTransferObjects\Repository\CurrencyPrice;
-use App\DataTransferObjects\Repository\CurrencyPriceWithType;
+use App\DataTransferObjects\Repository\PoeLeague;
 use App\Repositories\BaseEloquentRepository;
 use App\Services\Mapper\MapperService;
 use Illuminate\Support\Collection;
@@ -59,10 +59,10 @@ final class CurrencyPriceRepository extends BaseEloquentRepository implements Cu
         );
     }
 
-    public function findByCurrencyTypeId(int $currencyPriceTypeId): CurrencyPriceWithType
+    public function findByCurrencyTypeId(int $currencyPriceTypeId): PoeLeague
     {
         return $this->mapper->mapFromArray(
-            CurrencyPriceWithType::class,
+            PoeLeague::class,
             $this->getQuery()
                 ->where('currency_type_id', $currencyPriceTypeId)
                 ->with('type')

@@ -2,14 +2,14 @@
 
 namespace App\Http\Resources;
 
-use App\DataTransferObjects\Repository\CurrencyPriceWithType;
+use App\DataTransferObjects\Repository\PoeLeague;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CurrencyPriceResource extends JsonResource
 {
     public function toArray($request): array
     {
-        /** @var CurrencyPriceWithType $price */
+        /** @var PoeLeague $price */
         $price = $this->resource;
 
         return [
