@@ -3,7 +3,7 @@
 namespace App\Services\DataServices\CurrencyPriceService;
 
 use App\DataTransferObjects\Repository\CurrencyPrice;
-use App\DataTransferObjects\Repository\PoeLeague;
+use App\DataTransferObjects\Repository\CurrencyPriceWithType;
 
 interface CurrencyPriceServiceContract
 {
@@ -11,7 +11,7 @@ interface CurrencyPriceServiceContract
 
     public function delete(int $id): bool;
 
-    public function findByTypeDetailId(string $detailId): PoeLeague;
+    public function findByTypeDetailId(string $detailId): CurrencyPriceWithType;
 
     public function getAll(): CurrencyPrice;
 

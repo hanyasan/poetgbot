@@ -3,11 +3,11 @@
 namespace App\Services\DataServices\CurrencyPriceService;
 
 use App\DataTransferObjects\Repository\CurrencyPrice;
+use App\DataTransferObjects\Repository\CurrencyPriceWithType;
 use App\Repositories\CurrencyPrice\CurrencyPriceRepositoryContract;
 use App\Services\DataServices\CurrencyTypeService\CurrencyTypeServiceContract;
 use App\Services\PoeNinjaService\PoeNinjaServiceContract;
 use Illuminate\Support\Facades\Cache;
-use App\DataTransferObjects\Repository\PoeLeague;
 
 final class CurrencyPriceService implements CurrencyPriceServiceContract
 {
@@ -95,7 +95,7 @@ final class CurrencyPriceService implements CurrencyPriceServiceContract
         }
     }
 
-    public function findByTypeDetailId(string $detailId): PoeLeague
+    public function findByTypeDetailId(string $detailId): CurrencyPriceWithType
     {
         $currencyType = $this->currencyTypeService->findByDetail($detailId);
 
