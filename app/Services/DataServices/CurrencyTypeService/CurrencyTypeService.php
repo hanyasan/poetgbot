@@ -2,7 +2,7 @@
 
 namespace App\Services\DataServices\CurrencyTypeService;
 
-use App\DataTransferObjects\Repository\CurrencyType;
+use App\DataTransferObjects\RepositoryObjects\CurrencyType;
 use App\Repositories\CurrencyType\CurrencyTypeRepositoryContract;
 use App\Services\PoeNinjaService\PoeNinjaServiceContract;
 use Illuminate\Support\Collection;

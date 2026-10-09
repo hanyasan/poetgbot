@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Services\DataServices\PoeVersionService;
+namespace App\Services\DataServices\PoeLeagueService;
 
-use App\DataTransferObjects\Repository\PoeLeague;
+use App\DataTransferObjects\RepositoryObjects\PoeLeague;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
 use App\Services\PoeNinjaService\PoeNinjaServiceContract;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
-final class PoeVersionService implements PoeVersionServiceContract
+final class PoeLeagueService implements PoeLeagueServiceContract
 {
     public function __construct(
         private readonly PoeLeagueRepositoryContract $repository,
@@ -62,7 +62,7 @@ final class PoeVersionService implements PoeVersionServiceContract
         );
     }
 
-    public function getByVersion(PoeVersionEnum $version): Collection
+    public function getByLeague(PoeVersionEnum $version): Collection
     {
         return Cache::tags([
             'poe_league_get',
@@ -70,7 +70,7 @@ final class PoeVersionService implements PoeVersionServiceContract
             'by_version:' . $version->value,
             60 * 60,
             function () use ($version) {
-                return $this->repository->getByVersion($version);
+                return $this->repository->getByLeague($version);
             }
         );
     }

@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Repositories\CurrencyPrice;
-use App\DataTransferObjects\Repository\CurrencyPrice;
-use App\DataTransferObjects\Repository\CurrencyPriceWithType;
+use App\DataTransferObjects\RepositoryObjects\CurrencyPrice;
+use App\DataTransferObjects\RepositoryObjects\CurrencyPriceWithType;
 use App\Repositories\BaseRepositoryContract;
 use Illuminate\Support\Collection;
 

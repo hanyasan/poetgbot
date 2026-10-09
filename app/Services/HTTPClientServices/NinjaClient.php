@@ -18,7 +18,7 @@ class NinjaClient implements NinjaClientContract
 
     public function getCurrencyPrices(PoeVersionEnum $version, string $league): string
     {
-        $response = $this->client->get( $this->setVersionForUrl($version) . '/api/economy/exchange/current/overview', [
+        $response = $this->client->get( $this->setLeagueForUrl($version) . '/api/economy/exchange/current/overview', [
            'query' => [
               'league' => $league,
               'type' => 'Currency'
@@ -31,12 +31,12 @@ class NinjaClient implements NinjaClientContract
 
     public function getAvailableLeagues(PoeVersionEnum $version): string
     {
-        $response = $this->client->get( $this->setVersionForUrl($version) . '/api/data/index-state');
+        $response = $this->client->get( $this->setLeagueForUrl($version) . '/api/data/index-state');
 
         return $response->getBody()->getContents();
     }
 
-    private function setVersionForUrl(PoeVersionEnum $version): string
+    private function setLeagueForUrl(PoeVersionEnum $version): string
     {
         return $version->value;
     }

@@ -12,8 +12,8 @@ use App\Services\DataServices\CurrencyPriceService\CurrencyPriceService;
 use App\Services\DataServices\CurrencyPriceService\CurrencyPriceServiceContract;
 use App\Services\DataServices\CurrencyTypeService\CurrencyTypeService;
 use App\Services\DataServices\CurrencyTypeService\CurrencyTypeServiceContract;
-use App\Services\DataServices\PoeVersionService\PoeVersionService;
-use App\Services\DataServices\PoeVersionService\PoeVersionServiceContract;
+use App\Services\DataServices\PoeLeagueService\PoeLeagueService;
+use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
 use App\Services\HTTPClientServices\NinjaClient;
 use App\Services\HTTPClientServices\NinjaClientContract;
 use App\Services\Mapper\MapperService;
@@ -36,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
         CurrencyPriceRepositoryContract::class => CurrencyPriceRepository::class,
         CurrencyPriceServiceContract::class => CurrencyPriceService::class,
         PoeLeagueRepositoryContract::class => PoeLeagueRepository::class,
-        PoeVersionServiceContract::class => PoeVersionService::class,
+        PoeLeagueServiceContract::class => PoeLeagueService::class,
     ];
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DataTransferObjects\Currency;
+namespace App\DataTransferObjects\ParsingObjects\Currency;
 
 final class PoeNinjaExchangeSparkline
 {

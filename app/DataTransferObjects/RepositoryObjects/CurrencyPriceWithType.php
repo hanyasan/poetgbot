@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DataTransferObjects\Repository;
+namespace App\DataTransferObjects\RepositoryObjects;
 
 use Illuminate\Support\Carbon;
 

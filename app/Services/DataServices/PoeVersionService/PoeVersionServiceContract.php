@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Services\DataServices\PoeVersionService;
+namespace App\Services\DataServices\PoeLeagueService;
 
-use App\DataTransferObjects\Repository\PoeLeague;
+use App\DataTransferObjects\RepositoryObjects\PoeLeague;
 use App\Enums\PoeVersionEnum;
 use Illuminate\Support\Collection;
 
-interface PoeVersionServiceContract
+interface PoeLeagueServiceContract
 {
     public function create(array $params): PoeLeague;
 
@@ -16,7 +16,7 @@ interface PoeVersionServiceContract
 
     public function getAll(): Collection;
 
-    public function getByVersion(PoeVersionEnum $version): Collection;
+    public function getByLeague(PoeVersionEnum $version): Collection;
 
     public function updateOrCreate(array $paramsToMatch, array $params): PoeLeague;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\DataTransferObjects;
+namespace App\DataTransferObjects\ParsingObjects;
 
-final class PoeNinjaVersion
+final class PoeNinjaLeague
 {
     public function __construct(
         public readonly string $name,

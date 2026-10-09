@@ -1,17 +1,17 @@
 <?php
 
-namespace App\DataTransferObjects;
+namespace App\DataTransferObjects\ParsingObjects;
 
-final class PoeNinjaVersionResponse
+final class PoeNinjaLeagueResponse
 {
     public function __construct(
-        /** @var PoeNinjaVersion[] */
+        /** @var PoeNinjaLeague[] */
         public readonly array $economyLeagues,
-        /** @var PoeNinjaVersion[] */
+        /** @var PoeNinjaLeague[] */
         public readonly array $oldEconomyLeagues = [],
-        /** @var PoeNinjaVersion[] */
+        /** @var PoeNinjaLeague[] */
         public readonly array $buildLeagues = [],
-        /** @var PoeNinjaVersion[] */
+        /** @var PoeNinjaLeague[] */
         public readonly array $oldBuildLeagues = [],
     ) {}
 }

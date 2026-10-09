@@ -2,7 +2,7 @@
 
 namespace App\Repositories\PoeLeague;
 
-use App\DataTransferObjects\Repository\PoeLeague;
+use App\DataTransferObjects\RepositoryObjects\PoeLeague;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\BaseRepositoryContract;
 use Illuminate\Database\Eloquent\Model;
@@ -23,7 +23,7 @@ interface PoeLeagueRepositoryContract extends BaseRepositoryContract
      *
      * @return Collection<int, PoeLeague>
      */
-    public function getByVersion(PoeVersionEnum $version): Collection;
+    public function getByLeague(PoeVersionEnum $version): Collection;
 
     /**
      * Find a league by its id.

@@ -2,7 +2,7 @@
 
 namespace App\Repositories\PoeLeague;
 
-use App\DataTransferObjects\Repository\PoeLeague;
+use App\DataTransferObjects\RepositoryObjects\PoeLeague;
 use App\Enums\PoeVersionEnum;
 use App\Models\PoeLeague as PoeLeagueModel;
 use App\Repositories\BaseEloquentRepository;
@@ -35,7 +35,7 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
     /**
      * {@inheritDoc}
      */
-    public function getByVersion(PoeVersionEnum $version): Collection
+    public function getByLeague(PoeVersionEnum $version): Collection
     {
         return $this->getQuery()
             ->where('poe_version', $version->value)

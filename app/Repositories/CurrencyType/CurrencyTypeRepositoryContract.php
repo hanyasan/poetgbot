@@ -2,7 +2,7 @@
 
 namespace App\Repositories\CurrencyType;
 
-use App\DataTransferObjects\Repository\CurrencyType;
+use App\DataTransferObjects\RepositoryObjects\CurrencyType;
 use App\Repositories\BaseRepositoryContract;
 use Illuminate\Support\Collection;
 

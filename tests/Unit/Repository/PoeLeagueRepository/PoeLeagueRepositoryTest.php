@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Repository\PoeLeagueRepository;
 
-use App\DataTransferObjects\Repository\PoeLeague;
+use App\DataTransferObjects\RepositoryObjects\PoeLeague;
 use App\Enums\PoeVersionEnum;
 use App\Models\PoeLeague as PoeLeagueModel;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
@@ -13,7 +13,7 @@ class PoeLeagueRepositoryTest extends TestCase
 {
     private PoeLeagueRepositoryContract $repository;
 
-    private PoeLeague $poeVersion;
+    private PoeLeague $poeLeague;
 
     public function setUp(): void
     {
@@ -21,7 +21,7 @@ class PoeLeagueRepositoryTest extends TestCase
 
         $this->repository = app(PoeLeagueRepositoryContract::class);
 
-        $this->poeVersion = $this->repository->create([
+        $this->poeLeague = $this->repository->create([
             'league_name' => 'Test League',
             'poe_version' => PoeVersionEnum::POE_2->value,
         ]);
@@ -41,9 +41,9 @@ class PoeLeagueRepositoryTest extends TestCase
 
     public function test_find(): void
     {
-        $league = $this->repository->find($this->poeVersion->id);
+        $league = $this->repository->find($this->poeLeague->id);
 
-        $this->assertSame($this->poeVersion->id, $league->id);
+        $this->assertSame($this->poeLeague->id, $league->id);
         $this->assertSame('Test League', $league->league_name);
     }
 
@@ -60,7 +60,7 @@ class PoeLeagueRepositoryTest extends TestCase
 
         $this->assertSame(PoeLeagueModel::count(), $all->count());
         $this->assertContainsOnlyInstancesOf(PoeLeague::class, $all);
-        $this->assertContains($this->poeVersion->id, $all->pluck('id')->all());
+        $this->assertContains($this->poeLeague->id, $all->pluck('id')->all());
     }
 
     public function test_get_by_version(): void
@@ -70,14 +70,14 @@ class PoeLeagueRepositoryTest extends TestCase
             'poe_version' => PoeVersionEnum::POE_1->value,
         ]);
 
-        $poe1Leagues = $this->repository->getByVersion(PoeVersionEnum::POE_1);
-        $poe2Leagues = $this->repository->getByVersion(PoeVersionEnum::POE_2);
+        $poe1Leagues = $this->repository->getByLeague(PoeVersionEnum::POE_1);
+        $poe2Leagues = $this->repository->getByLeague(PoeVersionEnum::POE_2);
 
         $this->assertContainsOnlyInstancesOf(PoeLeague::class, $poe1Leagues);
         $this->assertContains($poe1->id, $poe1Leagues->pluck('id')->all());
-        $this->assertNotContains($this->poeVersion->id, $poe1Leagues->pluck('id')->all());
+        $this->assertNotContains($this->poeLeague->id, $poe1Leagues->pluck('id')->all());
 
-        $this->assertContains($this->poeVersion->id, $poe2Leagues->pluck('id')->all());
+        $this->assertContains($this->poeLeague->id, $poe2Leagues->pluck('id')->all());
         $this->assertNotContains($poe1->id, $poe2Leagues->pluck('id')->all());
         $this->assertEmpty($poe1Leagues->pluck('poe_version')->reject(
             fn ($version) => $version === PoeVersionEnum::POE_1->value
@@ -87,14 +87,14 @@ class PoeLeagueRepositoryTest extends TestCase
     public function test_update_or_create_updates_existing(): void
     {
         $league = $this->repository->updateOrCreate(
-            ['id' => $this->poeVersion->id],
+            ['id' => $this->poeLeague->id],
             ['league_name' => 'Renamed League']
         );
 
-        $this->assertSame($this->poeVersion->id, $league->id);
+        $this->assertSame($this->poeLeague->id, $league->id);
         $this->assertSame('Renamed League', $league->league_name);
         $this->assertDatabaseHas('poe_leagues', [
-            'id' => $this->poeVersion->id,
+            'id' => $this->poeLeague->id,
             'league_name' => 'Renamed League',
         ]);
     }
@@ -108,26 +108,26 @@ class PoeLeagueRepositoryTest extends TestCase
 
         $league = $this->repository->updateOrCreate($params, $params);
 
-        $this->assertNotSame($this->poeVersion->id, $league->id);
+        $this->assertNotSame($this->poeLeague->id, $league->id);
         $this->assertDatabaseHas('poe_leagues', $params);
     }
 
     public function test_update_one(): void
     {
         $this->assertTrue(
-            $this->repository->updateOne($this->poeVersion->id, ['league_name' => 'Updated League'])
+            $this->repository->updateOne($this->poeLeague->id, ['league_name' => 'Updated League'])
         );
 
         $this->assertSame(
             'Updated League',
-            $this->repository->find($this->poeVersion->id)->league_name
+            $this->repository->find($this->poeLeague->id)->league_name
         );
     }
 
     public function test_delete(): void
     {
-        $this->assertTrue($this->repository->delete($this->poeVersion->id));
+        $this->assertTrue($this->repository->delete($this->poeLeague->id));
 
-        $this->assertDatabaseMissing('poe_leagues', ['id' => $this->poeVersion->id]);
+        $this->assertDatabaseMissing('poe_leagues', ['id' => $this->poeLeague->id]);
     }
 }

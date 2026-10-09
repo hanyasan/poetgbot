@@ -2,8 +2,8 @@
 
 namespace App\Services\DataServices\CurrencyPriceService;
 
-use App\DataTransferObjects\Repository\CurrencyPrice;
-use App\DataTransferObjects\Repository\CurrencyPriceWithType;
+use App\DataTransferObjects\RepositoryObjects\CurrencyPrice;
+use App\DataTransferObjects\RepositoryObjects\CurrencyPriceWithType;
 
 interface CurrencyPriceServiceContract
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\DataTransferObjects\Currency;
+namespace App\DataTransferObjects\ParsingObjects\Currency;
 
-class PoeNinjaCurrencyReceive
+class PoeNinjaCurrencyPay
 {
     public function __construct(
         public readonly int $id,

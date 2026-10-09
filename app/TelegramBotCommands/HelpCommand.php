@@ -65,7 +65,7 @@ class HelpCommand extends UserCommand
                 'Description: %s' . PHP_EOL .
                 'Usage: %s',
                 $command->getName(),
-                $command->getVersion(),
+                $command->getLeague(),
                 $command->getDescription(),
                 $command->getUsage()
             ), ['parse_mode' => 'markdown']);

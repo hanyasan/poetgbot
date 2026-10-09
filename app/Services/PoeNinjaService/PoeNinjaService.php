@@ -2,12 +2,12 @@
 
 namespace App\Services\PoeNinjaService;
 
-use App\DataTransferObjects\Currency\PoeNinjaExchangeResponse;
-use App\DataTransferObjects\PoeNinjaVersionResponse;
+use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeResponse;
+use App\DataTransferObjects\ParsingObjects\PoeNinjaLeagueResponse;
 use App\Enums\PoeVersionEnum;
 use App\Services\HTTPClientServices\NinjaClientContract;
-use CuyZ\Valinor\MapperBuilder;
 use CuyZ\Valinor\Mapper\Source\Source;
+use CuyZ\Valinor\MapperBuilder;
 
 class PoeNinjaService implements PoeNinjaServiceContract
 {
@@ -18,7 +18,7 @@ class PoeNinjaService implements PoeNinjaServiceContract
 
     public function getCurrencyPrices(
         PoeVersionEnum $version,
-        string $league,
+        string         $league,
     ): PoeNinjaExchangeResponse {
         $response = $this->client->getCurrencyPrices($version, $league);
 
@@ -33,14 +33,14 @@ class PoeNinjaService implements PoeNinjaServiceContract
 
     public function getAvailableLeagues(
         PoeVersionEnum $version,
-    ): PoeNinjaVersionResponse {
+    ): PoeNinjaLeagueResponse {
         $response = $this->client->getAvailableLeagues($version);
 
         return (new MapperBuilder())
             ->allowSuperfluousKeys()
             ->mapper()
             ->map(
-                PoeNinjaVersionResponse::class,
+                PoeNinjaLeagueResponse::class,
                 Source::json($response)->camelCaseKeys()
             );
     }
