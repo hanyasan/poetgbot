@@ -8,7 +8,7 @@ final class PoeNinjaLeague
         public readonly string $name,
         public readonly string $url,
         public readonly string $displayName,
-        public readonly bool $hardcore,
-        public readonly bool $indexed,
+        public readonly bool $hardcore = false,
+        public readonly bool $indexed = false,
     ) {}
 }

@@ -27,7 +27,7 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
      */
     public function getAll(): Collection
     {
-        return $this->getQuery()->get()->map(
+        return $this->getQuery()->get()->toBase()->map(
             fn ($league) => $this->mapper->mapFromArray(PoeLeague::class, $league->toArray())
         );
     }
@@ -40,6 +40,7 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
         return $this->getQuery()
             ->where('poe_version', $version->value)
             ->get()
+            ->toBase()
             ->map(fn ($league) => $this->mapper->mapFromArray(PoeLeague::class, $league->toArray()));
     }
 

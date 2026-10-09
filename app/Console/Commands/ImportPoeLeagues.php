@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Enums\PoeVersionEnum;
+use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
+use Illuminate\Console\Command;
+
+class ImportPoeLeagues extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'app:import-poe-leagues';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Command description';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle()
+    {
+        /** @var PoeLeagueServiceContract $service */
+        $service = app(PoeLeagueServiceContract::class);
+
+        $service->upsertByNinja(PoeVersionEnum::POE_1);
+        $service->upsertByNinja(PoeVersionEnum::POE_2);
+
+        $this->info('The command was successful!');
+    }
+}

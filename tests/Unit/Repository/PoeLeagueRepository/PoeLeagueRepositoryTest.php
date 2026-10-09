@@ -7,6 +7,8 @@ use App\Enums\PoeVersionEnum;
 use App\Models\PoeLeague as PoeLeagueModel;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class PoeLeagueRepositoryTest extends TestCase
@@ -83,6 +85,20 @@ class PoeLeagueRepositoryTest extends TestCase
         ));
     }
 
+    public function test_empty_results_are_base_collections(): void
+    {
+        DB::beginTransaction();
+
+        try {
+            PoeLeagueModel::query()->delete();
+
+            $this->assertSame(Collection::class, $this->repository->getAll()::class);
+            $this->assertSame(Collection::class, $this->repository->getByLeague(PoeVersionEnum::POE_1)::class);
+        } finally {
+            DB::rollBack();
+        }
+    }
+
     public function test_delete(): void
     {
         $this->assertTrue($this->repository->delete($this->poeLeague->id));
@@ -130,7 +146,7 @@ class PoeLeagueRepositoryTest extends TestCase
         ]);
 
         $this->assertTrue($this->repository->find($this->poeLeague->id)->is_active);
-        $this->assertSame(1, PoeLeagueModel::count());
+        $this->assertSame(1, PoeLeagueModel::where('league_name', 'Test League')->where('poe_version', PoeVersionEnum::POE_2->value)->count());
     }
 
     public function test_upsert_only_touches_is_active(): void
