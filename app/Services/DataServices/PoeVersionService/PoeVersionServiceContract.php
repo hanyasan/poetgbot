@@ -21,4 +21,6 @@ interface PoeVersionServiceContract
     public function updateOrCreate(array $paramsToMatch, array $params): PoeLeague;
 
     public function truncate(): void;
+
+    public function updateOrCreateManyByNinja(PoeVersionEnum $version): void;
 }

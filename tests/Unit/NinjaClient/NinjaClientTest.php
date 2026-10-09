@@ -7,7 +7,7 @@ use App\Services\HTTPClientServices\NinjaClient;
 use PHPUnit\Framework\TestCase;
 use Tests\CreatesApplication;
 
-class CurrencyTest extends TestCase
+class NinjaClientTest extends TestCase
 {
     use CreatesApplication;
 
@@ -18,16 +18,24 @@ class CurrencyTest extends TestCase
         $this->createApplication();
     }
 
-    /**
-     * A basic test example.
-     */
-    public function test_has_response(): void
+    public function test_get_currency_prices(): void
     {
         $client = new NinjaClient();
 
         $response = $client->getCurrencyPrices(
             PoeVersionEnum::POE_2,
             'Forbidden Rites',
+        );
+
+        $this->assertIsString($response);
+    }
+
+    public function test_available_leagues(): void
+    {
+        $client = new NinjaClient();
+
+        $response = $client->getAvailableLeagues(
+            PoeVersionEnum::POE_2,
         );
 
         $this->assertIsString($response);

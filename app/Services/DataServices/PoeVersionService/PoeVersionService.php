@@ -5,18 +5,21 @@ namespace App\Services\DataServices\PoeVersionService;
 use App\DataTransferObjects\Repository\PoeLeague;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
+use App\Services\PoeNinjaService\PoeNinjaServiceContract;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 final class PoeVersionService implements PoeVersionServiceContract
 {
     public function __construct(
-        private readonly PoeLeagueRepositoryContract $repository
+        private readonly PoeLeagueRepositoryContract $repository,
+        private readonly PoeNinjaServiceContract $ninjaService,
     ) {}
 
     public function create(array $params): PoeLeague
     {
         Cache::tags([
+            'poe_league_detail' . $params['league_name'] . $params['poe_version'],
             'poe_league_get',
         ])->flush();
 
@@ -26,6 +29,7 @@ final class PoeVersionService implements PoeVersionServiceContract
     public function delete(int $id): bool
     {
         Cache::tags([
+            'poe_league_id:' . $id,
             'poe_league_get',
         ])->flush();
 
@@ -35,7 +39,7 @@ final class PoeVersionService implements PoeVersionServiceContract
     public function find(int $id): PoeLeague
     {
         return Cache::tags([
-            'poe_league',
+            'poe_league_id:' . $id,
         ])->remember(
             'by_id:' . $id,
             60 * 60,
@@ -48,7 +52,6 @@ final class PoeVersionService implements PoeVersionServiceContract
     public function getAll(): Collection
     {
         return Cache::tags([
-            'poe_league',
             'poe_league_get',
         ])->remember(
             'all',
@@ -62,7 +65,6 @@ final class PoeVersionService implements PoeVersionServiceContract
     public function getByVersion(PoeVersionEnum $version): Collection
     {
         return Cache::tags([
-            'poe_league',
             'poe_league_get',
         ])->remember(
             'by_version:' . $version->value,
@@ -76,10 +78,32 @@ final class PoeVersionService implements PoeVersionServiceContract
     public function updateOrCreate(array $paramsToMatch, array $params): PoeLeague
     {
         Cache::tags([
-            'poe_league',
+            'poe_league_get',
         ])->flush();
 
         return $this->repository->updateOrCreate($paramsToMatch, $params);
+    }
+
+    public function updateOrCreateManyByNinja(PoeVersionEnum $version): void
+    {
+        $leagues = $this->ninjaService->getAvailableLeagues($version);
+
+        collect($leagues->economyLeagues)
+            ->each(
+                function ($league) use ($version) {
+                    $this->updateOrCreate(
+                        [
+                            'league_name' => $league->name,
+                            'poe_version' => $version->value,
+                        ],
+                        [
+                            'league_name' => $league->name,
+                            'poe_version' => $version->value,
+                        ]
+                    );
+                }
+            )
+        ;
     }
 
     public function truncate(): void

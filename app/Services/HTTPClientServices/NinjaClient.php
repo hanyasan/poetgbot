@@ -28,6 +28,14 @@ class NinjaClient implements NinjaClientContract
         return $response->getBody()->getContents();
     }
 
+
+    public function getAvailableLeagues(PoeVersionEnum $version): string
+    {
+        $response = $this->client->get( $this->setVersionForUrl($version) . '/api/data/index-state');
+
+        return $response->getBody()->getContents();
+    }
+
     private function setVersionForUrl(PoeVersionEnum $version): string
     {
         return $version->value;

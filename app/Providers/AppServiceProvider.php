@@ -14,6 +14,8 @@ use App\Services\DataServices\CurrencyTypeService\CurrencyTypeService;
 use App\Services\DataServices\CurrencyTypeService\CurrencyTypeServiceContract;
 use App\Services\DataServices\PoeVersionService\PoeVersionService;
 use App\Services\DataServices\PoeVersionService\PoeVersionServiceContract;
+use App\Services\HTTPClientServices\NinjaClient;
+use App\Services\HTTPClientServices\NinjaClientContract;
 use App\Services\Mapper\MapperService;
 use App\Services\PoeNinjaService\PoeNinjaService;
 use App\Services\PoeNinjaService\PoeNinjaServiceContract;
@@ -25,6 +27,7 @@ use Illuminate\Support\ServiceProvider;
 class AppServiceProvider extends ServiceProvider
 {
     public array $singletons = [
+        NinjaClientContract::class => NinjaClient::class,
         PoeNinjaServiceContract::class => PoeNinjaService::class,
         TelegramBotContract::class => TelegramBotService::class,
         CurrencyTypeRepositoryContract::class => CurrencyTypeRepository::class,
