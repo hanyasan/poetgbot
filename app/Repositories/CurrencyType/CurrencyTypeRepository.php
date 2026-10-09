@@ -68,19 +68,22 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
         );
     }
 
-    public function create(array $params): CurrencyTypeWithLeague
+    /**
+     * @param array<int, array{
+     *   currency_type_name: string,
+     *   currency_trade_id: string,
+     *   currency_ninja_details_id: string,
+     *   poe_league_id: int,
+     * }> $insertData
+     *
+     * @return void
+     */
+    public function upsert(array $insertData): void
     {
-        return $this->mapper->mapFromArray(
-            CurrencyTypeWithLeague::class,
-            parent::create($params)->toArray()
-        );
-    }
-
-    public function updateOrCreate(array $paramsToMatch, array $params): CurrencyTypeWithLeague
-    {
-        return $this->mapper->mapFromArray(
-            CurrencyTypeWithLeague::class,
-            parent::updateOrCreate($paramsToMatch, $params)->toArray()
+        $this->getQuery()->upsert(
+            $insertData,
+            ['currency_trade_id'],
+            ['currency_type_name', 'currency_ninja_details_id'],
         );
     }
 }

@@ -23,11 +23,5 @@ interface CurrencyTypeServiceContract
      */
     public function getAllByLeague(int $leagueId): Collection;
 
-    /**
-     * @param int|array{
-     *     poe_version: string,
-     *     league_name: string,
-     * } $league
-     */
-    public function upsertByNinja(int|array $league): void;
+    public function upsertByNinja(int $leagueId): void;
 }

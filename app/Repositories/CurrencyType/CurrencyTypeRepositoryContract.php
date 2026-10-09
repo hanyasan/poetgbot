@@ -23,7 +23,15 @@ interface CurrencyTypeRepositoryContract extends BaseRepositoryContract
 
     public function find(int $id): CurrencyTypeWithLeague;
 
-    public function create(array $params): CurrencyTypeWithLeague;
-
-    public function updateOrCreate(array $paramsToMatch, array $params): CurrencyTypeWithLeague;
+    /**
+     * @param array<int, array{
+     *   currency_type_name: string,
+     *   currency_trade_id: string,
+     *   currency_ninja_details_id: string,
+     *   poe_league_id: int,
+     * }> $insertData
+     *
+     * @return void
+     */
+    public function upsert(array $insertData): void;
 }

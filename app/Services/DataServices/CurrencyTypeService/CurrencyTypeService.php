@@ -2,7 +2,9 @@
 
 namespace App\Services\DataServices\CurrencyTypeService;
 
+use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeItem;
 use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeague;
+use App\Enums\PoeVersionEnum;
 use App\Repositories\CurrencyType\CurrencyTypeRepositoryContract;
 use App\Services\CacheHelperService;
 use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
@@ -75,7 +77,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
             CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
             CacheHelperService::generateCacheTag(self::$currencyTypeByLeagueTag, $leagueId),
         ])->remember(
-            'all_by_league',
+            'all_by_league' . $leagueId,
             CacheHelperService::setHourTtl(),
             function () use ($leagueId) {
                 return $this->repository->getAllByLeague($leagueId);
@@ -83,14 +85,31 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
         );
     }
 
-    /**
-     * @param int|array{
-     *     poe_version: string,
-     *     league_name: string,
-     * } $league
-     */
-    public function upsertByNinja(int|array $league): void
+    public function upsertByNinja(int $leagueId): void
     {
-        //
+        Cache::tags([
+            CacheHelperService::generateCacheTag(self::$currencyTypeTag),
+            CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
+            CacheHelperService::generateCacheTag(self::$currencyTypeByLeagueTag, $leagueId),
+        ])->flush();
+
+        $league = $this->leagueService->find($leagueId);
+
+        $prices = $this->ninjaService->getCurrencyPrices(
+            PoeVersionEnum::from($league->poe_version),
+            $league->league_name
+        );
+
+        $insertData = collect($prices->items)
+            ->map(fn (PoeNinjaExchangeItem $currencyType) => [
+                'currency_type_name' => $currencyType->name,
+                'currency_trade_id' => $currencyType->id,
+                'currency_ninja_details_id' => $currencyType->detailsId,
+                'poe_league_id' => $league->id,
+            ])
+            ->toArray()
+        ;
+
+        $this->repository->upsert($insertData);
     }
 }
