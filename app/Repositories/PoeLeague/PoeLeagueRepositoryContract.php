@@ -19,6 +19,13 @@ interface PoeLeagueRepositoryContract extends BaseRepositoryContract
     public function getAll(): Collection;
 
     /**
+     * Get all leagues.
+     *
+     * @return Collection<PoeLeague>
+     */
+    public function getAllActive(PoeVersionEnum $version): Collection;
+
+    /**
      * Get all leagues belonging to the given PoE version.
      *
      * @return Collection<PoeLeague>

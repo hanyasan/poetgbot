@@ -12,8 +12,19 @@ interface PoeLeagueServiceContract
 
     public function find(int $id): PoeLeague;
 
+    /**
+     * @return Collection<PoeLeague>
+     */
     public function getAll(): Collection;
 
+    /**
+     * @return Collection<PoeLeague>
+     */
+    public function getAllActive(PoeVersionEnum $version): Collection;
+
+    /**
+     * @return Collection<PoeLeague>
+     */
     public function getByVersion(PoeVersionEnum $version): Collection;
 
     public function truncate(): void;

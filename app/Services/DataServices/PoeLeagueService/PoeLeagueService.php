@@ -16,6 +16,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     static string $leagueIdTag = 'poe_league_id';
     static string $leagueGetTag = 'poe_league_get';
     static string $leagueTag = 'poe_league';
+    static string $leagueVersionTag = 'poe_league_version';
 
     public function __construct(
         private readonly PoeLeagueRepositoryContract $repository,
@@ -61,6 +62,24 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     }
 
     /**
+     * @return Collection<PoeLeague>
+     */
+    public function getAllActive(PoeVersionEnum $version): Collection
+    {
+        return Cache::tags([
+            CacheHelperService::generateCacheTag(self::$leagueGetTag),
+            CacheHelperService::generateCacheTag(self::$leagueTag),
+            CacheHelperService::generateCacheTag(self::$leagueVersionTag, $version->value),
+        ])->remember(
+            'all_active' . $version->value,
+            CacheHelperService::setHourTtl(),
+            function () use ($version) {
+                return $this->repository->getAllActive($version);
+            }
+        );
+    }
+
+    /**
      * Get all leagues belonging to the given PoE version.
      *
      * @return Collection<PoeLeague>
@@ -70,6 +89,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         return Cache::tags([
             CacheHelperService::generateCacheTag(self::$leagueGetTag),
             CacheHelperService::generateCacheTag(self::$leagueTag),
+            CacheHelperService::generateCacheTag(self::$leagueVersionTag, $version->value),
         ])->remember(
             'by_version:' . $version->value,
             CacheHelperService::setHourTtl(),
@@ -84,6 +104,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         Cache::tags([
             CacheHelperService::generateCacheTag(self::$leagueGetTag),
             CacheHelperService::generateCacheTag(self::$leagueTag),
+            CacheHelperService::generateCacheTag(self::$leagueVersionTag, $version->value),
         ])->flush();
 
         $leagues = $this->ninjaService->getAvailableLeagues($version);
