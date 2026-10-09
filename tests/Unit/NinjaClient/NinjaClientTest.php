@@ -24,7 +24,7 @@ class NinjaClientTest extends TestCase
 
         $response = $client->getCurrencyPrices(
             PoeVersionEnum::POE_2,
-            'Forbidden Rites',
+            'Standard',
         );
 
         $this->assertIsString($response);

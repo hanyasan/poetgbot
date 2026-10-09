@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('currency_types', function (Blueprint $table) {
             $table->id();
-            $table->string('currency_type_name')->unique();
-            $table->string('currency_trade_id')->nullable();
-            $table->string('currency_ninja_details_id')->nullable();
+            $table->string('currency_type_name');
+            $table->string('currency_trade_id');
+            $table->string('currency_ninja_details_id');
             $table->timestamps();
         });
     }

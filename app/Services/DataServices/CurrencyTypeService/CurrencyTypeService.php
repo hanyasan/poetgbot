@@ -4,6 +4,7 @@ namespace App\Services\DataServices\CurrencyTypeService;
 
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeItem;
 use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeague;
+use App\DataTransferObjects\RepositoryObjects\PoeLeague;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\CurrencyType\CurrencyTypeRepositoryContract;
 use App\Services\CacheHelperService;
@@ -83,6 +84,19 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
                 return $this->repository->getAllByLeague($leagueId);
             }
         );
+    }
+
+    public function freshAllByNinja(): void
+    {
+        Cache::tags([
+            CacheHelperService::generateCacheTag(self::$currencyTypeTag),
+            CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
+        ])->flush();
+
+        $this->leagueService->getAllActive(PoeVersionEnum::POE_1)
+            ->merge($this->leagueService->getAllActive(PoeVersionEnum::POE_2))
+            ->each(fn (PoeLeague $league) => $this->upsertByNinja($league->id))
+        ;
     }
 
     public function upsertByNinja(int $leagueId): void

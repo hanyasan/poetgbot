@@ -26,7 +26,10 @@ class ImportCurrencyTypes extends Command
      */
     public function handle()
     {
-        app(CurrencyTypeServiceContract::class)->updateOrCreateManyByNinja();
+        /** @var CurrencyTypeServiceContract $service */
+        $service = app(CurrencyTypeServiceContract::class);
+
+        $service->freshAllByNinja();
 
         $this->info('The command was successful!');
     }

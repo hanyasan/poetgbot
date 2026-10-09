@@ -85,6 +85,38 @@ class PoeLeagueRepositoryTest extends TestCase
         ));
     }
 
+    public function test_get_all_active(): void
+    {
+        $activePoe2 = $this->repository->create([
+            'league_name' => 'Active League Poe2',
+            'poe_version' => PoeVersionEnum::POE_2->value,
+            'is_active' => true,
+        ]);
+        $activePoe1 = $this->repository->create([
+            'league_name' => 'Active League Poe1',
+            'poe_version' => PoeVersionEnum::POE_1->value,
+            'is_active' => true,
+        ]);
+        $inactivePoe1 = $this->repository->create([
+            'league_name' => 'Inactive League Poe1',
+            'poe_version' => PoeVersionEnum::POE_1->value,
+            'is_active' => false,
+        ]);
+
+        $poe2 = $this->repository->getAllActive(PoeVersionEnum::POE_2);
+        $poe1 = $this->repository->getAllActive(PoeVersionEnum::POE_1);
+
+        $this->assertContainsOnlyInstancesOf(PoeLeague::class, $poe2);
+        $this->assertContains($activePoe2->id, $poe2->pluck('id')->all());
+        $this->assertNotContains($this->poeLeague->id, $poe2->pluck('id')->all());
+        $this->assertNotContains($activePoe1->id, $poe2->pluck('id')->all());
+        $this->assertEmpty($poe2->reject(fn (PoeLeague $league) => $league->is_active));
+
+        $this->assertContains($activePoe1->id, $poe1->pluck('id')->all());
+        $this->assertNotContains($inactivePoe1->id, $poe1->pluck('id')->all());
+        $this->assertNotContains($activePoe2->id, $poe1->pluck('id')->all());
+    }
+
     public function test_empty_results_are_base_collections(): void
     {
         DB::beginTransaction();
@@ -94,6 +126,7 @@ class PoeLeagueRepositoryTest extends TestCase
 
             $this->assertSame(Collection::class, $this->repository->getAll()::class);
             $this->assertSame(Collection::class, $this->repository->getByLeague(PoeVersionEnum::POE_1)::class);
+            $this->assertSame(Collection::class, $this->repository->getAllActive(PoeVersionEnum::POE_1)::class);
         } finally {
             DB::rollBack();
         }

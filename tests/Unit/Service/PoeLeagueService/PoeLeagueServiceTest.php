@@ -68,6 +68,51 @@ class PoeLeagueServiceTest extends TestCase
         $this->assertSame($leagues, $this->service->getAll());
     }
 
+    public function test_get_all_active_caches_per_version(): void
+    {
+        $poe1 = collect([$this->league(1, 'One', PoeVersionEnum::POE_1, true)]);
+        $poe2 = collect([$this->league(2, 'Two', PoeVersionEnum::POE_2, true)]);
+
+        $this->repository->shouldReceive('getAllActive')->once()->with(PoeVersionEnum::POE_1)->andReturn($poe1);
+        $this->repository->shouldReceive('getAllActive')->once()->with(PoeVersionEnum::POE_2)->andReturn($poe2);
+
+        $this->assertSame($poe1, $this->service->getAllActive(PoeVersionEnum::POE_1));
+        $this->assertSame($poe2, $this->service->getAllActive(PoeVersionEnum::POE_2));
+        $this->assertSame($poe1, $this->service->getAllActive(PoeVersionEnum::POE_1));
+        $this->assertSame($poe2, $this->service->getAllActive(PoeVersionEnum::POE_2));
+    }
+
+    public function test_get_all_active_is_flushed_by_delete(): void
+    {
+        $leagues = collect([$this->league(1, 'One', PoeVersionEnum::POE_2, true)]);
+
+        $this->repository->shouldReceive('getAllActive')->twice()->with(PoeVersionEnum::POE_2)->andReturn($leagues);
+        $this->repository->shouldReceive('delete')->once()->with(1)->andReturn(true);
+
+        $this->service->getAllActive(PoeVersionEnum::POE_2);
+
+        $this->service->delete(1);
+
+        $this->service->getAllActive(PoeVersionEnum::POE_2);
+    }
+
+    public function test_get_all_active_is_flushed_by_upsert_by_ninja(): void
+    {
+        $this->repository->shouldReceive('getAllActive')->twice()->with(PoeVersionEnum::POE_2)->andReturn(collect());
+        $this->repository->shouldReceive('getByLeague')->once()->andReturn(collect());
+        $this->repository->shouldReceive('upsert')->once();
+        $this->ninjaService
+            ->shouldReceive('getAvailableLeagues')
+            ->once()
+            ->andReturn(new PoeNinjaLeagueResponse([$this->ninjaLeague('Standard')]));
+
+        $this->service->getAllActive(PoeVersionEnum::POE_2);
+
+        $this->service->upsertByNinja(PoeVersionEnum::POE_2);
+
+        $this->service->getAllActive(PoeVersionEnum::POE_2);
+    }
+
     public function test_get_by_version_caches_per_version(): void
     {
         $poe1 = collect([$this->league(1, 'One', PoeVersionEnum::POE_1)]);

@@ -84,7 +84,7 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
     {
         $this->getQuery()->upsert(
             $insertData,
-            ['currency_trade_id'],
+            ['currency_trade_id' , 'poe_league_id'],
             ['currency_type_name', 'currency_ninja_details_id'],
         );
     }

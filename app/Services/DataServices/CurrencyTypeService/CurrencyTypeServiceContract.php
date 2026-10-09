@@ -24,4 +24,6 @@ interface CurrencyTypeServiceContract
     public function getAllByLeague(int $leagueId): Collection;
 
     public function upsertByNinja(int $leagueId): void;
+
+    public function freshAllByNinja(): void;
 }
