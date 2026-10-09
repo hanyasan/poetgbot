@@ -29,7 +29,7 @@ class CurrencyType extends Model
 
     public function league(): BelongsTo
     {
-        return $this->belongsTo(PoeLeague::class);
+        return $this->belongsTo(PoeLeague::class, 'poe_league_id');
     }
 
     public function prices(): HasMany
