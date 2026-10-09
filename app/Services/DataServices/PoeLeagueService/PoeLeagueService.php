@@ -17,22 +17,11 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         private readonly PoeNinjaServiceContract $ninjaService,
     ) {}
 
-    public function create(array $params): PoeLeague
-    {
-        Cache::tags([
-            'poe_league_detail' . $params['league_name'] . $params['poe_version'],
-            'poe_league_get',
-        ])->flush();
-
-        return $this->repository->create($params);
-    }
-
     public function delete(int $id): bool
     {
         Cache::tags([
             'poe_league_id:' . $id,
             'poe_league_get',
-            'poe_league',
         ])->flush();
 
         return $this->repository->delete($id);
@@ -85,37 +74,13 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         );
     }
 
-    public function updateOrCreate(array $paramsToMatch, array $params): PoeLeague
-    {
-        Cache::tags([
-            'poe_league_get',
-            'poe_league',
-        ])->flush();
-
-        return $this->repository->updateOrCreate($paramsToMatch, $params);
-    }
-
-    /**
-     * @param  array<int, array{
-     *     league_name: string,
-     *     poe_version: string,
-     *     is_active: bool,
-     * }> $paramsWithValues
-     */
-    public function upsert(array $paramsWithValues): void
-    {
-        Cache::tags([
-            'poe_league_get',
-            'poe_league',
-        ])->flush();
-
-        $this->repository->upsert(
-            $paramsWithValues,
-        );
-    }
-
     public function upsertByNinja(PoeVersionEnum $version): void
     {
+        Cache::tags([
+            'poe_league_get',
+            'poe_league',
+        ])->flush();
+
         $leagues = $this->ninjaService->getAvailableLeagues($version);
 
         $leagues = collect($leagues->economyLeagues)->map(static function (PoeNinjaLeague $league) use ($version) {
@@ -126,20 +91,22 @@ final class PoeLeagueService implements PoeLeagueServiceContract
             ];
         });
 
+        $ninjaNames = $leagues->pluck('league_name');
+
+        // Active leagues that poe.ninja no longer lists become inactive.
         $leagues = $this
             ->getByVersion($version)
-            ->filter(static fn (PoeLeague $league) => ! $league->is_active)
+            ->filter(static fn (PoeLeague $league) => $league->is_active)
+            ->reject(static fn (PoeLeague $league) => $ninjaNames->contains($league->league_name))
             ->map(static fn (PoeLeague $league) => [
                 'league_name' => $league->league_name,
                 'poe_version' => $league->poe_version,
                 'is_active' => false,
             ])
-            ->intersectUsing($leagues, static fn ($la, $lb) => ($la['league_name'] !== $lb['league_name']) &&
-                ($la['poe_version'] !== $lb['poe_version']))
             ->merge($leagues)
         ;
 
-        $this->upsert($leagues);
+        $this->repository->upsert($leagues->values()->all());
     }
 
     public function truncate(): void

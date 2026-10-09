@@ -8,8 +8,6 @@ use Illuminate\Support\Collection;
 
 interface PoeLeagueServiceContract
 {
-    public function create(array $params): PoeLeague;
-
     public function delete(int $id): bool;
 
     public function find(int $id): PoeLeague;
@@ -18,18 +16,7 @@ interface PoeLeagueServiceContract
 
     public function getByVersion(PoeVersionEnum $version): Collection;
 
-    public function updateOrCreate(array $paramsToMatch, array $params): PoeLeague;
-
     public function truncate(): void;
 
     public function upsertByNinja(PoeVersionEnum $version): void;
-
-    /**
-     * @param  array<int, array{
-     *     league_name: string,
-     *     poe_version: string,
-     *     is_active: bool,
-     * }> $paramsWithValues
-     */
-    public function upsert(array $paramsWithValues): void;
 }

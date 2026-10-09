@@ -55,28 +55,6 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function create(array $params): PoeLeague
-    {
-        return $this->mapper->mapFromArray(
-            PoeLeague::class,
-            parent::create($params)->toArray()
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function updateOrCreate(array $paramsToMatch, array $params): PoeLeague
-    {
-        return $this->mapper->mapFromArray(
-            PoeLeague::class,
-            parent::updateOrCreate($paramsToMatch, $params)->toArray()
-        );
-    }
-
-    /**
      * @param  array<int, array{
      *     league_name: string,
      *     poe_version: string,

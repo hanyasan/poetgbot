@@ -13,7 +13,7 @@ class PoeLeagueRepositoryTest extends TestCase
 {
     private PoeLeagueRepositoryContract $repository;
 
-    private PoeLeague $poeLeague;
+    private PoeLeagueModel $poeLeague;
 
     public function setUp(): void
     {
@@ -25,30 +25,6 @@ class PoeLeagueRepositoryTest extends TestCase
             'league_name' => 'Test League',
             'poe_version' => PoeVersionEnum::POE_2->value,
         ]);
-    }
-
-    public function test_create(): void
-    {
-        $league = $this->repository->create([
-            'league_name' => 'Another test League',
-            'poe_version' => PoeVersionEnum::POE_2->value,
-            'is_active' => true,
-        ]);
-
-        $this->assertSame('Another test League', $league->league_name);
-        $this->assertSame(PoeVersionEnum::POE_2->value, $league->poe_version);
-        $this->assertTrue($league->is_active);
-        $this->assertDatabaseHas('poe_leagues', ['id' => $league->id, 'is_active' => true]);
-    }
-
-    public function test_create_defaults_to_inactive(): void
-    {
-        $league = $this->repository->create([
-            'league_name' => 'Inactive League',
-            'poe_version' => PoeVersionEnum::POE_2->value,
-        ]);
-
-        $this->assertFalse($league->is_active);
     }
 
     public function test_find(): void
@@ -105,53 +81,6 @@ class PoeLeagueRepositoryTest extends TestCase
         $this->assertEmpty($poe1Leagues->pluck('poe_version')->reject(
             fn ($version) => $version === PoeVersionEnum::POE_1->value
         ));
-    }
-
-    public function test_update_or_create_updates_existing(): void
-    {
-        $league = $this->repository->updateOrCreate(
-            ['id' => $this->poeLeague->id],
-            ['league_name' => 'Renamed League', 'is_active' => true]
-        );
-
-        $this->assertSame($this->poeLeague->id, $league->id);
-        $this->assertSame('Renamed League', $league->league_name);
-        $this->assertTrue($league->is_active);
-        $this->assertDatabaseHas('poe_leagues', [
-            'id' => $this->poeLeague->id,
-            'league_name' => 'Renamed League',
-            'is_active' => true,
-        ]);
-    }
-
-    public function test_update_or_create_creates_new(): void
-    {
-        $params = [
-            'league_name' => 'Brand New League',
-            'poe_version' => PoeVersionEnum::POE_1->value,
-            'is_active' => true,
-        ];
-
-        $league = $this->repository->updateOrCreate($params, $params);
-
-        $this->assertNotSame($this->poeLeague->id, $league->id);
-        $this->assertTrue($league->is_active);
-        $this->assertDatabaseHas('poe_leagues', $params);
-    }
-
-    public function test_update_one(): void
-    {
-        $this->assertTrue(
-            $this->repository->updateOne($this->poeLeague->id, [
-                'league_name' => 'Updated League',
-                'is_active' => true,
-            ])
-        );
-
-        $league = $this->repository->find($this->poeLeague->id);
-
-        $this->assertSame('Updated League', $league->league_name);
-        $this->assertTrue($league->is_active);
     }
 
     public function test_delete(): void

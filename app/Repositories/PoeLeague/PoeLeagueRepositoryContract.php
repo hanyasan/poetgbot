@@ -33,31 +33,6 @@ interface PoeLeagueRepositoryContract extends BaseRepositoryContract
     public function find(int $id): PoeLeague;
 
     /**
-     * Create a league.
-     *
-     * @param  array{
-     *     league_name: string,
-     *     poe_version: string
-     * }  $params  Column values, e.g. league_name and poe_version
-     */
-    public function create(array $params): PoeLeague;
-
-    /**
-     * Update the league matching the given attributes, or create it if none matches.
-     *
-     * @param  array{
-     *     league_name: string,
-     *     poe_version: string
-     * } $paramsToMatch
-     *
-     * @param  array{
-     *     league_name: string,
-     *     poe_version: string
-     * } $params  Values to set on the league
-     */
-    public function updateOrCreate(array $paramsToMatch, array $params): PoeLeague;
-
-    /**
      * @param  array<int, array{
      *     league_name: string,
      *     poe_version: string,
