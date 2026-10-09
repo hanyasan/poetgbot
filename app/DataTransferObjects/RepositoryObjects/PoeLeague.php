@@ -12,5 +12,6 @@ class PoeLeague
         public readonly Carbon $updated_at,
         public readonly string $league_name,
         public readonly string $poe_version,
+        public readonly bool $is_active
     ) {}
 }

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property string $league_name
  * @property PoeVersionEnum $poe_version
+ * @property bool $is_active
  */
 class PoeLeague extends Model
 {

@@ -75,4 +75,20 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
             parent::updateOrCreate($paramsToMatch, $params)->toArray()
         );
     }
+
+    /**
+     * @param  array<int, array{
+     *     league_name: string,
+     *     poe_version: string,
+     *     is_active: bool,
+     * }> $paramsWithValues
+     */
+    public function upsert(array $paramsWithValues): void
+    {
+        parent::getQuery()->upsert(
+            $paramsWithValues,
+            ['league_name', 'poe_version'],
+            ['is_active'],
+        );
+    }
 }

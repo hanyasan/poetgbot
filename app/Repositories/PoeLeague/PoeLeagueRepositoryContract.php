@@ -14,14 +14,14 @@ interface PoeLeagueRepositoryContract extends BaseRepositoryContract
     /**
      * Get all leagues.
      *
-     * @return Collection<int, PoeLeague>
+     * @return Collection<PoeLeague>
      */
     public function getAll(): Collection;
 
     /**
      * Get all leagues belonging to the given PoE version.
      *
-     * @return Collection<int, PoeLeague>
+     * @return Collection<PoeLeague>
      */
     public function getByLeague(PoeVersionEnum $version): Collection;
 
@@ -35,15 +35,34 @@ interface PoeLeagueRepositoryContract extends BaseRepositoryContract
     /**
      * Create a league.
      *
-     * @param  array<string, mixed>  $params  Column values, e.g. league_name and poe_version
+     * @param  array{
+     *     league_name: string,
+     *     poe_version: string
+     * }  $params  Column values, e.g. league_name and poe_version
      */
     public function create(array $params): PoeLeague;
 
     /**
      * Update the league matching the given attributes, or create it if none matches.
      *
-     * @param  array<string, mixed>  $paramsToMatch  Attributes used to look the league up
-     * @param  array<string, mixed>  $params  Values to set on the league
+     * @param  array{
+     *     league_name: string,
+     *     poe_version: string
+     * } $paramsToMatch
+     *
+     * @param  array{
+     *     league_name: string,
+     *     poe_version: string
+     * } $params  Values to set on the league
      */
     public function updateOrCreate(array $paramsToMatch, array $params): PoeLeague;
+
+    /**
+     * @param  array<int, array{
+     *     league_name: string,
+     *     poe_version: string,
+     *     is_active: bool,
+     * }> $paramsWithValues
+     */
+    public function upsert(array $paramsWithValues): void;
 }

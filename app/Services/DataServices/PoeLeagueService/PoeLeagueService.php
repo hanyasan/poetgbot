@@ -2,6 +2,7 @@
 
 namespace App\Services\DataServices\PoeLeagueService;
 
+use App\DataTransferObjects\ParsingObjects\PoeNinjaLeague;
 use App\DataTransferObjects\RepositoryObjects\PoeLeague;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
@@ -31,6 +32,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         Cache::tags([
             'poe_league_id:' . $id,
             'poe_league_get',
+            'poe_league',
         ])->flush();
 
         return $this->repository->delete($id);
@@ -40,6 +42,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     {
         return Cache::tags([
             'poe_league_id:' . $id,
+            'poe_league',
         ])->remember(
             'by_id:' . $id,
             60 * 60,
@@ -53,6 +56,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     {
         return Cache::tags([
             'poe_league_get',
+            'poe_league',
         ])->remember(
             'all',
             60 * 60,
@@ -62,10 +66,16 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         );
     }
 
-    public function getByLeague(PoeVersionEnum $version): Collection
+    /**
+     * Get all leagues belonging to the given PoE version.
+     *
+     * @return Collection<PoeLeague>
+     */
+    public function getByVersion(PoeVersionEnum $version): Collection
     {
         return Cache::tags([
             'poe_league_get',
+            'poe_league',
         ])->remember(
             'by_version:' . $version->value,
             60 * 60,
@@ -79,31 +89,57 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     {
         Cache::tags([
             'poe_league_get',
+            'poe_league',
         ])->flush();
 
         return $this->repository->updateOrCreate($paramsToMatch, $params);
     }
 
-    public function updateOrCreateManyByNinja(PoeVersionEnum $version): void
+    /**
+     * @param  array<int, array{
+     *     league_name: string,
+     *     poe_version: string,
+     *     is_active: bool,
+     * }> $paramsWithValues
+     */
+    public function upsert(array $paramsWithValues): void
+    {
+        Cache::tags([
+            'poe_league_get',
+            'poe_league',
+        ])->flush();
+
+        $this->repository->upsert(
+            $paramsWithValues,
+        );
+    }
+
+    public function upsertByNinja(PoeVersionEnum $version): void
     {
         $leagues = $this->ninjaService->getAvailableLeagues($version);
 
-        collect($leagues->economyLeagues)
-            ->each(
-                function ($league) use ($version) {
-                    $this->updateOrCreate(
-                        [
-                            'league_name' => $league->name,
-                            'poe_version' => $version->value,
-                        ],
-                        [
-                            'league_name' => $league->name,
-                            'poe_version' => $version->value,
-                        ]
-                    );
-                }
-            )
+        $leagues = collect($leagues->economyLeagues)->map(static function (PoeNinjaLeague $league) use ($version) {
+            return [
+                'league_name' => $league->name,
+                'poe_version' => $version->value,
+                'is_active' => true,
+            ];
+        });
+
+        $leagues = $this
+            ->getByVersion($version)
+            ->filter(static fn (PoeLeague $league) => ! $league->is_active)
+            ->map(static fn (PoeLeague $league) => [
+                'league_name' => $league->league_name,
+                'poe_version' => $league->poe_version,
+                'is_active' => false,
+            ])
+            ->intersectUsing($leagues, static fn ($la, $lb) => ($la['league_name'] !== $lb['league_name']) &&
+                ($la['poe_version'] !== $lb['poe_version']))
+            ->merge($leagues)
         ;
+
+        $this->upsert($leagues);
     }
 
     public function truncate(): void

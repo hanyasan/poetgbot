@@ -16,11 +16,20 @@ interface PoeLeagueServiceContract
 
     public function getAll(): Collection;
 
-    public function getByLeague(PoeVersionEnum $version): Collection;
+    public function getByVersion(PoeVersionEnum $version): Collection;
 
     public function updateOrCreate(array $paramsToMatch, array $params): PoeLeague;
 
     public function truncate(): void;
 
-    public function updateOrCreateManyByNinja(PoeVersionEnum $version): void;
+    public function upsertByNinja(PoeVersionEnum $version): void;
+
+    /**
+     * @param  array<int, array{
+     *     league_name: string,
+     *     poe_version: string,
+     *     is_active: bool,
+     * }> $paramsWithValues
+     */
+    public function upsert(array $paramsWithValues): void;
 }
