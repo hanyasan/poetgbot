@@ -2,19 +2,19 @@
 
 namespace App\Repositories\CurrencyType;
 
-use App\DataTransferObjects\RepositoryObjects\CurrencyType;
+use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeague;
 use App\Repositories\BaseRepositoryContract;
 use Illuminate\Support\Collection;
 
 interface CurrencyTypeRepositoryContract extends BaseRepositoryContract
 {
-    public function findByDetailId(string $detailId): CurrencyType;
+    public function findByDetailId(string $detailId): CurrencyTypeWithLeague;
 
     public function getAll(): Collection;
 
-    public function find(int $id): CurrencyType;
+    public function find(int $id): CurrencyTypeWithLeague;
 
-    public function create(array $params): CurrencyType;
+    public function create(array $params): CurrencyTypeWithLeague;
 
-    public function updateOrCreate(array $paramsToMatch, array $params): CurrencyType;
+    public function updateOrCreate(array $paramsToMatch, array $params): CurrencyTypeWithLeague;
 }

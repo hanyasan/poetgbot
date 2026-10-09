@@ -2,7 +2,7 @@
 
 namespace App\Repositories\CurrencyType;
 
-use App\DataTransferObjects\RepositoryObjects\CurrencyType;
+use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeague;
 use App\Models\PoeLeague as CurrencyTypeModel;
 use App\Repositories\BaseEloquentRepository;
 use App\Services\Mapper\MapperService;
@@ -17,10 +17,10 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
         parent::__construct($model, $mapper);
     }
 
-    public function findByDetailId(string $detailId): CurrencyType
+    public function findByDetailId(string $detailId): CurrencyTypeWithLeague
     {
         return $this->mapper->mapFromArray(
-            CurrencyType::class,
+            CurrencyTypeWithLeague::class,
             $this
                 ->getQuery()
                 ->where( 'currency_ninja_details_id', $detailId)
@@ -36,7 +36,7 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
         $this->getQuery()->get()->each(function ($priceType) use ($result) {
             $result->add(
                 $this->mapper->mapFromArray(
-                    CurrencyType::class,
+                    CurrencyTypeWithLeague::class,
                     $priceType->toArray()
                 )
             );
@@ -45,26 +45,26 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
         return $result;
     }
 
-    public function find(int $id): CurrencyType
+    public function find(int $id): CurrencyTypeWithLeague
     {
         return $this->mapper->mapFromArray(
-            CurrencyType::class,
+            CurrencyTypeWithLeague::class,
             parent::find($id)->toArray()
         );
     }
 
-    public function create(array $params): CurrencyType
+    public function create(array $params): CurrencyTypeWithLeague
     {
         return $this->mapper->mapFromArray(
-            CurrencyType::class,
+            CurrencyTypeWithLeague::class,
             parent::create($params)->toArray()
         );
     }
 
-    public function updateOrCreate(array $paramsToMatch, array $params): CurrencyType
+    public function updateOrCreate(array $paramsToMatch, array $params): CurrencyTypeWithLeague
     {
         return $this->mapper->mapFromArray(
-            CurrencyType::class,
+            CurrencyTypeWithLeague::class,
             parent::updateOrCreate($paramsToMatch, $params)->toArray()
         );
     }

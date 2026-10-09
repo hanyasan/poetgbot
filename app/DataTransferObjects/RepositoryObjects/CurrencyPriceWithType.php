@@ -11,7 +11,7 @@ class CurrencyPriceWithType
         public readonly float $chaos_equivalent,
         public readonly Carbon $created_at,
         public readonly Carbon $updated_at,
-        /** @var CurrencyType */
+        /** @var CurrencyTypeWithLeague */
         public readonly object $type,
         public readonly int $currency_type_id,
         public readonly ?float $sell_price = null,

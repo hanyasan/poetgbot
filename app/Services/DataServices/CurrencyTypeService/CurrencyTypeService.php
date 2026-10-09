@@ -2,7 +2,7 @@
 
 namespace App\Services\DataServices\CurrencyTypeService;
 
-use App\DataTransferObjects\RepositoryObjects\CurrencyType;
+use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeague;
 use App\Repositories\CurrencyType\CurrencyTypeRepositoryContract;
 use App\Services\PoeNinjaService\PoeNinjaServiceContract;
 use Illuminate\Support\Collection;
@@ -15,7 +15,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
         private readonly PoeNinjaServiceContract $ninjaService
     ) {}
 
-    public function create(array $params): CurrencyType
+    public function create(array $params): CurrencyTypeWithLeague
     {
         Cache::tags([
             'currency_type_detail:' . $params['currency_ninja_details_id'],
@@ -35,7 +35,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
         return $this->repository->delete($id);
     }
 
-    public function findByDetail(string $detailId): CurrencyType
+    public function findByDetail(string $detailId): CurrencyTypeWithLeague
     {
         return Cache::tags([
             'currency_type',
@@ -63,41 +63,27 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
         );
     }
 
-    public function updateOrCreate(array $paramsToMatch, array $params): CurrencyType
+    /**
+     * @param int|array{
+     *     poe_version: string,
+     *     league_name: string,
+     * } $league
+     *
+     * @return Collection<CurrencyTypeWithLeague>
+     */
+    public function getAllByLeague(int|array $league): Collection
     {
-        Cache::tags([
-            'currency_type_detail:' . ($params['currency_ninja_details_id'] ?? 'zero'),
-            'currency_type_id:' . ($params['id'] ?? 'zero'),
-            'currency_type_get',
-        ])->flush();
-
-        return $this->repository->updateOrCreate($paramsToMatch, $params);
+        //
     }
 
-    public function updateOrCreateManyByNinja(): void
+    /**
+     * @param int|array{
+     *     poe_version: string,
+     *     league_name: string,
+     * } $league
+     */
+    public function upsertByNinja(int|array $league): void
     {
-        $currencyPrices = $this->ninjaService->getCurrencyPrices();
-        $currencyPricesDetail = collect($currencyPrices->currencyDetails);
-
-        collect($currencyPrices->lines)
-            ->unique('currencyTypeName')
-            ->each(
-                function ($priceType) use ($currencyPricesDetail) {
-                    $this->updateOrCreate(
-                        [
-                            'currency_type_name' => $priceType->currencyTypeName,
-                        ],
-                        [
-                        'currency_type_name' => $priceType->currencyTypeName,
-                        'currency_trade_id'=> $currencyPricesDetail->where(
-                            'name',
-                            $priceType->currencyTypeName
-                        )->first()->tradeId,
-                        'currency_ninja_details_id'=> $priceType->detailsId,
-                    ]
-                    );
-                }
-            )
-        ;
+        //
     }
 }

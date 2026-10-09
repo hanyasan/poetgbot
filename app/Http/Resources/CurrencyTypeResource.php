@@ -2,14 +2,14 @@
 
 namespace App\Http\Resources;
 
-use App\DataTransferObjects\RepositoryObjects\CurrencyType;
+use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeague;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CurrencyTypeResource extends JsonResource
 {
     public function toArray($request): array
     {
-        /** @var CurrencyType $type */
+        /** @var CurrencyTypeWithLeague $type */
         $type = $this->resource;
 
         return [

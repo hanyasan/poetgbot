@@ -3,19 +3,36 @@
 namespace App\Services\DataServices\CurrencyTypeService;
 
 use App\DataTransferObjects\RepositoryObjects\CurrencyType;
+use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeague;
 use Illuminate\Support\Collection;
 
 interface CurrencyTypeServiceContract
 {
-    public function create(array $params): CurrencyType;
 
     public function delete(int $id): bool;
 
-    public function findByDetail(string $detailId): CurrencyType;
+    public function findByDetail(string $detailId): CurrencyTypeWithLeague;
 
+    /**
+     * @return Collection<CurrencyTypeWithLeague>
+     */
     public function getAll(): Collection;
 
-    public function updateOrCreate(array $paramsToMatch, array $params): CurrencyType;
+    /**
+     * @param int|array{
+     *     poe_version: string,
+     *     league_name: string,
+     * } $league
+     *
+     * @return Collection<CurrencyType>
+     */
+    public function getAllByLeague(int|array $league): Collection;
 
-    public function updateOrCreateManyByNinja(): void;
+    /**
+     * @param int|array{
+     *     poe_version: string,
+     *     league_name: string,
+     * } $league
+     */
+    public function upsertByNinja(int|array $league): void;
 }
