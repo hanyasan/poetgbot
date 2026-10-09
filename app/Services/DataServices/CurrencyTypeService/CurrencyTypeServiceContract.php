@@ -19,14 +19,9 @@ interface CurrencyTypeServiceContract
     public function getAll(): Collection;
 
     /**
-     * @param int|array{
-     *     poe_version: string,
-     *     league_name: string,
-     * } $league
-     *
      * @return Collection<CurrencyType>
      */
-    public function getAllByLeague(int|array $league): Collection;
+    public function getAllByLeague(int $leagueId): Collection;
 
     /**
      * @param int|array{
