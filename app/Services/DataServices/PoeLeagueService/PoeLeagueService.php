@@ -6,12 +6,17 @@ use App\DataTransferObjects\ParsingObjects\PoeNinjaLeague;
 use App\DataTransferObjects\RepositoryObjects\PoeLeague;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
+use App\Services\CacheHelperService;
 use App\Services\PoeNinjaService\PoeNinjaServiceContract;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 final class PoeLeagueService implements PoeLeagueServiceContract
 {
+    static string $leagueIdTag = 'poe_league_id';
+    static string $leagueGetTag = 'poe_league_get';
+    static string $leagueTag = 'poe_league';
+
     public function __construct(
         private readonly PoeLeagueRepositoryContract $repository,
         private readonly PoeNinjaServiceContract $ninjaService,
@@ -20,8 +25,8 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     public function delete(int $id): bool
     {
         Cache::tags([
-            'poe_league_id:' . $id,
-            'poe_league_get',
+            CacheHelperService::generateCacheTag(self::$leagueIdTag, $id),
+            CacheHelperService::generateCacheTag(self::$leagueGetTag),
         ])->flush();
 
         return $this->repository->delete($id);
@@ -30,11 +35,11 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     public function find(int $id): PoeLeague
     {
         return Cache::tags([
-            'poe_league_id:' . $id,
-            'poe_league',
+            CacheHelperService::generateCacheTag(self::$leagueIdTag, $id),
+            CacheHelperService::generateCacheTag(self::$leagueTag),
         ])->remember(
             'by_id:' . $id,
-            60 * 60,
+            CacheHelperService::setHourTtl(),
             function () use ($id) {
                 return $this->repository->find($id);
             }
@@ -44,11 +49,11 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     public function getAll(): Collection
     {
         return Cache::tags([
-            'poe_league_get',
-            'poe_league',
+            CacheHelperService::generateCacheTag(self::$leagueGetTag),
+            CacheHelperService::generateCacheTag(self::$leagueTag),
         ])->remember(
             'all',
-            60 * 60,
+            CacheHelperService::setHourTtl(),
             function () {
                 return $this->repository->getAll();
             }
@@ -63,11 +68,11 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     public function getByVersion(PoeVersionEnum $version): Collection
     {
         return Cache::tags([
-            'poe_league_get',
-            'poe_league',
+            CacheHelperService::generateCacheTag(self::$leagueGetTag),
+            CacheHelperService::generateCacheTag(self::$leagueTag),
         ])->remember(
             'by_version:' . $version->value,
-            60 * 60,
+            CacheHelperService::setHourTtl(),
             function () use ($version) {
                 return $this->repository->getByLeague($version);
             }
@@ -77,8 +82,8 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     public function upsertByNinja(PoeVersionEnum $version): void
     {
         Cache::tags([
-            'poe_league_get',
-            'poe_league',
+            CacheHelperService::generateCacheTag(self::$leagueGetTag),
+            CacheHelperService::generateCacheTag(self::$leagueTag),
         ])->flush();
 
         $leagues = $this->ninjaService->getAvailableLeagues($version);
@@ -112,7 +117,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     public function truncate(): void
     {
         Cache::tags([
-            'poe_league',
+            CacheHelperService::generateCacheTag(self::$leagueTag),
         ])->flush();
 
         $this->repository->truncate();
