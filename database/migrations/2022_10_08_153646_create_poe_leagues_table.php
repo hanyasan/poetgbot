@@ -11,8 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('poe_leagues', function (Blueprint $table) {
+        Schema::create('poe_leagues', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+
+            $table->string('league_name');
+            $table->string('poe_version');
             $table->boolean('is_active')->default(false);
+
+            $table->unique(['league_name', 'poe_version']);
         });
     }
 
@@ -21,8 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('poe_leagues', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('poe_leagues');
     }
 };

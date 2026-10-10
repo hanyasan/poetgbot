@@ -13,9 +13,15 @@ return new class extends Migration
     {
         Schema::create('currency_types', function (Blueprint $table) {
             $table->id();
+
             $table->string('currency_type_name');
             $table->string('currency_trade_id');
             $table->string('currency_ninja_details_id');
+
+            $table->foreignIdFor(\App\Models\PoeLeague::class, 'poe_league_id')->constrained();
+
+            $table->unique(['currency_trade_id', 'poe_league_id']);
+
             $table->timestamps();
         });
     }

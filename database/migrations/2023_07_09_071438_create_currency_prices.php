@@ -13,11 +13,15 @@ return new class extends Migration
     {
         Schema::create('currency_prices', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('currency_type_id');
+
             $table->float('chaos_equivalent');
             $table->float('sell_price')->nullable();
             $table->float('buy_price')->nullable();
-            $table->timestamps();
+
+            $table->foreignIdFor(\App\Models\Currency\CurrencyPrice::class, 'currency_type_id');
+
+            $table->dateTime('created_at')->index();
+            $table->dateTime('updated_at');
         });
     }
 
