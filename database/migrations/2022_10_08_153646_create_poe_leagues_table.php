@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('poe_leagues', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->timestampsTz();
 
             $table->string('league_name');
             $table->string('poe_version');

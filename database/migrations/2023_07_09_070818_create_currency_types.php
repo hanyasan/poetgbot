@@ -22,7 +22,7 @@ return new class extends Migration
 
             $table->unique(['currency_trade_id', 'poe_league_id']);
 
-            $table->timestamps();
+            $table->timestampsTz();
         });
     }
 

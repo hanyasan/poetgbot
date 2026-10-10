@@ -16,8 +16,8 @@ return new class extends Migration
 
             $table->foreignIdFor(\App\Models\PoeLeague::class, 'poe_league_id')->constrained();
 
-            $table->dateTime('created_at')->index();
-            $table->dateTime('updated_at');
+            $table->dateTimeTz('created_at')->index();
+            $table->dateTimeTz('updated_at');
         });
     }
 

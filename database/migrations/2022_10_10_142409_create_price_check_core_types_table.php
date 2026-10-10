@@ -22,7 +22,7 @@ return new class extends Migration
 
             $table->foreignIdFor(PriceCheckCore::class, 'price_check_core_id')->constrained();
 
-            $table->timestamps();
+            $table->timestampsTz();
         });
     }
 
