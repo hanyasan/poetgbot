@@ -14,6 +14,7 @@ use Illuminate\Support\Carbon;
  * @property bool $is_primary
  * @property float $rate
  * @property string $type_id
+ * @property string $name
  *
   * @property-read int $price_check_core_id
  * @property-read PriceCheckCore $priceCheckCore

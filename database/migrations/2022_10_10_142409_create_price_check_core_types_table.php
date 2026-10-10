@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('is_primary')->default(false);
             $table->unsignedFloat('rate')->default(1);
             $table->string('type_id', 255);
+            $table->string('name', 255);
 
             $table->foreignIdFor(PriceCheckCore::class, 'price_check_core_id')->constrained();
 
