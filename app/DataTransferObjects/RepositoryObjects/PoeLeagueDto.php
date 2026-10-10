@@ -4,7 +4,7 @@ namespace App\DataTransferObjects\RepositoryObjects;
 
 use Illuminate\Support\Carbon;
 
-class PoeLeague
+class PoeLeagueDto
 {
     public function __construct(
         public readonly int $id,

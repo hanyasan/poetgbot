@@ -2,8 +2,8 @@
 
 namespace App\Services\DataServices\CurrencyTypeService;
 
-use App\DataTransferObjects\RepositoryObjects\CurrencyType;
-use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeague;
+use App\DataTransferObjects\RepositoryObjects\CurrencyTypeDto;
+use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeagueDto;
 use Illuminate\Support\Collection;
 
 interface CurrencyTypeServiceContract
@@ -11,15 +11,15 @@ interface CurrencyTypeServiceContract
 
     public function delete(int $id): bool;
 
-    public function findByDetail(string $detailId): CurrencyTypeWithLeague;
+    public function findByDetail(string $detailId): CurrencyTypeWithLeagueDto;
 
     /**
-     * @return Collection<CurrencyTypeWithLeague>
+     * @return Collection<CurrencyTypeWithLeagueDto>
      */
     public function getAll(): Collection;
 
     /**
-     * @return Collection<CurrencyType>
+     * @return Collection<CurrencyTypeDto>
      */
     public function getAllByLeague(int $leagueId): Collection;
 

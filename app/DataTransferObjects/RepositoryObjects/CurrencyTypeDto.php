@@ -4,7 +4,7 @@ namespace App\DataTransferObjects\RepositoryObjects;
 
 use Illuminate\Support\Carbon;
 
-class CurrencyType
+class CurrencyTypeDto
 {
     public function __construct(
         public readonly int $id,

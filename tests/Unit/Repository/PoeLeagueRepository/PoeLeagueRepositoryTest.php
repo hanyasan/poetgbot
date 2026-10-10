@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Repository\PoeLeagueRepository;
 
-use App\DataTransferObjects\RepositoryObjects\PoeLeague;
+use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
 use App\Models\PoeLeague as PoeLeagueModel;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
@@ -56,7 +56,7 @@ class PoeLeagueRepositoryTest extends TestCase
         $all = $this->repository->getAll();
 
         $this->assertSame(PoeLeagueModel::count(), $all->count());
-        $this->assertContainsOnlyInstancesOf(PoeLeague::class, $all);
+        $this->assertContainsOnlyInstancesOf(PoeLeagueDto::class, $all);
         $this->assertContains($this->poeLeague->id, $all->pluck('id')->all());
 
         $activeLeague = $all->firstWhere('id', $active->id);
@@ -74,7 +74,7 @@ class PoeLeagueRepositoryTest extends TestCase
         $poe1Leagues = $this->repository->getByLeague(PoeVersionEnum::POE_1);
         $poe2Leagues = $this->repository->getByLeague(PoeVersionEnum::POE_2);
 
-        $this->assertContainsOnlyInstancesOf(PoeLeague::class, $poe1Leagues);
+        $this->assertContainsOnlyInstancesOf(PoeLeagueDto::class, $poe1Leagues);
         $this->assertContains($poe1->id, $poe1Leagues->pluck('id')->all());
         $this->assertNotContains($this->poeLeague->id, $poe1Leagues->pluck('id')->all());
 
@@ -106,11 +106,11 @@ class PoeLeagueRepositoryTest extends TestCase
         $poe2 = $this->repository->getAllActive(PoeVersionEnum::POE_2);
         $poe1 = $this->repository->getAllActive(PoeVersionEnum::POE_1);
 
-        $this->assertContainsOnlyInstancesOf(PoeLeague::class, $poe2);
+        $this->assertContainsOnlyInstancesOf(PoeLeagueDto::class, $poe2);
         $this->assertContains($activePoe2->id, $poe2->pluck('id')->all());
         $this->assertNotContains($this->poeLeague->id, $poe2->pluck('id')->all());
         $this->assertNotContains($activePoe1->id, $poe2->pluck('id')->all());
-        $this->assertEmpty($poe2->reject(fn (PoeLeague $league) => $league->is_active));
+        $this->assertEmpty($poe2->reject(fn (PoeLeagueDto $league) => $league->is_active));
 
         $this->assertContains($activePoe1->id, $poe1->pluck('id')->all());
         $this->assertNotContains($inactivePoe1->id, $poe1->pluck('id')->all());

@@ -2,7 +2,7 @@
 
 namespace App\Repositories\PoeLeague;
 
-use App\DataTransferObjects\RepositoryObjects\PoeLeague;
+use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\BaseRepositoryContract;
 use Illuminate\Database\Eloquent\Model;
@@ -14,21 +14,21 @@ interface PoeLeagueRepositoryContract extends BaseRepositoryContract
     /**
      * Get all leagues.
      *
-     * @return Collection<PoeLeague>
+     * @return Collection<PoeLeagueDto>
      */
     public function getAll(): Collection;
 
     /**
      * Get all leagues.
      *
-     * @return Collection<PoeLeague>
+     * @return Collection<PoeLeagueDto>
      */
     public function getAllActive(PoeVersionEnum $version): Collection;
 
     /**
      * Get all leagues belonging to the given PoE version.
      *
-     * @return Collection<PoeLeague>
+     * @return Collection<PoeLeagueDto>
      */
     public function getByLeague(PoeVersionEnum $version): Collection;
 
@@ -37,7 +37,7 @@ interface PoeLeagueRepositoryContract extends BaseRepositoryContract
      *
      * @throws ModelNotFoundException<Model> When the league does not exist
      */
-    public function find(int $id): PoeLeague;
+    public function find(int $id): PoeLeagueDto;
 
     /**
      * @param  array<int, array{

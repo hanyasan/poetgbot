@@ -3,7 +3,7 @@
 namespace App\Services\DataServices\PoeLeagueService;
 
 use App\DataTransferObjects\ParsingObjects\PoeNinjaLeague;
-use App\DataTransferObjects\RepositoryObjects\PoeLeague;
+use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
 use App\Services\CacheHelperService;
@@ -33,7 +33,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         return $this->repository->delete($id);
     }
 
-    public function find(int $id): PoeLeague
+    public function find(int $id): PoeLeagueDto
     {
         return Cache::tags([
             CacheHelperService::generateCacheTag(self::$leagueIdTag, $id),
@@ -62,7 +62,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     }
 
     /**
-     * @return Collection<PoeLeague>
+     * @return Collection<PoeLeagueDto>
      */
     public function getAllActive(PoeVersionEnum $version): Collection
     {
@@ -82,7 +82,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     /**
      * Get all leagues belonging to the given PoE version.
      *
-     * @return Collection<PoeLeague>
+     * @return Collection<PoeLeagueDto>
      */
     public function getByVersion(PoeVersionEnum $version): Collection
     {
@@ -122,9 +122,9 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         // Active leagues that poe.ninja no longer lists become inactive.
         $leagues = $this
             ->getByVersion($version)
-            ->filter(static fn (PoeLeague $league) => $league->is_active)
-            ->reject(static fn (PoeLeague $league) => $ninjaNames->contains($league->league_name))
-            ->map(static fn (PoeLeague $league) => [
+            ->filter(static fn (PoeLeagueDto $league) => $league->is_active)
+            ->reject(static fn (PoeLeagueDto $league) => $ninjaNames->contains($league->league_name))
+            ->map(static fn (PoeLeagueDto $league) => [
                 'league_name' => $league->league_name,
                 'poe_version' => $league->poe_version,
                 'is_active' => false,

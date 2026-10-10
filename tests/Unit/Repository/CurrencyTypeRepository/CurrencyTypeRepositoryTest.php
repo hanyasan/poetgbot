@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Repository\CurrencyTypeRepository;
 
-use App\DataTransferObjects\RepositoryObjects\CurrencyType;
-use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeague;
+use App\DataTransferObjects\RepositoryObjects\CurrencyTypeDto;
+use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeagueDto;
 use App\Enums\PoeVersionEnum;
 use App\Models\Currency\CurrencyType as CurrencyTypeModel;
 use App\Models\PoeLeague as PoeLeagueModel;
@@ -65,7 +65,7 @@ class CurrencyTypeRepositoryTest extends TestCase
     {
         $type = $this->repository->find($this->poe1Divine->id);
 
-        $this->assertInstanceOf(CurrencyTypeWithLeague::class, $type);
+        $this->assertInstanceOf(CurrencyTypeWithLeagueDto::class, $type);
         $this->assertSame($this->poe1Divine->id, $type->id);
         $this->assertSame('Test Divine Orb', $type->currency_type_name);
         $this->assertSame('test-divine-poe1', $type->currency_trade_id);
@@ -106,7 +106,7 @@ class CurrencyTypeRepositoryTest extends TestCase
     {
         $all = $this->repository->getAll();
 
-        $this->assertContainsOnlyInstancesOf(CurrencyTypeWithLeague::class, $all);
+        $this->assertContainsOnlyInstancesOf(CurrencyTypeWithLeagueDto::class, $all);
         $this->assertSame(CurrencyTypeModel::count(), $all->count());
 
         $byId = $all->keyBy('id');
@@ -122,7 +122,7 @@ class CurrencyTypeRepositoryTest extends TestCase
         $poe1Other = $this->repository->getAllByLeague($this->poe1OtherLeague->id);
         $poe2 = $this->repository->getAllByLeague($this->poe2League->id);
 
-        $this->assertContainsOnlyInstancesOf(CurrencyType::class, $poe1);
+        $this->assertContainsOnlyInstancesOf(CurrencyTypeDto::class, $poe1);
         $this->assertSame([$this->poe1Divine->id], $poe1->pluck('id')->all());
         $this->assertSame([$this->poe2Divine->id], $poe2->pluck('id')->all());
         $this->assertCount(1, $poe1Other);

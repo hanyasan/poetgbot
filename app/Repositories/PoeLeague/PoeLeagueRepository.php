@@ -2,7 +2,7 @@
 
 namespace App\Repositories\PoeLeague;
 
-use App\DataTransferObjects\RepositoryObjects\PoeLeague;
+use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
 use App\Models\PoeLeague as PoeLeagueModel;
 use App\Repositories\BaseEloquentRepository;
@@ -13,7 +13,7 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
 {
     /**
      * @param  PoeLeagueModel  $model  Eloquent model the repository queries
-     * @param  MapperService  $mapper  Maps raw model arrays into PoeLeague DTOs
+     * @param  MapperService  $mapper  Maps raw model arrays into PoeLeagueDto DTOs
      */
     public function __construct(
         PoeLeagueModel $model,
@@ -28,14 +28,14 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
     public function getAll(): Collection
     {
         return $this->getQuery()->get()->toBase()->map(
-            fn ($league) => $this->mapper->mapFromArray(PoeLeague::class, $league->toArray())
+            fn ($league) => $this->mapper->mapFromArray(PoeLeagueDto::class, $league->toArray())
         );
     }
 
     /**
      * Get all leagues.
      *
-     * @return Collection<PoeLeague>
+     * @return Collection<PoeLeagueDto>
      */
     public function getAllActive(PoeVersionEnum $version): Collection
     {
@@ -44,7 +44,7 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
             ->where('is_active', true)
             ->get()
             ->toBase()
-            ->map(fn ($league) => $this->mapper->mapFromArray(PoeLeague::class, $league->toArray()));
+            ->map(fn ($league) => $this->mapper->mapFromArray(PoeLeagueDto::class, $league->toArray()));
     }
 
     /**
@@ -56,16 +56,16 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
             ->where('poe_version', $version->value)
             ->get()
             ->toBase()
-            ->map(fn ($league) => $this->mapper->mapFromArray(PoeLeague::class, $league->toArray()));
+            ->map(fn ($league) => $this->mapper->mapFromArray(PoeLeagueDto::class, $league->toArray()));
     }
 
     /**
      * {@inheritDoc}
      */
-    public function find(int $id): PoeLeague
+    public function find(int $id): PoeLeagueDto
     {
         return $this->mapper->mapFromArray(
-            PoeLeague::class,
+            PoeLeagueDto::class,
             parent::find($id)->toArray()
         );
     }

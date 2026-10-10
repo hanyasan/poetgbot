@@ -2,14 +2,14 @@
 
 namespace App\Http\Resources;
 
-use App\DataTransferObjects\RepositoryObjects\CurrencyPriceWithType;
+use App\DataTransferObjects\RepositoryObjects\CurrencyPriceWithTypeDto;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CurrencyPriceResource extends JsonResource
 {
     public function toArray($request): array
     {
-        /** @var CurrencyPriceWithType $price */
+        /** @var CurrencyPriceWithTypeDto $price */
         $price = $this->resource;
 
         return [

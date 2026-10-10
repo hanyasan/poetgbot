@@ -3,8 +3,8 @@
 namespace App\Services\DataServices\CurrencyTypeService;
 
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeItem;
-use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeague;
-use App\DataTransferObjects\RepositoryObjects\PoeLeague;
+use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\CurrencyType\CurrencyTypeRepositoryContract;
 use App\Services\CacheHelperService;
@@ -37,7 +37,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
         return $this->repository->delete($id);
     }
 
-    public function findByDetail(string $detailId): CurrencyTypeWithLeague
+    public function findByDetail(string $detailId): CurrencyTypeWithLeagueDto
     {
         return Cache::tags([
             CacheHelperService::generateCacheTag(self::$currencyTypeDetailTag, $detailId),
@@ -52,7 +52,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
     }
 
     /**
-     * @return Collection<CurrencyTypeWithLeague>
+     * @return Collection<CurrencyTypeWithLeagueDto>
      */
     public function getAll(): Collection
     {
@@ -69,7 +69,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
     }
 
     /**
-     * @return Collection<CurrencyTypeWithLeague>
+     * @return Collection<CurrencyTypeWithLeagueDto>
      */
     public function getAllByLeague(int $leagueId): Collection
     {
@@ -95,7 +95,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
 
         $this->leagueService->getAllActive(PoeVersionEnum::POE_1)
             ->merge($this->leagueService->getAllActive(PoeVersionEnum::POE_2))
-            ->each(fn (PoeLeague $league) => $this->upsertByNinja($league->id))
+            ->each(fn (PoeLeagueDto $league) => $this->upsertByNinja($league->id))
         ;
     }
 

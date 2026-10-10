@@ -2,8 +2,8 @@
 
 namespace App\Repositories\CurrencyType;
 
-use App\DataTransferObjects\RepositoryObjects\CurrencyType;
-use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeague;
+use App\DataTransferObjects\RepositoryObjects\CurrencyTypeDto;
+use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeagueDto;
 use App\Models\Currency\CurrencyType as CurrencyTypeModel;
 use App\Repositories\BaseEloquentRepository;
 use App\Services\Mapper\MapperService;
@@ -18,10 +18,10 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
         parent::__construct($model, $mapper);
     }
 
-    public function findByDetailId(string $detailId): CurrencyTypeWithLeague
+    public function findByDetailId(string $detailId): CurrencyTypeWithLeagueDto
     {
         return $this->mapper->mapFromArray(
-            CurrencyTypeWithLeague::class,
+            CurrencyTypeWithLeagueDto::class,
             $this
                 ->getQuery()
                 ->with('league')
@@ -39,14 +39,14 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
             ->toBase()
             ->map(function ($priceType) {
                 return $this->mapper->mapFromArray(
-                    CurrencyTypeWithLeague::class,
+                    CurrencyTypeWithLeagueDto::class,
                     $priceType->toArray()
                 );
             });
     }
 
     /**
-     * @return Collection<CurrencyType>
+     * @return Collection<CurrencyTypeDto>
      */
     public function getAllByLeague(int $leagueId): Collection
     {
@@ -56,16 +56,16 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
             ->toBase()
             ->map(function ($priceType) {
                 return $this->mapper->mapFromArray(
-                    CurrencyType::class,
+                    CurrencyTypeDto::class,
                     $priceType->toArray()
                 );
             });
     }
 
-    public function find(int $id): CurrencyTypeWithLeague
+    public function find(int $id): CurrencyTypeWithLeagueDto
     {
         return $this->mapper->mapFromArray(
-            CurrencyTypeWithLeague::class,
+            CurrencyTypeWithLeagueDto::class,
             $this->getQuery()->with('league')->findOrFail($id)->toArray()
         );
     }

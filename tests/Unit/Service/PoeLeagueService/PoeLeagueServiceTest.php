@@ -4,7 +4,7 @@ namespace Tests\Unit\Service\PoeLeagueService;
 
 use App\DataTransferObjects\ParsingObjects\PoeNinjaLeague;
 use App\DataTransferObjects\ParsingObjects\PoeNinjaLeagueResponse;
-use App\DataTransferObjects\RepositoryObjects\PoeLeague;
+use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
 use App\Services\DataServices\PoeLeagueService\PoeLeagueService;
@@ -35,9 +35,9 @@ class PoeLeagueServiceTest extends TestCase
         $this->service = new PoeLeagueService($this->repository, $this->ninjaService);
     }
 
-    private function league(int $id, string $name, PoeVersionEnum $version, bool $active = false): PoeLeague
+    private function league(int $id, string $name, PoeVersionEnum $version, bool $active = false): PoeLeagueDto
     {
-        return new PoeLeague($id, Carbon::now(), Carbon::now(), $name, $version->value, $active);
+        return new PoeLeagueDto($id, Carbon::now(), Carbon::now(), $name, $version->value, $active);
     }
 
     private function ninjaLeague(string $name): PoeNinjaLeague

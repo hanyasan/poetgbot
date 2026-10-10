@@ -2,7 +2,7 @@
 
 namespace App\Services\DataServices\PoeLeagueService;
 
-use App\DataTransferObjects\RepositoryObjects\PoeLeague;
+use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
 use Illuminate\Support\Collection;
 
@@ -10,20 +10,20 @@ interface PoeLeagueServiceContract
 {
     public function delete(int $id): bool;
 
-    public function find(int $id): PoeLeague;
+    public function find(int $id): PoeLeagueDto;
 
     /**
-     * @return Collection<PoeLeague>
+     * @return Collection<PoeLeagueDto>
      */
     public function getAll(): Collection;
 
     /**
-     * @return Collection<PoeLeague>
+     * @return Collection<PoeLeagueDto>
      */
     public function getAllActive(PoeVersionEnum $version): Collection;
 
     /**
-     * @return Collection<PoeLeague>
+     * @return Collection<PoeLeagueDto>
      */
     public function getByVersion(PoeVersionEnum $version): Collection;
 

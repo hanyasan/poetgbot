@@ -2,8 +2,8 @@
 
 namespace App\Repositories\CurrencyPrice;
 
-use App\DataTransferObjects\RepositoryObjects\CurrencyPrice;
-use App\DataTransferObjects\RepositoryObjects\CurrencyPriceWithType;
+use App\DataTransferObjects\RepositoryObjects\CurrencyPriceDto;
+use App\DataTransferObjects\RepositoryObjects\CurrencyPriceWithTypeDto;
 use App\Repositories\BaseEloquentRepository;
 use App\Services\Mapper\MapperService;
 use Illuminate\Support\Collection;
@@ -26,7 +26,7 @@ final class CurrencyPriceRepository extends BaseEloquentRepository implements Cu
         $this->getQuery()->get()->each(function ($currencyPrice) use ($result) {
             $result->add(
                 $this->mapper->mapFromArray(
-                    CurrencyPrice::class,
+                    CurrencyPriceDto::class,
                     $currencyPrice->toArray()
                 )
             );
@@ -35,34 +35,34 @@ final class CurrencyPriceRepository extends BaseEloquentRepository implements Cu
         return $result;
     }
 
-    public function find(int $id): CurrencyPrice
+    public function find(int $id): CurrencyPriceDto
     {
         return $this->mapper->mapFromArray(
-            CurrencyPrice::class,
+            CurrencyPriceDto::class,
             parent::find($id)->toArray()
         );
     }
 
-    public function create(array $params): CurrencyPrice
+    public function create(array $params): CurrencyPriceDto
     {
         return $this->mapper->mapFromArray(
-            CurrencyPrice::class,
+            CurrencyPriceDto::class,
             parent::create($params)->toArray()
         );
     }
 
-    public function updateOrCreate(array $paramsToMatch, array $params): CurrencyPrice
+    public function updateOrCreate(array $paramsToMatch, array $params): CurrencyPriceDto
     {
         return $this->mapper->mapFromArray(
-            CurrencyPrice::class,
+            CurrencyPriceDto::class,
             parent::updateOrCreate($paramsToMatch, $params)->toArray()
         );
     }
 
-    public function findByCurrencyTypeId(int $currencyPriceTypeId): CurrencyPriceWithType
+    public function findByCurrencyTypeId(int $currencyPriceTypeId): CurrencyPriceWithTypeDto
     {
         return $this->mapper->mapFromArray(
-            CurrencyPriceWithType::class,
+            CurrencyPriceWithTypeDto::class,
             $this->getQuery()
                 ->where('currency_type_id', $currencyPriceTypeId)
                 ->with('type')

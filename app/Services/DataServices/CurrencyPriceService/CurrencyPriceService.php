@@ -2,8 +2,8 @@
 
 namespace App\Services\DataServices\CurrencyPriceService;
 
-use App\DataTransferObjects\RepositoryObjects\CurrencyPrice;
-use App\DataTransferObjects\RepositoryObjects\CurrencyPriceWithType;
+use App\DataTransferObjects\RepositoryObjects\CurrencyPriceDto;
+use App\DataTransferObjects\RepositoryObjects\CurrencyPriceWithTypeDto;
 use App\Repositories\CurrencyPrice\CurrencyPriceRepositoryContract;
 use App\Services\DataServices\CurrencyTypeService\CurrencyTypeServiceContract;
 use App\Services\PoeNinjaService\PoeNinjaServiceContract;
@@ -18,7 +18,7 @@ final class CurrencyPriceService implements CurrencyPriceServiceContract
         private readonly PoeNinjaServiceContract $ninjaService
     ) {}
 
-    public function create(array $params): CurrencyPrice
+    public function create(array $params): CurrencyPriceDto
     {
         Cache::tags([
             'currency_price_get',
@@ -36,7 +36,7 @@ final class CurrencyPriceService implements CurrencyPriceServiceContract
         return $this->repository->delete($id);
     }
 
-    public function getAll(): CurrencyPrice
+    public function getAll(): CurrencyPriceDto
     {
         return Cache::tags([
             'currency_price',
@@ -50,7 +50,7 @@ final class CurrencyPriceService implements CurrencyPriceServiceContract
         );
     }
 
-    public function updateOrCreate(array $paramsToMatch, array $params): CurrencyPrice
+    public function updateOrCreate(array $paramsToMatch, array $params): CurrencyPriceDto
     {
         Cache::tags([
             'currency_price_get',
@@ -95,7 +95,7 @@ final class CurrencyPriceService implements CurrencyPriceServiceContract
         }
     }
 
-    public function findByTypeDetailId(string $detailId): CurrencyPriceWithType
+    public function findByTypeDetailId(string $detailId): CurrencyPriceWithTypeDto
     {
         $currencyType = $this->currencyTypeService->findByDetail($detailId);
 

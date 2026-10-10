@@ -14,7 +14,6 @@ use Illuminate\Support\Carbon;
  * @property-read Carbon $created_at
  * @property-read Carbon $updated_at
  *
- * @property-read int $price_check_core_type_id
  * @property-read Collection<PriceCheckCoreType> $priceCheckCoreTypes
  *
  * @property-read int $poe_league_id

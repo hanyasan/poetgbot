@@ -5,9 +5,9 @@ namespace Tests\Unit\Service\CurrencyTypeService;
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeCore;
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeItem;
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeResponse;
-use App\DataTransferObjects\RepositoryObjects\CurrencyType;
-use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeague;
-use App\DataTransferObjects\RepositoryObjects\PoeLeague;
+use App\DataTransferObjects\RepositoryObjects\CurrencyTypeDto;
+use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\CurrencyType\CurrencyTypeRepositoryContract;
 use App\Services\DataServices\CurrencyTypeService\CurrencyTypeService;
@@ -43,19 +43,19 @@ class CurrencyTypeServiceTest extends TestCase
         $this->service = new CurrencyTypeService($this->repository, $this->ninjaService, $this->leagueService);
     }
 
-    private function league(int $id, string $name, PoeVersionEnum $version): PoeLeague
+    private function league(int $id, string $name, PoeVersionEnum $version): PoeLeagueDto
     {
-        return new PoeLeague($id, Carbon::now(), Carbon::now(), $name, $version->value, true);
+        return new PoeLeagueDto($id, Carbon::now(), Carbon::now(), $name, $version->value, true);
     }
 
-    private function typeWithLeague(int $id, PoeLeague $league, string $detailId): CurrencyTypeWithLeague
+    private function typeWithLeague(int $id, PoeLeagueDto $league, string $detailId): CurrencyTypeWithLeagueDto
     {
-        return new CurrencyTypeWithLeague($id, 'Type ' . $id, Carbon::now(), Carbon::now(), $league, 'trade-' . $id, $detailId);
+        return new CurrencyTypeWithLeagueDto($id, 'Type ' . $id, Carbon::now(), Carbon::now(), $league, 'trade-' . $id, $detailId);
     }
 
-    private function type(int $id): CurrencyType
+    private function type(int $id): CurrencyTypeDto
     {
-        return new CurrencyType($id, 'Type ' . $id, Carbon::now(), Carbon::now(), 'trade-' . $id, 'detail-' . $id);
+        return new CurrencyTypeDto($id, 'Type ' . $id, Carbon::now(), Carbon::now(), 'trade-' . $id, 'detail-' . $id);
     }
 
     private function ninjaResponse(array $items): PoeNinjaExchangeResponse
