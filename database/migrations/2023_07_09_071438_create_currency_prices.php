@@ -14,13 +14,10 @@ return new class extends Migration
         Schema::create('currency_prices', function (Blueprint $table) {
             $table->id();
 
-            $table->float('chaos_equivalent');
-            $table->float('sell_price')->nullable();
-            $table->float('buy_price')->nullable();
+            $table->unsignedFloat('rate');
 
             $table->foreignIdFor(\App\Models\Currency\CurrencyPrice::class, 'currency_type_id');
-
-            $table->timestamps();
+            $table->foreignIdFor(\App\Models\Currency\PriceCheckCore::class, 'price_check_core_id');
         });
     }
 

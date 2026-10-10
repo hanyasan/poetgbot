@@ -3,27 +3,33 @@
 namespace App\Models\Currency;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * @property-read integer $id
+ *
+ * @property float $rate
+ *
+ * @property-read int $currency_type_id
+ * @property-read CurrencyType $type
+ *
+ * @property-read int $price_check_core_id
+ * @property-read PriceCheckCore $priceCheck
+ */
 class CurrencyPrice extends Model
 {
     protected $table = 'currency_prices';
 
-    protected $fillable = [
-        'chaos_equivalent',
-        'sell_price',
-        'buy_price',
-        'currency_type_id',
-    ];
+    protected $guarded = ['id'];
 
-    protected $casts = [
-        'chaos_equivalent' => 'float',
-        'buy_price' => 'float',
-        'sell_price' => 'float',
-    ];
-
-    public function type(): HasOne
+    public function type(): BelongsTo
     {
-        return $this->hasOne(CurrencyType::class, 'id', 'currency_type_id');
+        return $this->belongsTo(CurrencyType::class,'currency_type_id');
+    }
+
+    public function priceCheck(): BelongsTo
+    {
+        return $this->belongsTo(PriceCheckCore::class,'price_check_core_id');
     }
 }
