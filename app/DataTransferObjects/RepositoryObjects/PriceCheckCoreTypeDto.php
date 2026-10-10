@@ -12,7 +12,7 @@ class PriceCheckCoreTypeDto
         public readonly Carbon $updated_at,
         public readonly bool $is_primary,
         public readonly float $rate,
-        public readonly int $type_id,
+        public readonly string $type_id,
         public readonly string $name,
         public readonly int $price_check_core_id,
     ) {}

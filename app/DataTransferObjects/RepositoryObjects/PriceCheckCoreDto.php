@@ -10,7 +10,7 @@ class PriceCheckCoreDto
         public readonly int $id,
         public readonly Carbon $created_at,
         public readonly Carbon $updated_at,
-        /** @var PriceCheckCoreTypeDto[] $types */
-        public readonly object $types,
+        /** @var PriceCheckCoreTypeDto[] $price_check_core_types */
+        public readonly array $price_check_core_types,
     ) {}
 }

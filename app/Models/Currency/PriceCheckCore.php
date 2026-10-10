@@ -32,6 +32,6 @@ class PriceCheckCore extends Model
 
     public function priceCheckCoreTypes(): HasMany
     {
-        return $this->hasMany(PriceCheckCoreType::class, 'price_check_core_type_id');
+        return $this->hasMany(PriceCheckCoreType::class, 'price_check_core_id');
     }
 }
