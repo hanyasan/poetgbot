@@ -20,8 +20,7 @@ return new class extends Migration
 
             $table->foreignIdFor(\App\Models\Currency\CurrencyPrice::class, 'currency_type_id');
 
-            $table->dateTime('created_at')->index();
-            $table->dateTime('updated_at');
+            $table->timestamps();
         });
     }
 
