@@ -2,15 +2,13 @@
 
 namespace App\DataTransferObjects\RepositoryObjects\Currency;
 
-use Illuminate\Support\Carbon;
-
 class CurrencyPriceWithTypeDto
 {
     public function __construct(
         public readonly int $id,
         public readonly float $chaos_equivalent,
-        public readonly Carbon $created_at,
-        public readonly Carbon $updated_at,
+        public readonly string $created_at,
+        public readonly string $updated_at,
         /** @var CurrencyTypeWithLeagueDto */
         public readonly object $type,
         public readonly int $currency_type_id,

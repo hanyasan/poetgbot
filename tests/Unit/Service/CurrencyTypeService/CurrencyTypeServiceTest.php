@@ -16,6 +16,7 @@ use App\Services\PoeNinjaService\PoeNinjaServiceContract;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Mockery;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Mockery\MockInterface;
 use ReflectionClass;
 use Tests\TestCase;
@@ -136,9 +137,7 @@ class CurrencyTypeServiceTest extends TestCase
         $this->service->getAllByLeague(10);
     }
 
-    /**
-     * @dataProvider versionProvider
-     */
+    #[DataProvider('versionProvider')]
     public function test_upsert_by_ninja_requests_prices_for_league_version(PoeVersionEnum $version, string $leagueName): void
     {
         $league = $this->league(5, $leagueName, $version);

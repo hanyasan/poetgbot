@@ -2,20 +2,23 @@
 
 namespace App\Services\Mapper;
 
+use CuyZ\Valinor\Mapper\TreeMapper;
 use CuyZ\Valinor\MapperBuilder;
-use Illuminate\Support\Carbon;
 use CuyZ\Valinor\Mapper\Source\Source;
 
-class MapperService
+readonly class MapperService
 {
+    private TreeMapper $mapper;
+
+    public function __construct(
+    ) {
+        $this->mapper = (new MapperBuilder())->allowSuperfluousKeys()->mapper();
+    }
+
     public function mapFromArray(string $dtoClass, array $data): object
     {
-        return (new MapperBuilder())
-            ->allowSuperfluousKeys()
-            ->registerConstructor(function (string $time): Carbon {
-                return Carbon::parse($time);
-            })
-            ->mapper()
+        return $this
+            ->mapper
             ->map(
                 $dtoClass,
                 Source::array($data)
@@ -24,12 +27,8 @@ class MapperService
 
     public function mapFromJson(string $dtoClass, string $data): object
     {
-        return (new MapperBuilder())
-            ->allowSuperfluousKeys()
-            ->registerConstructor(function (string $time): Carbon {
-                return Carbon::parse($time);
-            })
-            ->mapper()
+        return $this
+            ->mapper
             ->map(
                 $dtoClass,
                 Source::json($data)

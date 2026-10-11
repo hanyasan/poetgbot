@@ -4,20 +4,10 @@ namespace Tests\Unit\NinjaClient;
 
 use App\Enums\PoeVersionEnum;
 use App\Services\HTTPClientServices\NinjaClient;
-use PHPUnit\Framework\TestCase;
-use Tests\CreatesApplication;
+use Tests\TestCase;
 
 class NinjaClientTest extends TestCase
 {
-    use CreatesApplication;
-
-    public function __construct(string $name)
-    {
-        parent::__construct($name);
-
-        $this->createApplication();
-    }
-
     public function test_get_currency_prices(): void
     {
         $client = new NinjaClient();

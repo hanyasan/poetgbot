@@ -3,23 +3,12 @@
 namespace Tests\Unit\NinjaService;
 
 use App\Enums\PoeVersionEnum;
-use App\Services\HTTPClientServices\NinjaClient;
 use App\Services\PoeNinjaService\PoeNinjaService;
 use App\Services\PoeNinjaService\PoeNinjaServiceContract;
-use PHPUnit\Framework\TestCase;
-use Tests\CreatesApplication;
+use Tests\TestCase;
 
 class PoeNinjaServiceTest extends TestCase
 {
-    use CreatesApplication;
-
-    public function __construct(string $name)
-    {
-        parent::__construct($name);
-
-        $this->createApplication();
-    }
-
     public function test_get_currency_prices(): void
     {
         $service = app(PoeNinjaServiceContract::class);
@@ -27,7 +16,6 @@ class PoeNinjaServiceTest extends TestCase
         $response = $service->getCurrencyPrices(
             PoeVersionEnum::POE_2,
             'Standard',
-            new NinjaClient(),
         );
 
         $this->assertNotNull($response);
@@ -39,7 +27,6 @@ class PoeNinjaServiceTest extends TestCase
 
         $response = $service->getAvailableLeagues(
             PoeVersionEnum::POE_2,
-            new NinjaClient(),
         );
 
         $this->assertNotNull($response);
