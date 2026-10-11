@@ -52,14 +52,14 @@ class PriceCheckCoreRepository extends BaseEloquentRepository implements PriceCh
 
     public function getLatestByLeague(int $leagueId): PriceCheckCoreDto
     {
-        return $this
+        $core = $this
             ->getQuery()
             ->with('priceCheckCoreTypes')
             ->where('poe_league_id', $leagueId)
             ->latest()
-            ->get()
-            ->toBase()
-            ->map(fn ($core) => $this->mapper->mapFromArray(PriceCheckCoreDto::class, $core->toArray()));
+            ->first();
+
+        return $this->mapper->mapFromArray(PriceCheckCoreDto::class, $core->toArray());
     }
 
     /**

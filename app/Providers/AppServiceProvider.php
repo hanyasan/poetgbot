@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Repositories\Currency\CurrencyPrice\CurrencyPriceRepository;
 use App\Repositories\Currency\CurrencyPrice\CurrencyPriceRepositoryContract;
+use App\Repositories\Currency\CurrencyPrice\PriceCheckCoreRepository;
+use App\Repositories\Currency\CurrencyPrice\PriceCheckCoreRepositoryContract;
 use App\Repositories\Currency\CurrencyType\CurrencyTypeRepository;
 use App\Repositories\Currency\CurrencyType\CurrencyTypeRepositoryContract;
 use App\Repositories\PoeLeague\PoeLeagueRepository;
@@ -37,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
         CurrencyPriceServiceContract::class => CurrencyPriceService::class,
         PoeLeagueRepositoryContract::class => PoeLeagueRepository::class,
         PoeLeagueServiceContract::class => PoeLeagueService::class,
+        PriceCheckCoreRepositoryContract::class => PriceCheckCoreRepository::class,
     ];
 
     /**
