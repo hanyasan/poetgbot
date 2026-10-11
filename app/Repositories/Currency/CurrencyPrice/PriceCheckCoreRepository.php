@@ -77,6 +77,17 @@ class PriceCheckCoreRepository extends BaseEloquentRepository implements PriceCh
             ->map(fn ($core) => $this->mapper->mapFromArray(PriceCheckCoreDto::class, $core->toArray()));
     }
 
+    /**
+     * @param int $leagueId
+     * @param array{
+     *      is_primary: bool,
+     *      rate: float,
+     *      type_id: string,
+     *      name: string,
+     * } $types
+     *
+     * @return void
+     */
     public function createCore(
         int $leagueId,
         array $types,
@@ -87,6 +98,17 @@ class PriceCheckCoreRepository extends BaseEloquentRepository implements PriceCh
         $this->createTypes($types, $core);
     }
 
+    /**
+     * @param array{
+     *      is_primary: bool,
+     *      rate: float,
+     *      type_id: string,
+     *      name: string,
+     * } $types
+     * @param PriceCheckCore $core
+     *
+     * @return void
+     */
     private function createTypes(array $types, PriceCheckCore $core): void
     {
         $core

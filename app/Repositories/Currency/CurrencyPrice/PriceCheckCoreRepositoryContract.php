@@ -26,6 +26,17 @@ interface PriceCheckCoreRepositoryContract
      */
     public function getFromDateByLeague(Carbon $dateFrom, int $leagueId): Collection;
 
+    /**
+     * @param int $leagueId
+     * @param array{
+     *      is_primary: bool,
+     *      rate: float,
+     *      type_id: string,
+     *      name: string,
+     * } $types
+     *
+     * @return void
+     */
     public function createCore(
         int $leagueId,
         array $types,
