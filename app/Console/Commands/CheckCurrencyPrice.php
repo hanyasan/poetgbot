@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\DataServices\CurrencyPriceService\CurrencyPriceServiceContract;
+use App\Services\DataServices\Currency\CurrencyPriceService\CurrencyPriceServiceContract;
 use Illuminate\Console\Command;
 
 class CheckCurrencyPrice extends Command

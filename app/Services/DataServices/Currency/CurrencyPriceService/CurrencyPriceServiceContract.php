@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Services\DataServices\CurrencyPriceService;
+namespace App\Services\DataServices\Currency\CurrencyPriceService;
 
-use App\DataTransferObjects\RepositoryObjects\CurrencyPriceDto;
-use App\DataTransferObjects\RepositoryObjects\CurrencyPriceWithTypeDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyPriceDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyPriceWithTypeDto;
 
 interface CurrencyPriceServiceContract
 {

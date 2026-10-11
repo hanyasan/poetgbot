@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Repositories\CurrencyPrice;
+namespace App\Repositories\Currency\CurrencyPrice;
 
-use App\DataTransferObjects\RepositoryObjects\CurrencyPriceDto;
-use App\DataTransferObjects\RepositoryObjects\CurrencyPriceWithTypeDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyPriceDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyPriceWithTypeDto;
+use App\Models\Currency\CurrencyPrice as CurrencyPriceModel;
 use App\Repositories\BaseEloquentRepository;
 use App\Services\Mapper\MapperService;
 use Illuminate\Support\Collection;
-use App\Models\Currency\CurrencyPrice as CurrencyPriceModel;
 
 final class CurrencyPriceRepository extends BaseEloquentRepository implements CurrencyPriceRepositoryContract
 {

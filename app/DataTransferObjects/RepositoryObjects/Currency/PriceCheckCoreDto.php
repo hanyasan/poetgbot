@@ -1,7 +1,8 @@
 <?php
 
-namespace App\DataTransferObjects\RepositoryObjects;
+namespace App\DataTransferObjects\RepositoryObjects\Currency;
 
+use App\DataTransferObjects\RepositoryObjects\PriceCheckCoreTypeDto;
 use Illuminate\Support\Carbon;
 
 class PriceCheckCoreDto
@@ -12,5 +13,7 @@ class PriceCheckCoreDto
         public readonly Carbon $updated_at,
         /** @var PriceCheckCoreTypeDto[] $price_check_core_types */
         public readonly array $price_check_core_types,
+        /** @var CurrencyPriceDto[] $prices */
+        public readonly array $prices,
     ) {}
 }

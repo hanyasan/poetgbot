@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repositories\CurrencyType;
+namespace App\Repositories\Currency\CurrencyType;
 
-use App\DataTransferObjects\RepositoryObjects\CurrencyTypeDto;
-use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithLeagueDto;
 use App\Models\Currency\CurrencyType as CurrencyTypeModel;
 use App\Repositories\BaseEloquentRepository;
 use App\Services\Mapper\MapperService;

@@ -2,16 +2,16 @@
 
 namespace App\Providers;
 
-use App\Repositories\CurrencyPrice\CurrencyPriceRepository;
-use App\Repositories\CurrencyPrice\CurrencyPriceRepositoryContract;
-use App\Repositories\CurrencyType\CurrencyTypeRepository;
-use App\Repositories\CurrencyType\CurrencyTypeRepositoryContract;
+use App\Repositories\Currency\CurrencyPrice\CurrencyPriceRepository;
+use App\Repositories\Currency\CurrencyPrice\CurrencyPriceRepositoryContract;
+use App\Repositories\Currency\CurrencyType\CurrencyTypeRepository;
+use App\Repositories\Currency\CurrencyType\CurrencyTypeRepositoryContract;
 use App\Repositories\PoeLeague\PoeLeagueRepository;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
-use App\Services\DataServices\CurrencyPriceService\CurrencyPriceService;
-use App\Services\DataServices\CurrencyPriceService\CurrencyPriceServiceContract;
-use App\Services\DataServices\CurrencyTypeService\CurrencyTypeService;
-use App\Services\DataServices\CurrencyTypeService\CurrencyTypeServiceContract;
+use App\Services\DataServices\Currency\CurrencyPriceService\CurrencyPriceService;
+use App\Services\DataServices\Currency\CurrencyPriceService\CurrencyPriceServiceContract;
+use App\Services\DataServices\Currency\CurrencyTypeService\CurrencyTypeService;
+use App\Services\DataServices\Currency\CurrencyTypeService\CurrencyTypeServiceContract;
 use App\Services\DataServices\PoeLeagueService\PoeLeagueService;
 use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
 use App\Services\HTTPClientServices\NinjaClient;

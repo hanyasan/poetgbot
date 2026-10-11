@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithLeagueDto;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CurrencyTypeResource extends JsonResource

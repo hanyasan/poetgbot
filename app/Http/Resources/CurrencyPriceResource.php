@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\DataTransferObjects\RepositoryObjects\CurrencyPriceWithTypeDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyPriceWithTypeDto;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CurrencyPriceResource extends JsonResource

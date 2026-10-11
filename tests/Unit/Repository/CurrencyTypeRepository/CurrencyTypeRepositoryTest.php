@@ -2,12 +2,12 @@
 
 namespace Tests\Unit\Repository\CurrencyTypeRepository;
 
-use App\DataTransferObjects\RepositoryObjects\CurrencyTypeDto;
-use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithLeagueDto;
 use App\Enums\PoeVersionEnum;
 use App\Models\Currency\CurrencyType as CurrencyTypeModel;
 use App\Models\PoeLeague as PoeLeagueModel;
-use App\Repositories\CurrencyType\CurrencyTypeRepositoryContract;
+use App\Repositories\Currency\CurrencyType\CurrencyTypeRepositoryContract;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;

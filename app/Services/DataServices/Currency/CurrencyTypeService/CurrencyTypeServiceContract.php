@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Services\DataServices\CurrencyTypeService;
+namespace App\Services\DataServices\Currency\CurrencyTypeService;
 
-use App\DataTransferObjects\RepositoryObjects\CurrencyTypeDto;
-use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithLeagueDto;
 use Illuminate\Support\Collection;
 
 interface CurrencyTypeServiceContract

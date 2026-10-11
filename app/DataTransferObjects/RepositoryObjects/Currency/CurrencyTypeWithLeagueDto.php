@@ -1,7 +1,8 @@
 <?php
 
-namespace App\DataTransferObjects\RepositoryObjects;
+namespace App\DataTransferObjects\RepositoryObjects\Currency;
 
+use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
 use Illuminate\Support\Carbon;
 
 class CurrencyTypeWithLeagueDto

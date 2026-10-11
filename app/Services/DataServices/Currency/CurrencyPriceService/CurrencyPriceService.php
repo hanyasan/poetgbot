@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services\DataServices\CurrencyPriceService;
+namespace App\Services\DataServices\Currency\CurrencyPriceService;
 
-use App\DataTransferObjects\RepositoryObjects\CurrencyPriceDto;
-use App\DataTransferObjects\RepositoryObjects\CurrencyPriceWithTypeDto;
-use App\Repositories\CurrencyPrice\CurrencyPriceRepositoryContract;
-use App\Services\DataServices\CurrencyTypeService\CurrencyTypeServiceContract;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyPriceDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyPriceWithTypeDto;
+use App\Repositories\Currency\CurrencyPrice\CurrencyPriceRepositoryContract;
+use App\Services\DataServices\Currency\CurrencyTypeService\CurrencyTypeServiceContract;
 use App\Services\PoeNinjaService\PoeNinjaServiceContract;
 use Illuminate\Support\Facades\Cache;
 

@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
  * @property-read Carbon $updated_at
  *
  * @property-read Collection<PriceCheckCoreType> $priceCheckCoreTypes
+ * @property-read Collection<CurrencyPrice> $prices
  *
  * @property-read int $poe_league_id
  * @property-read PoeLeague $league
@@ -33,5 +34,10 @@ class PriceCheckCore extends Model
     public function priceCheckCoreTypes(): HasMany
     {
         return $this->hasMany(PriceCheckCoreType::class, 'price_check_core_id');
+    }
+
+    public function prices(): HasMany
+    {
+        return $this->hasMany(CurrencyPrice::class, 'price_check_core_id');
     }
 }

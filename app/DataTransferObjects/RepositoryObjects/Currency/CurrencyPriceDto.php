@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DataTransferObjects\RepositoryObjects;
+namespace App\DataTransferObjects\RepositoryObjects\Currency;
 
 use Illuminate\Support\Carbon;
 

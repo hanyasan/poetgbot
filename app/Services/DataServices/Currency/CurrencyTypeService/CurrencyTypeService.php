@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Services\DataServices\CurrencyTypeService;
+namespace App\Services\DataServices\Currency\CurrencyTypeService;
 
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeItem;
-use App\DataTransferObjects\RepositoryObjects\CurrencyTypeWithLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithLeagueDto;
 use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
-use App\Repositories\CurrencyType\CurrencyTypeRepositoryContract;
+use App\Repositories\Currency\CurrencyType\CurrencyTypeRepositoryContract;
 use App\Services\CacheHelperService;
 use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
 use App\Services\PoeNinjaService\PoeNinjaServiceContract;

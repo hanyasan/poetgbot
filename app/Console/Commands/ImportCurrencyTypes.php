@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\DataServices\CurrencyTypeService\CurrencyTypeServiceContract;
+use App\Services\DataServices\Currency\CurrencyTypeService\CurrencyTypeServiceContract;
 use Illuminate\Console\Command;
 
 class ImportCurrencyTypes extends Command

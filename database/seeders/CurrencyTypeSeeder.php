@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Repositories\CurrencyType\CurrencyTypeRepositoryContract;
+use App\Repositories\Currency\CurrencyType\CurrencyTypeRepositoryContract;
 use Illuminate\Database\Seeder;
 
 class CurrencyTypeSeeder extends Seeder
