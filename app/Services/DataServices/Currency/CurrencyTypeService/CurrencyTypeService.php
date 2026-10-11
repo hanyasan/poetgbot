@@ -4,6 +4,7 @@ namespace App\Services\DataServices\Currency\CurrencyTypeService;
 
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeItem;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithPricesDto;
 use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\Currency\CurrencyType\CurrencyTypeRepositoryContract;
@@ -97,6 +98,55 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
             ->merge($this->leagueService->getAllActive(PoeVersionEnum::POE_2))
             ->each(fn (PoeLeagueDto $league) => $this->upsertByNinja($league->id))
         ;
+    }
+
+    /**
+     * @param array<int, array{
+     *     currency_type_name: string,
+     *     currency_trade_id: string,
+     *     currency_ninja_details_id: string,
+     * }> $typeData
+     * @param int $leagueId
+     *
+     * @return void
+     */
+    public function upsert(array $typeData, int $leagueId): void
+    {
+        Cache::tags([
+            CacheHelperService::generateCacheTag(self::$currencyTypeTag),
+            CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
+            CacheHelperService::generateCacheTag(self::$currencyTypeByLeagueTag, $leagueId),
+        ])->flush();
+
+        $insertData = collect($typeData)
+            ->map(fn (array $currencyItem) => [
+                'currency_type_name' => $currencyItem['currency_type_name'],
+                'currency_trade_id' => $currencyItem['currency_trade_id'],
+                'currency_ninja_details_id' => $currencyItem['currency_ninja_details_id'],
+                'poe_league_id' => $leagueId,
+            ])
+            ->toArray()
+        ;
+
+        $this->repository->upsert($insertData);
+    }
+
+    /**
+     * @return Collection<CurrencyTypeWithPricesDto>
+     */
+    public function getAllByLeagueWithPriceByCore(int $leagueId, int $coreId): Collection
+    {
+        return Cache::tags([
+            CacheHelperService::generateCacheTag(self::$currencyTypeTag),
+            CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
+            CacheHelperService::generateCacheTag(self::$currencyTypeByLeagueTag, $leagueId),
+        ])->remember(
+            'all_by_league_core' . $leagueId,
+            CacheHelperService::setHourTtl(),
+            function () use ($leagueId, $coreId) {
+                return $this->repository->getAllByLeagueWithPriceByCore($leagueId, $coreId);
+            }
+        );
     }
 
     public function upsertByNinja(int $leagueId): void

@@ -4,6 +4,7 @@ namespace App\Services\DataServices\Currency\CurrencyTypeService;
 
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithPricesDto;
 use Illuminate\Support\Collection;
 
 interface CurrencyTypeServiceContract
@@ -24,6 +25,23 @@ interface CurrencyTypeServiceContract
     public function getAllByLeague(int $leagueId): Collection;
 
     public function upsertByNinja(int $leagueId): void;
+
+    /**
+     * @param array<int, array{
+     *     currency_type_name: string,
+     *     currency_trade_id: string,
+     *     currency_ninja_details_id: string,
+     * }> $typeData
+     * @param int $leagueId
+     *
+     * @return void
+     */
+    public function upsert(array $typeData, int $leagueId): void;
+
+    /**
+     * @return Collection<CurrencyTypeWithPricesDto>
+     */
+    public function getAllByLeagueWithPriceByCore(int $leagueId, int $coreId): Collection;
 
     public function freshAllByNinja(): void;
 }

@@ -139,7 +139,7 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
      *     name: string,
      * }
      */
-    private function prepTypes(PoeNinjaExchangeResponse $prices): array
+    public function prepTypes(PoeNinjaExchangeResponse $prices): array
     {
         return array_map(static function (PoeNinjaExchangeItem $item) use ($prices) {
             $isPrimary = $prices->core->primary === $item->id;

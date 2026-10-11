@@ -10,7 +10,7 @@ final readonly class CurrencyTypeWithPricesDto
         public string  $created_at,
         public string  $updated_at,
         /** @var CurrencyPriceDto[] $prices */
-        public object  $prices,
+        public array  $prices,
         public ?string $currency_trade_id = null,
         public ?string $currency_ninja_details_id = null,
     ){}

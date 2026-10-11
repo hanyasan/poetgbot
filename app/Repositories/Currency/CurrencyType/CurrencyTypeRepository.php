@@ -53,6 +53,26 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
     /**
      * @return Collection<CurrencyTypeWithPricesDto>
      */
+    public function getAllByLeagueWithPriceByCore(int $leagueId, int $coreId): Collection
+    {
+        return $this->getQuery()
+            ->where('poe_league_id', $leagueId)
+            ->with(['prices' => static function ($query) use ($coreId) {
+                $query->where('price_check_core_id', $coreId);
+            }])
+            ->get()
+            ->toBase()
+            ->map(function ($priceType) {
+                return $this->mapper->mapFromArray(
+                    CurrencyTypeWithPricesDto::class,
+                    $priceType->toArray()
+                );
+            });
+    }
+
+    /**
+     * @return Collection<CurrencyTypeWithPricesDto>
+     */
     public function getAllByLeagueWithLatestPrice(int $leagueId): Collection
     {
         return $this->getQuery()

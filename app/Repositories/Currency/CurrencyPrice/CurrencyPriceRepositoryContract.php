@@ -5,9 +5,11 @@ namespace App\Repositories\Currency\CurrencyPrice;
 interface CurrencyPriceRepositoryContract
 {
     /**
-     * @param array<int, array{rate: float}> $pricesData
-     * @param int $coreId
-     * @param int $currencyTypeId
+     * @param array<int, array{
+     *     rate: float,
+     *     price_check_core_id: int,
+     *     currency_type_id: int,
+     * }> $pricesData
      */
-    public function insert(array $pricesData, int $coreId, int $currencyTypeId): void;
+    public function insert(array $pricesData): void;
 }

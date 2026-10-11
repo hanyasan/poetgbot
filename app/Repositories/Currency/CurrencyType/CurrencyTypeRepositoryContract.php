@@ -25,6 +25,11 @@ interface CurrencyTypeRepositoryContract extends BaseRepositoryContract
      */
     public function getAllByLeagueWithLatestPrice(int $leagueId): Collection;
 
+    /**
+     * @return Collection<CurrencyTypeWithPricesDto>
+     */
+    public function getAllByLeagueWithPriceByCore(int $leagueId, int $coreId): Collection;
+
     public function find(int $id): CurrencyTypeWithLeagueDto;
 
     /**

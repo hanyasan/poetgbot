@@ -16,19 +16,21 @@ class CurrencyPriceRepository extends BaseEloquentRepository implements Currency
     }
 
     /**
-     * @param array<int, array{rate: float}> $pricesData
-     * @param int $coreId
-     * @param int $currencyTypeId
+     * @param array<int, array{
+     *     rate: float,
+     *     price_check_core_id: int,
+     *     currency_type_id: int,
+     * }> $pricesData
      */
-    public function insert(array $pricesData, int $coreId, int $currencyTypeId): void
+    public function insert(array $pricesData): void
     {
         $this->model
             ->newQuery()
-            ->insert(array_map(function ($pricesData) use ($coreId, $currencyTypeId) {
+            ->insert(array_map(static function ($pricesData) {
                 return [
                     'rate' => $pricesData['rate'],
-                    'currency_type_id' => $currencyTypeId,
-                    'price_check_core_id' => $coreId,
+                    'currency_type_id' => $pricesData['currency_type_id'],
+                    'price_check_core_id' => $pricesData['price_check_core_id'],
                 ];
             }, $pricesData));
     }
