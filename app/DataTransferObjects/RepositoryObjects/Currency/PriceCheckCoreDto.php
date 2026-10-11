@@ -2,7 +2,6 @@
 
 namespace App\DataTransferObjects\RepositoryObjects\Currency;
 
-use App\DataTransferObjects\RepositoryObjects\PriceCheckCoreTypeDto;
 use Illuminate\Support\Carbon;
 
 class PriceCheckCoreDto

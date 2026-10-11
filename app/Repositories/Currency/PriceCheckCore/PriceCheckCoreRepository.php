@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Repositories\Currency\CurrencyPrice;
+namespace App\Repositories\Currency\PriceCheckCore;
 
 use App\DataTransferObjects\RepositoryObjects\Currency\PriceCheckCoreDto;
 use App\Models\Currency\PriceCheckCore;
-use App\Models\Currency\PriceCheckCoreType;
 use App\Repositories\BaseEloquentRepository;
-use App\Repositories\Currency\CurrencyPrice\PriceCheckCoreRepositoryContract;
 use App\Services\Mapper\MapperService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -21,6 +19,14 @@ class PriceCheckCoreRepository extends BaseEloquentRepository implements PriceCh
         MapperService $mapper
     ) {
         parent::__construct($model, $mapper);
+    }
+
+    public function find(int $id): PriceCheckCoreDto
+    {
+        return $this->mapper->mapFromArray(
+            PriceCheckCoreDto::class,
+            $this->getQuery()->with('priceCheckCoreTypes')->findOrFail($id)->toArray()
+        );
     }
 
     /**
@@ -86,16 +92,18 @@ class PriceCheckCoreRepository extends BaseEloquentRepository implements PriceCh
      *      name: string,
      * } $types
      *
-     * @return void
+     * @return PriceCheckCoreDto
      */
     public function createCore(
         int $leagueId,
         array $types,
-    ): void {
+    ): PriceCheckCoreDto {
         /** @var PriceCheckCore $core */
         $core = $this->create(['poe_league_id' => $leagueId]);
 
         $this->createTypes($types, $core);
+
+        return $this->find($core->id);
     }
 
     /**

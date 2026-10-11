@@ -4,16 +4,18 @@ namespace App\Providers;
 
 use App\Repositories\Currency\CurrencyPrice\CurrencyPriceRepository;
 use App\Repositories\Currency\CurrencyPrice\CurrencyPriceRepositoryContract;
-use App\Repositories\Currency\CurrencyPrice\PriceCheckCoreRepository;
-use App\Repositories\Currency\CurrencyPrice\PriceCheckCoreRepositoryContract;
 use App\Repositories\Currency\CurrencyType\CurrencyTypeRepository;
 use App\Repositories\Currency\CurrencyType\CurrencyTypeRepositoryContract;
+use App\Repositories\Currency\PriceCheckCore\PriceCheckCoreRepository;
+use App\Repositories\Currency\PriceCheckCore\PriceCheckCoreRepositoryContract;
 use App\Repositories\PoeLeague\PoeLeagueRepository;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
 use App\Services\DataServices\Currency\CurrencyPriceService\CurrencyPriceService;
 use App\Services\DataServices\Currency\CurrencyPriceService\CurrencyPriceServiceContract;
 use App\Services\DataServices\Currency\CurrencyTypeService\CurrencyTypeService;
 use App\Services\DataServices\Currency\CurrencyTypeService\CurrencyTypeServiceContract;
+use App\Services\DataServices\Currency\PriceCheckCoreService\PriceCheckCoreService;
+use App\Services\DataServices\Currency\PriceCheckCoreService\PriceCheckCoreServiceContract;
 use App\Services\DataServices\PoeLeagueService\PoeLeagueService;
 use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
 use App\Services\HTTPClientServices\NinjaClient;
@@ -40,6 +42,7 @@ class AppServiceProvider extends ServiceProvider
         PoeLeagueRepositoryContract::class => PoeLeagueRepository::class,
         PoeLeagueServiceContract::class => PoeLeagueService::class,
         PriceCheckCoreRepositoryContract::class => PriceCheckCoreRepository::class,
+        PriceCheckCoreServiceContract::class => PriceCheckCoreService::class,
     ];
 
     /**

@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Repositories\Currency\CurrencyPrice;
+namespace App\Services\DataServices\Currency\PriceCheckCoreService;
 
 use App\DataTransferObjects\RepositoryObjects\Currency\PriceCheckCoreDto;
-use App\Models\Currency\PriceCheckCore;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
-interface PriceCheckCoreRepositoryContract
+interface PriceCheckCoreServiceContract
 {
+    public function find(int $id): PriceCheckCoreDto;
+
     /**
      * @return Collection<PriceCheckCoreDto>
      */
@@ -27,18 +28,19 @@ interface PriceCheckCoreRepositoryContract
     public function getFromDateByLeague(Carbon $dateFrom, int $leagueId): Collection;
 
     /**
-     * @param int $leagueId
      * @param array{
-     *      is_primary: bool,
-     *      rate: float,
-     *      type_id: string,
-     *      name: string,
-     * } $types
+     *     types: array{
+     *          is_primary: bool,
+     *          rate: float,
+     *          type_id: string,
+     *          name: string,
+     *     }
+     * } $coreData
+     * @param int $leagueId
      *
-     * @return void
+     * @return PriceCheckCoreDto
      */
-    public function createCore(
-        int $leagueId,
-        array $types,
-    ): void;
+    public function create(array $coreData, int $leagueId): PriceCheckCoreDto;
+
+    public function createNewByNinja(int $leagueId): PriceCheckCoreDto;
 }
