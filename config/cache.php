@@ -1,5 +1,8 @@
 <?php
 
+use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
+use App\DataTransferObjects\ServiceObjects\LeaguePricesDto;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 
 return [
@@ -135,14 +138,15 @@ return [
         Illuminate\Support\Collection::class,
         Illuminate\Database\Eloquent\Collection::class,
         Illuminate\Support\Carbon::class,
-        Illuminate\Support\CarbonImmutable::class,
         App\DataTransferObjects\RepositoryObjects\PoeLeagueDto::class,
         App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto::class,
         App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithLeagueDto::class,
+        App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithPricesDto::class,
         App\DataTransferObjects\RepositoryObjects\Currency\CurrencyPriceDto::class,
-        App\DataTransferObjects\RepositoryObjects\Currency\CurrencyPriceWithTypeDto::class,
         App\DataTransferObjects\RepositoryObjects\Currency\PriceCheckCoreDto::class,
         App\DataTransferObjects\RepositoryObjects\Currency\PriceCheckCoreTypeDto::class,
+        LeaguePricesDto::class,
+        Carbon::class,
     ],
 
 ];

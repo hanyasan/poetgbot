@@ -2,7 +2,6 @@
 
 namespace App\TelegramBotCommands;
 
-use App\Services\DataServices\Currency\CurrencyPriceService\CurrencyPriceServiceContract;
 use Longman\TelegramBot\Commands\UserCommand;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Exception\TelegramException;
@@ -41,12 +40,13 @@ class DivineCommand extends UserCommand
      */
     public function execute(): ServerResponse
     {
-        $price = app(CurrencyPriceServiceContract::class)->findByTypeDetailId('divine-orb');
-
-        return $this->replyToChat(
-            'Estimated price: ' . ($price->chaos_equivalent ? round($price->chaos_equivalent, 2) : 'Unknown') . PHP_EOL .
-            'Buy price: ' . ($price->buy_price ? round($price->buy_price, 2) : 'Unknown') . PHP_EOL .
-            'Sell price: ' . ($price->sell_price ? round($price->sell_price, 2) : 'Unknown') . PHP_EOL
-        , ['parse_mode' => 'markdown']);
+        //TODO: implement new logic, not now
+//        $price = app(CurrencyPriceServiceContract::class)->findByTypeDetailId('divine-orb');
+//
+//        return $this->replyToChat(
+//            'Estimated price: ' . ($price->chaos_equivalent ? round($price->chaos_equivalent, 2) : 'Unknown') . PHP_EOL .
+//            'Buy price: ' . ($price->buy_price ? round($price->buy_price, 2) : 'Unknown') . PHP_EOL .
+//            'Sell price: ' . ($price->sell_price ? round($price->sell_price, 2) : 'Unknown') . PHP_EOL
+//        , ['parse_mode' => 'markdown']);
     }
 }

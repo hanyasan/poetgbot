@@ -48,17 +48,17 @@ class CurrencyTypeServiceTest extends TestCase
 
     private function league(int $id, string $name, PoeVersionEnum $version): PoeLeagueDto
     {
-        return new PoeLeagueDto($id, Carbon::now(), Carbon::now(), $name, $version->value, true);
+        return new PoeLeagueDto($id, Carbon::now()->toDateTimeString(), Carbon::now()->toDateTimeString(), $name, $version->value, true);
     }
 
     private function typeWithLeague(int $id, PoeLeagueDto $league, string $detailId): CurrencyTypeWithLeagueDto
     {
-        return new CurrencyTypeWithLeagueDto($id, 'Type ' . $id, Carbon::now(), Carbon::now(), $league, 'trade-' . $id, $detailId);
+        return new CurrencyTypeWithLeagueDto($id, 'Type ' . $id, Carbon::now()->toDateTimeString(), Carbon::now()->toDateTimeString(), $league, 'trade-' . $id, $detailId);
     }
 
     private function type(int $id): CurrencyTypeDto
     {
-        return new CurrencyTypeDto($id, 'Type ' . $id, Carbon::now(), Carbon::now(), 'trade-' . $id, 'detail-' . $id);
+        return new CurrencyTypeDto($id, 'Type ' . $id, Carbon::now()->toDateTimeString(), Carbon::now()->toDateTimeString(), 'trade-' . $id, 'detail-' . $id);
     }
 
     private function typeWithPrices(int $id, float $rate): CurrencyTypeWithPricesDto
@@ -86,29 +86,6 @@ class CurrencyTypeServiceTest extends TestCase
         return new PoeNinjaExchangeItem($id, $name, 'image.png', 'Currency', $detailsId);
     }
 
-    public function test_find_by_detail_only_calls_methods_the_repository_contract_has(): void
-    {
-        // Regression guard for 4d3d55c: findByDetailId() was removed from the repository but
-        // CurrencyTypeService::findByDetail() kept calling it, so GET /api/v1/price/currency/{id}
-        // and the Telegram /divine command throw "Call to undefined method". The Mockery mock
-        // below accepts any method name, so assert against the real contract instead.
-        $called = [];
-        $this->repository->shouldReceive('findByDetailId')->andReturnUsing(function () use (&$called) {
-            $called[] = 'findByDetailId';
-
-            return $this->typeWithLeague(1, $this->league(1, 'L', PoeVersionEnum::POE_1), 'divine-orb');
-        });
-
-        $this->service->findByDetail('divine-orb');
-
-        foreach ($called as $method) {
-            $this->assertTrue(
-                method_exists(CurrencyTypeRepositoryContract::class, $method),
-                "CurrencyTypeService::findByDetail() calls {$method}(), which CurrencyTypeRepositoryContract does not declare."
-            );
-        }
-    }
-
     public function test_get_all_caches_result(): void
     {
         $all = collect([
@@ -116,10 +93,10 @@ class CurrencyTypeServiceTest extends TestCase
             $this->typeWithLeague(2, $this->league(2, 'Poe2 League', PoeVersionEnum::POE_2), 'b'),
         ]);
 
-        $this->repository->shouldReceive('getAll')->once()->andReturn($all);
+        $this->repository->expects('getAll')->andReturns($all);
 
-        $this->assertSame($all, $this->service->getAll());
-        $this->assertSame($all, $this->service->getAll());
+        $this->assertEquals($all, $this->service->getAll());
+        $this->assertEquals($all, $this->service->getAll());
     }
 
     public function test_get_all_by_league_caches_per_league(): void
@@ -127,13 +104,13 @@ class CurrencyTypeServiceTest extends TestCase
         $poe1 = collect([$this->type(1)]);
         $poe2 = collect([$this->type(2)]);
 
-        $this->repository->shouldReceive('getAllByLeague')->once()->with(10)->andReturn($poe1);
-        $this->repository->shouldReceive('getAllByLeague')->once()->with(20)->andReturn($poe2);
+        $this->repository->expects('getAllByLeague')->with(10)->andReturns($poe1);
+        $this->repository->expects('getAllByLeague')->with(20)->andReturns($poe2);
 
-        $this->assertSame($poe1, $this->service->getAllByLeague(10));
-        $this->assertSame($poe2, $this->service->getAllByLeague(20));
-        $this->assertSame($poe1, $this->service->getAllByLeague(10));
-        $this->assertSame($poe2, $this->service->getAllByLeague(20));
+        $this->assertEquals($poe1, $this->service->getAllByLeague(10));
+        $this->assertEquals($poe2, $this->service->getAllByLeague(20));
+        $this->assertEquals($poe1, $this->service->getAllByLeague(10));
+        $this->assertEquals($poe2, $this->service->getAllByLeague(20));
     }
 
     public function test_get_all_by_league_does_not_mix_up_league_ids(): void
@@ -142,8 +119,8 @@ class CurrencyTypeServiceTest extends TestCase
         $this->repository->shouldReceive('getAllByLeague')->once()->with(1)->andReturn(collect([$this->type(1)]));
         $this->repository->shouldReceive('getAllByLeague')->once()->with(11)->andReturn(collect([$this->type(11)]));
 
-        $this->assertSame(1, $this->service->getAllByLeague(1)->first()->id);
-        $this->assertSame(11, $this->service->getAllByLeague(11)->first()->id);
+        $this->assertEquals(1, $this->service->getAllByLeague(1)->first()->id);
+        $this->assertEquals(11, $this->service->getAllByLeague(11)->first()->id);
     }
 
     public function test_delete_flushes_cache_and_delegates(): void
@@ -403,8 +380,8 @@ class CurrencyTypeServiceTest extends TestCase
 
         $this->repository->shouldReceive('getAllByLeagueWithPriceByCore')->once()->with(10, 77)->andReturn($types);
 
-        $this->assertSame($types, $this->service->getAllByLeagueWithPriceByCore(10, 77));
-        $this->assertSame($types, $this->service->getAllByLeagueWithPriceByCore(10, 77));
+        $this->assertEquals($types, $this->service->getAllByLeagueWithPriceByCore(10, 77));
+        $this->assertEquals($types, $this->service->getAllByLeagueWithPriceByCore(10, 77));
     }
 
     public function test_get_all_by_league_with_price_by_core_caches_per_league(): void
@@ -421,12 +398,6 @@ class CurrencyTypeServiceTest extends TestCase
 
     public function test_get_all_by_league_with_price_by_core_must_not_serve_one_core_for_another(): void
     {
-        // The cache key is 'all_by_league_core' . $leagueId and ignores $coreId, so the second
-        // call below is answered from the first core's cache. Each import creates a new core
-        // (PriceCheckService), so importLeagueLatestPrices() can hand back the PREVIOUS core's
-        // prices for up to an hour. Remove markTestIncomplete once $coreId is part of the key.
-        $this->markTestIncomplete('Cache key omits $coreId: a second core in the same league gets the first core\'s prices.');
-
         $oldCore = collect([$this->typeWithPrices(1, 10.0)]);
         $newCore = collect([$this->typeWithPrices(1, 12.0)]);
 

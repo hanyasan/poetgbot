@@ -33,11 +33,13 @@ class PoeLeagueServiceTest extends TestCase
         $this->ninjaService = Mockery::mock(PoeNinjaServiceContract::class);
 
         $this->service = new PoeLeagueService($this->repository, $this->ninjaService);
+
+        Cache::flush();
     }
 
     private function league(int $id, string $name, PoeVersionEnum $version, bool $active = false): PoeLeagueDto
     {
-        return new PoeLeagueDto($id, Carbon::now(), Carbon::now(), $name, $version->value, $active);
+        return new PoeLeagueDto($id, Carbon::now()->toDateTimeString(), Carbon::now()->toDateTimeString(), $name, $version->value, $active);
     }
 
     private function ninjaLeague(string $name): PoeNinjaLeague
@@ -51,8 +53,8 @@ class PoeLeagueServiceTest extends TestCase
 
         $this->repository->shouldReceive('find')->once()->with(1)->andReturn($league);
 
-        $this->assertSame($league, $this->service->find(1));
-        $this->assertSame($league, $this->service->find(1));
+        $this->assertEquals($league, $this->service->find(1));
+        $this->assertEquals($league, $this->service->find(1));
     }
 
     public function test_get_all_caches_result(): void
@@ -64,8 +66,8 @@ class PoeLeagueServiceTest extends TestCase
 
         $this->repository->shouldReceive('getAll')->once()->andReturn($leagues);
 
-        $this->assertSame($leagues, $this->service->getAll());
-        $this->assertSame($leagues, $this->service->getAll());
+        $this->assertEquals($leagues, $this->service->getAll());
+        $this->assertEquals($leagues, $this->service->getAll());
     }
 
     public function test_get_all_active_caches_per_version(): void
@@ -76,10 +78,10 @@ class PoeLeagueServiceTest extends TestCase
         $this->repository->shouldReceive('getAllActive')->once()->with(PoeVersionEnum::POE_1)->andReturn($poe1);
         $this->repository->shouldReceive('getAllActive')->once()->with(PoeVersionEnum::POE_2)->andReturn($poe2);
 
-        $this->assertSame($poe1, $this->service->getAllActive(PoeVersionEnum::POE_1));
-        $this->assertSame($poe2, $this->service->getAllActive(PoeVersionEnum::POE_2));
-        $this->assertSame($poe1, $this->service->getAllActive(PoeVersionEnum::POE_1));
-        $this->assertSame($poe2, $this->service->getAllActive(PoeVersionEnum::POE_2));
+        $this->assertEquals($poe1, $this->service->getAllActive(PoeVersionEnum::POE_1));
+        $this->assertEquals($poe2, $this->service->getAllActive(PoeVersionEnum::POE_2));
+        $this->assertEquals($poe1, $this->service->getAllActive(PoeVersionEnum::POE_1));
+        $this->assertEquals($poe2, $this->service->getAllActive(PoeVersionEnum::POE_2));
     }
 
     public function test_get_all_active_is_flushed_by_delete(): void
@@ -121,10 +123,10 @@ class PoeLeagueServiceTest extends TestCase
         $this->repository->shouldReceive('getByLeague')->once()->with(PoeVersionEnum::POE_1)->andReturn($poe1);
         $this->repository->shouldReceive('getByLeague')->once()->with(PoeVersionEnum::POE_2)->andReturn($poe2);
 
-        $this->assertSame($poe1, $this->service->getByVersion(PoeVersionEnum::POE_1));
-        $this->assertSame($poe2, $this->service->getByVersion(PoeVersionEnum::POE_2));
-        $this->assertSame($poe1, $this->service->getByVersion(PoeVersionEnum::POE_1));
-        $this->assertSame($poe2, $this->service->getByVersion(PoeVersionEnum::POE_2));
+        $this->assertEquals($poe1, $this->service->getByVersion(PoeVersionEnum::POE_1));
+        $this->assertEquals($poe2, $this->service->getByVersion(PoeVersionEnum::POE_2));
+        $this->assertEquals($poe1, $this->service->getByVersion(PoeVersionEnum::POE_1));
+        $this->assertEquals($poe2, $this->service->getByVersion(PoeVersionEnum::POE_2));
     }
 
     public function test_delete_flushes_cache_and_delegates(): void

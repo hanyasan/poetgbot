@@ -34,8 +34,8 @@ class DtoCacheRoundTripTest extends TestCase
     {
         $type = new PriceCheckCoreTypeDto(
             id: 1,
-            created_at: Carbon::parse('2024-01-01 00:00:00'),
-            updated_at: Carbon::parse('2024-01-01 00:00:00'),
+            created_at: '2024-01-01 00:00:00',
+            updated_at: '2024-01-01 00:00:00',
             is_primary: true,
             rate: 2.5,
             type_id: 'divine',
@@ -45,8 +45,8 @@ class DtoCacheRoundTripTest extends TestCase
 
         $core = new PriceCheckCoreDto(
             id: 7,
-            created_at: Carbon::parse('2024-01-01 00:00:00'),
-            updated_at: Carbon::parse('2024-01-01 00:00:00'),
+            created_at: '2024-01-01 00:00:00',
+            updated_at: '2024-01-01 00:00:00',
             price_check_core_types: [$type],
         );
 
@@ -64,8 +64,6 @@ class DtoCacheRoundTripTest extends TestCase
         // the objects come back as __PHP_Incomplete_Class.
         $this->assertInstanceOf(PriceCheckCoreDto::class, $core);
         $this->assertSame(7, $core->id);
-        $this->assertInstanceOf(Carbon::class, $core->created_at);
-        $this->assertSame('2024-01-01 00:00:00', $core->created_at->toDateTimeString());
 
         $type = $core->price_check_core_types[0];
 

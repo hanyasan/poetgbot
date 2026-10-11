@@ -14,6 +14,7 @@ use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
 use App\Services\PoeNinjaService\PoeNinjaService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
@@ -28,6 +29,9 @@ class PriceCheckCoreServiceTest extends TestCase
 
     private PriceCheckCoreService $service;
 
+    private $coreOne;
+    private $coreTwo;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -38,38 +42,38 @@ class PriceCheckCoreServiceTest extends TestCase
         $this->leagueService = Mockery::mock(PoeLeagueServiceContract::class);
 
         $this->service = new PriceCheckCoreService($this->repository, $this->ninjaService, $this->leagueService);
+
+        $this->coreOne = $this->core(1);
+        $this->coreTwo = $this->core(2);
+
+        Cache::flush();
     }
 
     private function core(int $id): PriceCheckCoreDto
     {
-        return new PriceCheckCoreDto($id, Carbon::now(), Carbon::now(), []);
+        return new PriceCheckCoreDto($id, Carbon::now()->toDateTimeString(), Carbon::now()->toDateTimeString(), []);
     }
 
     public function test_find_returns_repository_result_and_caches_it(): void
     {
-        $core = $this->core(1);
+        $this->repository->expects('find')->with(1)->andReturns($this->coreOne);
 
-        $this->repository->shouldReceive('find')->once()->with(1)->andReturn($core);
-
-        $this->assertSame($core, $this->service->find(1));
-        $this->assertSame($core, $this->service->find(1));
+        $this->assertEquals($this->coreOne, $this->service->find(1));
+        $this->assertEquals($this->coreOne, $this->service->find(1));
     }
 
     public function test_find_caches_per_id(): void
     {
-        $one = $this->core(1);
-        $two = $this->core(2);
+        $this->repository->expects('find')->with(1)->andReturns($this->coreOne);
+        $this->repository->expects('find')->with(2)->andReturns($this->coreTwo);
 
-        $this->repository->shouldReceive('find')->once()->with(1)->andReturn($one);
-        $this->repository->shouldReceive('find')->once()->with(2)->andReturn($two);
-
-        $this->assertSame($one, $this->service->find(1));
-        $this->assertSame($two, $this->service->find(2));
+        $this->assertEquals($this->coreOne, $this->service->find(1));
+        $this->assertEquals($this->coreTwo, $this->service->find(2));
     }
 
     public function test_find_propagates_not_found_and_does_not_cache(): void
     {
-        $this->repository->shouldReceive('find')->twice()->with(99)->andThrow(new ModelNotFoundException());
+        $this->repository->expects('find')->twice()->with(99)->andThrow(new ModelNotFoundException());
 
         for ($i = 0; $i < 2; $i++) {
             try {
@@ -87,8 +91,8 @@ class PriceCheckCoreServiceTest extends TestCase
 
         $this->repository->shouldReceive('getAll')->once()->andReturn($cores);
 
-        $this->assertSame($cores, $this->service->getAll());
-        $this->assertSame($cores, $this->service->getAll());
+        $this->assertEquals($cores, $this->service->getAll());
+        $this->assertEquals($cores, $this->service->getAll());
     }
 
     public function test_get_by_league_caches_per_league(): void
@@ -99,9 +103,9 @@ class PriceCheckCoreServiceTest extends TestCase
         $this->repository->shouldReceive('getByLeague')->once()->with(10)->andReturn($first);
         $this->repository->shouldReceive('getByLeague')->once()->with(20)->andReturn($second);
 
-        $this->assertSame($first, $this->service->getByLeague(10));
-        $this->assertSame($first, $this->service->getByLeague(10));
-        $this->assertSame($second, $this->service->getByLeague(20));
+        $this->assertEquals($first, $this->service->getByLeague(10));
+        $this->assertEquals($first, $this->service->getByLeague(10));
+        $this->assertEquals($second, $this->service->getByLeague(20));
     }
 
     public function test_get_latest_by_league_caches_per_league(): void
@@ -112,9 +116,9 @@ class PriceCheckCoreServiceTest extends TestCase
         $this->repository->shouldReceive('getLatestByLeague')->once()->with(10)->andReturn($first);
         $this->repository->shouldReceive('getLatestByLeague')->once()->with(20)->andReturn($second);
 
-        $this->assertSame($first, $this->service->getLatestByLeague(10));
-        $this->assertSame($first, $this->service->getLatestByLeague(10));
-        $this->assertSame($second, $this->service->getLatestByLeague(20));
+        $this->assertEquals($first, $this->service->getLatestByLeague(10));
+        $this->assertEquals($first, $this->service->getLatestByLeague(10));
+        $this->assertEquals($second, $this->service->getLatestByLeague(20));
     }
 
     public function test_get_from_date_by_league_caches_per_date_and_league(): void
@@ -131,9 +135,9 @@ class PriceCheckCoreServiceTest extends TestCase
             fn ($date, $league) => $date->equalTo($later) && $league === 10
         )->andReturn($b);
 
-        $this->assertSame($a, $this->service->getFromDateByLeague($from, 10));
-        $this->assertSame($a, $this->service->getFromDateByLeague($from, 10));
-        $this->assertSame($b, $this->service->getFromDateByLeague($later, 10));
+        $this->assertEquals($a, $this->service->getFromDateByLeague($from, 10));
+        $this->assertEquals($a, $this->service->getFromDateByLeague($from, 10));
+        $this->assertEquals($b, $this->service->getFromDateByLeague($later, 10));
     }
 
     public function test_create_passes_types_to_repository_and_returns_dto(): void
@@ -163,7 +167,7 @@ class PriceCheckCoreServiceTest extends TestCase
 
         $this->service->create(['types' => []], 10);
 
-        $this->assertSame($fresh, $this->service->getByLeague(10));
+        $this->assertEquals($fresh, $this->service->getByLeague(10));
     }
 
     public function test_create_invalidates_get_all_cache(): void
@@ -184,7 +188,7 @@ class PriceCheckCoreServiceTest extends TestCase
 
     public function test_create_new_by_ninja_maps_ninja_items_to_core_types(): void
     {
-        $league = new PoeLeagueDto(10, Carbon::now(), Carbon::now(), 'Test League', PoeVersionEnum::POE_2->value, true);
+        $league = new PoeLeagueDto(10, Carbon::now()->toDateTimeString(), Carbon::now()->toDateTimeString(), 'Test League', PoeVersionEnum::POE_2->value, true);
         $response = new PoeNinjaExchangeResponse(
             new PoeNinjaExchangeCore(
                 [

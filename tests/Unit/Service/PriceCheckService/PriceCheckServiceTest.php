@@ -68,12 +68,12 @@ class PriceCheckServiceTest extends TestCase
 
     private function league(int $id = self::LEAGUE_ID, PoeVersionEnum $version = PoeVersionEnum::POE_2): PoeLeagueDto
     {
-        return new PoeLeagueDto($id, Carbon::now(), Carbon::now(), 'Test League', $version->value, true);
+        return new PoeLeagueDto($id, Carbon::now()->toDateTimeString(), Carbon::now()->toDateTimeString(), 'Test League', $version->value, true);
     }
 
     private function core(int $id = self::CORE_ID): PriceCheckCoreDto
     {
-        return new PriceCheckCoreDto($id, Carbon::now(), Carbon::now(), []);
+        return new PriceCheckCoreDto($id, Carbon::now()->toDateTimeString(), Carbon::now()->toDateTimeString(), []);
     }
 
     private function item(string $id, string $name, string $detailsId): PoeNinjaExchangeItem
