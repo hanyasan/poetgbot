@@ -9,7 +9,7 @@ use App\Enums\PoeVersionEnum;
 use App\Repositories\Currency\PriceCheckCore\PriceCheckCoreRepositoryContract;
 use App\Services\CacheHelperService;
 use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
-use App\Services\PoeNinjaService\PoeNinjaService;
+use App\Services\PoeNinjaService\PoeNinjaServiceContract;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -22,7 +22,7 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
 
     public function __construct(
         private readonly PriceCheckCoreRepositoryContract $repository,
-        private readonly PoeNinjaService $ninjaService,
+        private readonly PoeNinjaServiceContract $ninjaService,
         private readonly PoeLeagueServiceContract $leagueService,
     ) {}
 
