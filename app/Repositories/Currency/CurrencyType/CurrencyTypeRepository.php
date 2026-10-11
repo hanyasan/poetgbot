@@ -6,6 +6,7 @@ use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithLeagueDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithPricesDto;
 use App\Models\Currency\CurrencyType as CurrencyTypeModel;
+use App\Models\Currency\PriceCheckCore;
 use App\Repositories\BaseEloquentRepository;
 use App\Services\Mapper\MapperService;
 use Illuminate\Support\Collection;
@@ -75,16 +76,23 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
      */
     public function getAllByLeagueWithLatestPrice(int $leagueId): Collection
     {
+        $latestCoreId = PriceCheckCore::query()
+            ->select('id')
+            ->where('poe_league_id', $leagueId)
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->limit(1);
+
         return $this->getQuery()
             ->where('poe_league_id', $leagueId)
-            ->with(['prices' => static function ($query) {
-                $query->latest();
+            ->with(['prices' => static function ($query) use ($latestCoreId) {
+                $query->where('price_check_core_id', $latestCoreId);
             }])
             ->get()
             ->toBase()
             ->map(function ($priceType) {
                 return $this->mapper->mapFromArray(
-                    CurrencyTypeDto::class,
+                    CurrencyTypeWithPricesDto::class,
                     $priceType->toArray()
                 );
             });

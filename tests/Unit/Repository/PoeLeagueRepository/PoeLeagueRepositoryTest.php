@@ -122,6 +122,13 @@ class PoeLeagueRepositoryTest extends TestCase
         DB::beginTransaction();
 
         try {
+            // price_check_cores and currency_types reference poe_leagues, so a bare
+            // delete() fails with a foreign key violation once real data was imported.
+            // The enclosing transaction rolls all of this back.
+            DB::table('price_check_core_types')->delete();
+            DB::table('currency_prices')->delete();
+            DB::table('price_check_cores')->delete();
+            DB::table('currency_types')->delete();
             PoeLeagueModel::query()->delete();
 
             $this->assertSame(Collection::class, $this->repository->getAll()::class);

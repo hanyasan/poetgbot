@@ -2,10 +2,14 @@
 
 namespace Tests\Unit\Repository\CurrencyTypeRepository;
 
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyPriceDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithPricesDto;
 use App\Enums\PoeVersionEnum;
+use App\Models\Currency\CurrencyPrice as CurrencyPriceModel;
 use App\Models\Currency\CurrencyType as CurrencyTypeModel;
+use App\Models\Currency\PriceCheckCore as PriceCheckCoreModel;
 use App\Models\PoeLeague as PoeLeagueModel;
 use App\Repositories\Currency\CurrencyType\CurrencyTypeRepositoryContract;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -81,27 +85,6 @@ class CurrencyTypeRepositoryTest extends TestCase
         $this->repository->find(PHP_INT_MAX);
     }
 
-    public function test_find_by_detail_id_for_each_poe_version(): void
-    {
-        $poe1 = $this->repository->findByDetailId('test-divine-orb-poe1');
-        $poe2 = $this->repository->findByDetailId('test-divine-orb-poe2');
-
-        $this->assertSame($this->poe1Divine->id, $poe1->id);
-        $this->assertSame(PoeVersionEnum::POE_1->value, $poe1->league->poe_version);
-        $this->assertSame($this->poe1League->id, $poe1->league->id);
-
-        $this->assertSame($this->poe2Divine->id, $poe2->id);
-        $this->assertSame(PoeVersionEnum::POE_2->value, $poe2->league->poe_version);
-        $this->assertSame($this->poe2League->id, $poe2->league->id);
-    }
-
-    public function test_find_by_detail_id_throws_when_missing(): void
-    {
-        $this->expectException(ModelNotFoundException::class);
-
-        $this->repository->findByDetailId('test-no-such-detail-id');
-    }
-
     public function test_get_all_includes_types_of_both_poe_versions(): void
     {
         $all = $this->repository->getAll();
@@ -134,6 +117,170 @@ class CurrencyTypeRepositoryTest extends TestCase
         $empty = $this->league('Test Empty League', PoeVersionEnum::POE_2);
 
         $this->assertTrue($this->repository->getAllByLeague($empty->id)->isEmpty());
+    }
+
+    private function core(PoeLeagueModel $league): PriceCheckCoreModel
+    {
+        return PriceCheckCoreModel::create(['poe_league_id' => $league->id]);
+    }
+
+    /**
+     * Plain insert: the currency_prices table has no timestamp columns, so Model::create() cannot be used.
+     */
+    private function price(CurrencyTypeModel $type, PriceCheckCoreModel $core, float $rate): int
+    {
+        return CurrencyPriceModel::query()->insertGetId([
+            'rate' => $rate,
+            'currency_type_id' => $type->id,
+            'price_check_core_id' => $core->id,
+        ]);
+    }
+
+    public function test_get_all_by_league_with_price_by_core_only_returns_prices_of_that_core(): void
+    {
+        $chaos = $this->type($this->poe1League, 'Test Chaos Orb', 'test-chaos-poe1', 'test-chaos-orb-poe1');
+        $older = $this->core($this->poe1League);
+        $newer = $this->core($this->poe1League);
+
+        $this->price($this->poe1Divine, $older, 10.0);
+        $this->price($this->poe1Divine, $newer, 12.0);
+        $this->price($chaos, $older, 1.0);
+
+        $olderTypes = $this->repository->getAllByLeagueWithPriceByCore($this->poe1League->id, $older->id)->keyBy('id');
+        $newerTypes = $this->repository->getAllByLeagueWithPriceByCore($this->poe1League->id, $newer->id)->keyBy('id');
+
+        $this->assertSame([10.0], array_column($olderTypes[$this->poe1Divine->id]->prices, 'rate'));
+        $this->assertSame([1.0], array_column($olderTypes[$chaos->id]->prices, 'rate'));
+
+        $this->assertSame([12.0], array_column($newerTypes[$this->poe1Divine->id]->prices, 'rate'));
+    }
+
+    public function test_get_all_by_league_with_price_by_core_keeps_types_that_have_no_price_for_the_core(): void
+    {
+        $chaos = $this->type($this->poe1League, 'Test Chaos Orb', 'test-chaos-poe1', 'test-chaos-orb-poe1');
+        $core = $this->core($this->poe1League);
+
+        $this->price($this->poe1Divine, $core, 10.0);
+
+        $types = $this->repository->getAllByLeagueWithPriceByCore($this->poe1League->id, $core->id)->keyBy('id');
+
+        $this->assertCount(2, $types);
+        $this->assertCount(1, $types[$this->poe1Divine->id]->prices);
+        $this->assertSame([], $types[$chaos->id]->prices);
+    }
+
+    public function test_get_all_by_league_with_price_by_core_maps_prices_to_dtos(): void
+    {
+        $core = $this->core($this->poe1League);
+        $priceId = $this->price($this->poe1Divine, $core, 2.5);
+
+        $types = $this->repository->getAllByLeagueWithPriceByCore($this->poe1League->id, $core->id);
+
+        $this->assertContainsOnlyInstancesOf(CurrencyTypeWithPricesDto::class, $types);
+
+        $divine = $types->firstWhere('id', $this->poe1Divine->id);
+        $this->assertSame('Test Divine Orb', $divine->currency_type_name);
+        $this->assertSame('test-divine-poe1', $divine->currency_trade_id);
+        $this->assertSame('test-divine-orb-poe1', $divine->currency_ninja_details_id);
+        $this->assertContainsOnlyInstancesOf(CurrencyPriceDto::class, $divine->prices);
+        $this->assertSame($priceId, $divine->prices[0]->id);
+        $this->assertSame(2.5, $divine->prices[0]->rate);
+    }
+
+    public function test_get_all_by_league_with_price_by_core_is_scoped_to_the_league(): void
+    {
+        $core = $this->core($this->poe1League);
+        $this->price($this->poe1Divine, $core, 10.0);
+
+        $types = $this->repository->getAllByLeagueWithPriceByCore($this->poe1League->id, $core->id);
+
+        $this->assertSame([$this->poe1Divine->id], $types->pluck('id')->all());
+        $this->assertNotContains($this->poe2Divine->id, $types->pluck('id')->all());
+    }
+
+    public function test_get_all_by_league_with_price_by_core_without_types_is_empty(): void
+    {
+        $empty = $this->league('Test Empty League', PoeVersionEnum::POE_2);
+
+        $result = $this->repository->getAllByLeagueWithPriceByCore($empty->id, $this->core($empty)->id);
+
+        $this->assertTrue($result->isEmpty());
+    }
+
+    private function coreAt(PoeLeagueModel $league, string $createdAt): PriceCheckCoreModel
+    {
+        return PriceCheckCoreModel::create([
+            'poe_league_id' => $league->id,
+            'created_at' => $createdAt,
+            'updated_at' => $createdAt,
+        ]);
+    }
+
+    public function test_get_all_by_league_with_latest_price_uses_the_newest_core_of_the_league(): void
+    {
+        $chaos = $this->type($this->poe1League, 'Test Chaos Orb', 'test-chaos-poe1', 'test-chaos-orb-poe1');
+        $old = $this->coreAt($this->poe1League, '2024-01-01 00:00:00');
+        $new = $this->coreAt($this->poe1League, '2024-03-01 00:00:00');
+        $mid = $this->coreAt($this->poe1League, '2024-02-01 00:00:00');
+
+        foreach ([$old, $new, $mid] as $core) {
+            $this->price($this->poe1Divine, $core, (float) $core->created_at->month);
+            $this->price($chaos, $core, (float) $core->created_at->month / 10);
+        }
+
+        $types = $this->repository->getAllByLeagueWithLatestPrice($this->poe1League->id)->keyBy('id');
+
+        $this->assertContainsOnlyInstancesOf(CurrencyTypeWithPricesDto::class, $types);
+        $this->assertSame([3.0], array_column($types[$this->poe1Divine->id]->prices, 'rate'));
+        $this->assertSame([0.3], array_column($types[$chaos->id]->prices, 'rate'));
+    }
+
+    public function test_get_all_by_league_with_latest_price_ignores_cores_of_other_leagues(): void
+    {
+        $mine = $this->coreAt($this->poe1League, '2024-01-01 00:00:00');
+        $foreignNewer = $this->coreAt($this->poe1OtherLeague, '2024-06-01 00:00:00');
+
+        $this->price($this->poe1Divine, $mine, 10.0);
+        $this->price($this->poe1Divine, $foreignNewer, 99.0);
+
+        $types = $this->repository->getAllByLeagueWithLatestPrice($this->poe1League->id);
+
+        $this->assertSame([10.0], array_column($types->first()->prices, 'rate'));
+    }
+
+    public function test_get_all_by_league_with_latest_price_breaks_created_at_ties_by_id(): void
+    {
+        $first = $this->coreAt($this->poe1League, '2024-01-01 00:00:00');
+        $second = $this->coreAt($this->poe1League, '2024-01-01 00:00:00');
+
+        $this->price($this->poe1Divine, $first, 1.0);
+        $this->price($this->poe1Divine, $second, 2.0);
+
+        $types = $this->repository->getAllByLeagueWithLatestPrice($this->poe1League->id);
+
+        $this->assertSame([2.0], array_column($types->first()->prices, 'rate'));
+    }
+
+    public function test_get_all_by_league_with_latest_price_keeps_types_unpriced_by_the_latest_core(): void
+    {
+        $chaos = $this->type($this->poe1League, 'Test Chaos Orb', 'test-chaos-poe1', 'test-chaos-orb-poe1');
+        $old = $this->coreAt($this->poe1League, '2024-01-01 00:00:00');
+        $this->coreAt($this->poe1League, '2024-02-01 00:00:00');
+
+        // priced only by the older core: not part of the latest price check
+        $this->price($chaos, $old, 1.0);
+
+        $types = $this->repository->getAllByLeagueWithLatestPrice($this->poe1League->id)->keyBy('id');
+
+        $this->assertSame([], $types[$chaos->id]->prices);
+    }
+
+    public function test_get_all_by_league_with_latest_price_without_any_core_returns_types_with_no_prices(): void
+    {
+        $types = $this->repository->getAllByLeagueWithLatestPrice($this->poe1League->id);
+
+        $this->assertSame([$this->poe1Divine->id], $types->pluck('id')->all());
+        $this->assertSame([], $types->first()->prices);
     }
 
     public function test_delete(): void

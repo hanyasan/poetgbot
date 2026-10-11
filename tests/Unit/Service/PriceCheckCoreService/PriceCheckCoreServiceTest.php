@@ -213,4 +213,39 @@ class PriceCheckCoreServiceTest extends TestCase
 
         $this->assertSame($core, $this->service->createNewByNinja(10));
     }
+
+    public function test_prep_types_marks_only_the_primary_item_and_uses_rate_one_for_it(): void
+    {
+        $response = new PoeNinjaExchangeResponse(
+            new PoeNinjaExchangeCore(
+                [
+                    new PoeNinjaExchangeItem('divine', 'Divine Orb', 'img.png', 'Currency', 'divine-orb'),
+                    new PoeNinjaExchangeItem('chaos', 'Chaos Orb', 'img.png', 'Currency', 'chaos-orb'),
+                    new PoeNinjaExchangeItem('exalted', 'Exalted Orb', 'img.png', 'Currency', 'exalted-orb'),
+                ],
+                ['divine' => 99.0, 'chaos' => 0.25, 'exalted' => 0.05],
+                'divine',
+                'chaos',
+            ),
+            [],
+            [],
+        );
+
+        $this->assertSame([
+            ['is_primary' => true, 'rate' => 1, 'type_id' => 'divine', 'name' => 'Divine Orb'],
+            ['is_primary' => false, 'rate' => 0.25, 'type_id' => 'chaos', 'name' => 'Chaos Orb'],
+            ['is_primary' => false, 'rate' => 0.05, 'type_id' => 'exalted', 'name' => 'Exalted Orb'],
+        ], $this->service->prepTypes($response));
+    }
+
+    public function test_prep_types_without_items_is_empty(): void
+    {
+        $response = new PoeNinjaExchangeResponse(
+            new PoeNinjaExchangeCore([], [], 'divine', 'chaos'),
+            [],
+            [],
+        );
+
+        $this->assertSame([], $this->service->prepTypes($response));
+    }
 }

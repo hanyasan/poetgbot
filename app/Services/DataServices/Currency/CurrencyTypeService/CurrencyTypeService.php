@@ -141,7 +141,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
             CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
             CacheHelperService::generateCacheTag(self::$currencyTypeByLeagueTag, $leagueId),
         ])->remember(
-            'all_by_league_core' . $leagueId,
+            'all_by_league_core' . $leagueId . '_' . $coreId,
             CacheHelperService::setHourTtl(),
             function () use ($leagueId, $coreId) {
                 return $this->repository->getAllByLeagueWithPriceByCore($leagueId, $coreId);

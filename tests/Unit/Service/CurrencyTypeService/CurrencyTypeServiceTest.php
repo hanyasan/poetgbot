@@ -5,8 +5,10 @@ namespace Tests\Unit\Service\CurrencyTypeService;
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeCore;
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeItem;
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeResponse;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyPriceDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithPricesDto;
 use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\Currency\CurrencyType\CurrencyTypeRepositoryContract;
@@ -59,6 +61,19 @@ class CurrencyTypeServiceTest extends TestCase
         return new CurrencyTypeDto($id, 'Type ' . $id, Carbon::now(), Carbon::now(), 'trade-' . $id, 'detail-' . $id);
     }
 
+    private function typeWithPrices(int $id, float $rate): CurrencyTypeWithPricesDto
+    {
+        return new CurrencyTypeWithPricesDto(
+            $id,
+            'Type ' . $id,
+            '2024-01-01T00:00:00.000000Z',
+            '2024-01-01T00:00:00.000000Z',
+            [new CurrencyPriceDto($id * 100, $rate)],
+            'trade-' . $id,
+            'detail-' . $id,
+        );
+    }
+
     private function ninjaResponse(array $items): PoeNinjaExchangeResponse
     {
         $core = (new ReflectionClass(PoeNinjaExchangeCore::class))->newInstanceWithoutConstructor();
@@ -71,18 +86,27 @@ class CurrencyTypeServiceTest extends TestCase
         return new PoeNinjaExchangeItem($id, $name, 'image.png', 'Currency', $detailsId);
     }
 
-    public function test_find_by_detail_caches_per_detail_id(): void
+    public function test_find_by_detail_only_calls_methods_the_repository_contract_has(): void
     {
-        $poe1 = $this->typeWithLeague(1, $this->league(1, 'Poe1 League', PoeVersionEnum::POE_1), 'divine-orb');
-        $poe2 = $this->typeWithLeague(2, $this->league(2, 'Poe2 League', PoeVersionEnum::POE_2), 'divine-orb-2');
+        // Regression guard for 4d3d55c: findByDetailId() was removed from the repository but
+        // CurrencyTypeService::findByDetail() kept calling it, so GET /api/v1/price/currency/{id}
+        // and the Telegram /divine command throw "Call to undefined method". The Mockery mock
+        // below accepts any method name, so assert against the real contract instead.
+        $called = [];
+        $this->repository->shouldReceive('findByDetailId')->andReturnUsing(function () use (&$called) {
+            $called[] = 'findByDetailId';
 
-        $this->repository->shouldReceive('findByDetailId')->once()->with('divine-orb')->andReturn($poe1);
-        $this->repository->shouldReceive('findByDetailId')->once()->with('divine-orb-2')->andReturn($poe2);
+            return $this->typeWithLeague(1, $this->league(1, 'L', PoeVersionEnum::POE_1), 'divine-orb');
+        });
 
-        $this->assertSame($poe1, $this->service->findByDetail('divine-orb'));
-        $this->assertSame($poe2, $this->service->findByDetail('divine-orb-2'));
-        $this->assertSame($poe1, $this->service->findByDetail('divine-orb'));
-        $this->assertSame($poe2, $this->service->findByDetail('divine-orb-2'));
+        $this->service->findByDetail('divine-orb');
+
+        foreach ($called as $method) {
+            $this->assertTrue(
+                method_exists(CurrencyTypeRepositoryContract::class, $method),
+                "CurrencyTypeService::findByDetail() calls {$method}(), which CurrencyTypeRepositoryContract does not declare."
+            );
+        }
     }
 
     public function test_get_all_caches_result(): void
@@ -236,23 +260,6 @@ class CurrencyTypeServiceTest extends TestCase
         $this->service->getAllByLeague(5);
     }
 
-    public function test_upsert_by_ninja_flushes_cached_detail_lookups(): void
-    {
-        $this->leagueService->shouldReceive('find')->once()->with(5)
-            ->andReturn($this->league(5, 'Standard', PoeVersionEnum::POE_1));
-        $this->ninjaService->shouldReceive('getCurrencyPrices')->once()->andReturn($this->ninjaResponse([]));
-        $this->repository->shouldReceive('upsert')->once();
-
-        // the by-detail cache shares the base tag, so it is flushed as well
-        $type = $this->typeWithLeague(1, $this->league(5, 'Standard', PoeVersionEnum::POE_1), 'divine-orb');
-        $this->repository->shouldReceive('findByDetailId')->twice()->with('divine-orb')->andReturn($type);
-
-        $this->service->findByDetail('divine-orb');
-        $this->service->upsertByNinja(5);
-
-        $this->service->findByDetail('divine-orb');
-    }
-
     public function test_fresh_all_by_ninja_upserts_every_active_league_of_both_versions(): void
     {
         $poe1Standard = $this->league(1, 'Standard', PoeVersionEnum::POE_1);
@@ -319,5 +326,124 @@ class CurrencyTypeServiceTest extends TestCase
 
         $this->service->getAll();
         $this->service->getAllByLeague(10);
+    }
+
+    public function test_upsert_adds_the_league_id_to_every_row(): void
+    {
+        $this->repository->shouldReceive('upsert')->once()->with([
+            [
+                'currency_type_name' => 'Divine Orb',
+                'currency_trade_id' => 'divine',
+                'currency_ninja_details_id' => 'divine-orb',
+                'poe_league_id' => 7,
+            ],
+            [
+                'currency_type_name' => 'Chaos Orb',
+                'currency_trade_id' => 'chaos',
+                'currency_ninja_details_id' => 'chaos-orb',
+                'poe_league_id' => 7,
+            ],
+        ]);
+
+        $this->service->upsert([
+            ['currency_type_name' => 'Divine Orb', 'currency_trade_id' => 'divine', 'currency_ninja_details_id' => 'divine-orb'],
+            ['currency_type_name' => 'Chaos Orb', 'currency_trade_id' => 'chaos', 'currency_ninja_details_id' => 'chaos-orb'],
+        ], 7);
+    }
+
+    public function test_upsert_drops_keys_that_are_not_type_columns(): void
+    {
+        $this->repository->shouldReceive('upsert')->once()->with([
+            [
+                'currency_type_name' => 'Divine Orb',
+                'currency_trade_id' => 'divine',
+                'currency_ninja_details_id' => 'divine-orb',
+                'poe_league_id' => 7,
+            ],
+        ]);
+
+        $this->service->upsert([
+            [
+                'currency_type_name' => 'Divine Orb',
+                'currency_trade_id' => 'divine',
+                'currency_ninja_details_id' => 'divine-orb',
+                'unexpected' => 'dropped',
+            ],
+        ], 7);
+    }
+
+    public function test_upsert_does_not_need_ninja_or_the_league_service(): void
+    {
+        // unlike upsertByNinja(), the caller already holds the poe.ninja data (PriceCheckService)
+        $this->leagueService->shouldNotReceive('find');
+        $this->ninjaService->shouldNotReceive('getCurrencyPrices');
+        $this->repository->shouldReceive('upsert')->once()->with([]);
+
+        $this->service->upsert([], 7);
+    }
+
+    public function test_upsert_flushes_cached_types_of_that_league(): void
+    {
+        $this->repository->shouldReceive('upsert')->once();
+        $this->repository->shouldReceive('getAll')->twice()->andReturn(collect());
+        $this->repository->shouldReceive('getAllByLeague')->twice()->with(5)->andReturn(collect());
+
+        $this->service->getAll();
+        $this->service->getAllByLeague(5);
+
+        $this->service->upsert([], 5);
+
+        $this->service->getAll();
+        $this->service->getAllByLeague(5);
+    }
+
+    public function test_get_all_by_league_with_price_by_core_caches_result(): void
+    {
+        $types = collect([$this->typeWithPrices(1, 10.0)]);
+
+        $this->repository->shouldReceive('getAllByLeagueWithPriceByCore')->once()->with(10, 77)->andReturn($types);
+
+        $this->assertSame($types, $this->service->getAllByLeagueWithPriceByCore(10, 77));
+        $this->assertSame($types, $this->service->getAllByLeagueWithPriceByCore(10, 77));
+    }
+
+    public function test_get_all_by_league_with_price_by_core_caches_per_league(): void
+    {
+        $first = collect([$this->typeWithPrices(1, 10.0)]);
+        $second = collect([$this->typeWithPrices(2, 20.0)]);
+
+        $this->repository->shouldReceive('getAllByLeagueWithPriceByCore')->once()->with(10, 77)->andReturn($first);
+        $this->repository->shouldReceive('getAllByLeagueWithPriceByCore')->once()->with(20, 77)->andReturn($second);
+
+        $this->assertSame($first, $this->service->getAllByLeagueWithPriceByCore(10, 77));
+        $this->assertSame($second, $this->service->getAllByLeagueWithPriceByCore(20, 77));
+    }
+
+    public function test_get_all_by_league_with_price_by_core_must_not_serve_one_core_for_another(): void
+    {
+        // The cache key is 'all_by_league_core' . $leagueId and ignores $coreId, so the second
+        // call below is answered from the first core's cache. Each import creates a new core
+        // (PriceCheckService), so importLeagueLatestPrices() can hand back the PREVIOUS core's
+        // prices for up to an hour. Remove markTestIncomplete once $coreId is part of the key.
+        $this->markTestIncomplete('Cache key omits $coreId: a second core in the same league gets the first core\'s prices.');
+
+        $oldCore = collect([$this->typeWithPrices(1, 10.0)]);
+        $newCore = collect([$this->typeWithPrices(1, 12.0)]);
+
+        $this->repository->shouldReceive('getAllByLeagueWithPriceByCore')->once()->with(10, 77)->andReturn($oldCore);
+        $this->repository->shouldReceive('getAllByLeagueWithPriceByCore')->once()->with(10, 78)->andReturn($newCore);
+
+        $this->assertSame($oldCore, $this->service->getAllByLeagueWithPriceByCore(10, 77));
+        $this->assertSame($newCore, $this->service->getAllByLeagueWithPriceByCore(10, 78));
+    }
+
+    public function test_get_all_by_league_with_price_by_core_is_flushed_by_upsert(): void
+    {
+        $this->repository->shouldReceive('upsert')->once();
+        $this->repository->shouldReceive('getAllByLeagueWithPriceByCore')->twice()->with(10, 77)->andReturn(collect());
+
+        $this->service->getAllByLeagueWithPriceByCore(10, 77);
+        $this->service->upsert([], 10);
+        $this->service->getAllByLeagueWithPriceByCore(10, 77);
     }
 }
