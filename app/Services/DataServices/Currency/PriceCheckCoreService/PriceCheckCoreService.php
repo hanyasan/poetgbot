@@ -8,6 +8,7 @@ use App\DataTransferObjects\RepositoryObjects\Currency\PriceCheckCoreDto;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\Currency\PriceCheckCore\PriceCheckCoreRepositoryContract;
 use App\Services\CacheHelperService;
+use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
 use App\Services\PoeNinjaService\PoeNinjaService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
