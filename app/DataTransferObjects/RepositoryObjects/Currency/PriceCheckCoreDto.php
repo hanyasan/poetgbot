@@ -13,7 +13,5 @@ class PriceCheckCoreDto
         public readonly Carbon $updated_at,
         /** @var PriceCheckCoreTypeDto[] $price_check_core_types */
         public readonly array $price_check_core_types,
-        /** @var CurrencyPriceDto[] $prices */
-        public readonly array $prices,
     ) {}
 }

@@ -3,6 +3,7 @@
 namespace App\Repositories\Currency\CurrencyPrice;
 
 use App\DataTransferObjects\RepositoryObjects\Currency\PriceCheckCoreDto;
+use App\Models\Currency\PriceCheckCore;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
@@ -25,7 +26,8 @@ interface PriceCheckCoreRepositoryContract
      */
     public function getFromDateByLeague(Carbon $dateFrom, int $leagueId): Collection;
 
-    public function createTypes(array $types, int $coreId): void;
-
-    public function createPrices(array $prices, int $coreId): void;
+    public function createCore(
+        int $leagueId,
+        array $types,
+    ): void;
 }
