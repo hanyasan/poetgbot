@@ -2,18 +2,18 @@
 
 namespace App\DataTransferObjects\ParsingObjects\Currency;
 
-class PoeNinjaCurrencyReceive
+final readonly class PoeNinjaCurrencyReceive
 {
     public function __construct(
-        public readonly int $id,
-        public readonly int $getCurrencyId,
-        public readonly string $sampleTimeUtc,
-        public readonly int $count,
-        public readonly float $value,
-        public readonly int $dataPointCount,
-        public readonly bool $includesSecondary,
-        public readonly int $listingCount,
-        public readonly int $leagueId,
-        public readonly int $payCurrencyId,
+        public int    $id,
+        public int    $getCurrencyId,
+        public string $sampleTimeUtc,
+        public int    $count,
+        public float  $value,
+        public int    $dataPointCount,
+        public bool   $includesSecondary,
+        public int    $listingCount,
+        public int    $leagueId,
+        public int    $payCurrencyId,
     ) {}
 }

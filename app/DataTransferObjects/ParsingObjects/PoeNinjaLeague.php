@@ -2,13 +2,13 @@
 
 namespace App\DataTransferObjects\ParsingObjects;
 
-final class PoeNinjaLeague
+final readonly class PoeNinjaLeague
 {
     public function __construct(
-        public readonly string $name,
-        public readonly string $url,
-        public readonly string $displayName,
-        public readonly bool $hardcore = false,
-        public readonly bool $indexed = false,
+        public string $name,
+        public string $url,
+        public string $displayName,
+        public bool   $hardcore = false,
+        public bool   $indexed = false,
     ) {}
 }

@@ -2,16 +2,16 @@
 
 namespace App\DataTransferObjects\ParsingObjects;
 
-final class PoeNinjaLeagueResponse
+final readonly class PoeNinjaLeagueResponse
 {
     public function __construct(
         /** @var PoeNinjaLeague[] */
-        public readonly array $economyLeagues,
+        public array $economyLeagues,
         /** @var PoeNinjaLeague[] */
-        public readonly array $oldEconomyLeagues = [],
+        public array $oldEconomyLeagues = [],
         /** @var PoeNinjaLeague[] */
-        public readonly array $buildLeagues = [],
+        public array $buildLeagues = [],
         /** @var PoeNinjaLeague[] */
-        public readonly array $oldBuildLeagues = [],
+        public array $oldBuildLeagues = [],
     ) {}
 }

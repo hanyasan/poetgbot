@@ -2,13 +2,13 @@
 
 namespace App\DataTransferObjects\ParsingObjects\Currency;
 
-final class PoeNinjaExchangeResponse
+final readonly class PoeNinjaExchangeResponse
 {
     public function __construct(
-        public readonly PoeNinjaExchangeCore $core,
+        public PoeNinjaExchangeCore $core,
         /** @var PoeNinjaExchangeLine[] */
-        public readonly array $lines,
+        public array                $lines,
         /** @var PoeNinjaExchangeItem[] */
-        public readonly array $items,
+        public array                $items,
     ) {}
 }

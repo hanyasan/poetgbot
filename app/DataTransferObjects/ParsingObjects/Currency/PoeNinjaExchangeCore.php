@@ -2,14 +2,14 @@
 
 namespace App\DataTransferObjects\ParsingObjects\Currency;
 
-final class PoeNinjaExchangeCore
+final readonly class PoeNinjaExchangeCore
 {
     public function __construct(
         /** @var PoeNinjaExchangeItem[] */
-        public readonly array $items,
+        public array  $items,
         /** @var array<string, float> */
-        public readonly array $rates,
-        public readonly string $primary,
-        public readonly string $secondary,
+        public array  $rates,
+        public string $primary,
+        public string $secondary,
     ) {}
 }

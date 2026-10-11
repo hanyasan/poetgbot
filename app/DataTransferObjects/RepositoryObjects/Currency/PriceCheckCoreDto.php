@@ -2,13 +2,13 @@
 
 namespace App\DataTransferObjects\RepositoryObjects\Currency;
 
-class PriceCheckCoreDto
+final readonly class PriceCheckCoreDto
 {
     public function __construct(
-        public readonly int $id,
-        public readonly string $created_at,
-        public readonly string $updated_at,
+        public int    $id,
+        public string $created_at,
+        public string $updated_at,
         /** @var PriceCheckCoreTypeDto[] $price_check_core_types */
-        public readonly array $price_check_core_types,
+        public array  $price_check_core_types,
     ) {}
 }

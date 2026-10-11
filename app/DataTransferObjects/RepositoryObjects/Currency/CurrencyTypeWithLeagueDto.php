@@ -4,16 +4,16 @@ namespace App\DataTransferObjects\RepositoryObjects\Currency;
 
 use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
 
-class CurrencyTypeWithLeagueDto
+final readonly class CurrencyTypeWithLeagueDto
 {
     public function __construct(
-        public readonly int $id,
-        public readonly string $currency_type_name,
-        public readonly string $created_at,
-        public readonly string $updated_at,
+        public int     $id,
+        public string  $currency_type_name,
+        public string  $created_at,
+        public string  $updated_at,
         /** @var PoeLeagueDto */
-        public readonly object $league,
-        public readonly ?string $currency_trade_id = null,
-        public readonly ?string $currency_ninja_details_id = null,
+        public object  $league,
+        public ?string $currency_trade_id = null,
+        public ?string $currency_ninja_details_id = null,
     ) {}
 }

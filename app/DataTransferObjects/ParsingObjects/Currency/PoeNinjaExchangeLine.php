@@ -2,14 +2,14 @@
 
 namespace App\DataTransferObjects\ParsingObjects\Currency;
 
-final class PoeNinjaExchangeLine
+final readonly class PoeNinjaExchangeLine
 {
     public function __construct(
-        public readonly string $id,
-        public readonly float $primaryValue,
-        public readonly float $volumePrimaryValue,
-        public readonly string $maxVolumeCurrency,
-        public readonly float $maxVolumeRate,
-        public readonly PoeNinjaExchangeSparkline $sparkline,
+        public string                    $id,
+        public float                     $primaryValue,
+        public float                     $volumePrimaryValue,
+        public string                    $maxVolumeCurrency,
+        public float                     $maxVolumeRate,
+        public PoeNinjaExchangeSparkline $sparkline,
     ) {}
 }

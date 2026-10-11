@@ -2,15 +2,15 @@
 
 namespace App\DataTransferObjects\ParsingObjects\Currency;
 
-final class PoeNinjaCurrency
+final readonly class PoeNinjaCurrency
 {
     public function __construct(
-        public readonly string $currencyTypeName,
-        public readonly float $chaosEquivalent,
-        public readonly string $detailsId,
+        public string  $currencyTypeName,
+        public float   $chaosEquivalent,
+        public string  $detailsId,
         /** @var ?PoeNinjaCurrencyPay */
-        public readonly ?object $pay = null,
+        public ?object $pay = null,
         /** @var ?PoeNinjaCurrencyReceive */
-        public readonly ?object $receive = null
+        public ?object $receive = null
     ) {}
 }

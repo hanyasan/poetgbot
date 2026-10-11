@@ -4,14 +4,14 @@ namespace App\DataTransferObjects\RepositoryObjects;
 
 use Illuminate\Support\Carbon;
 
-class PoeLeagueDto
+final readonly class PoeLeagueDto
 {
     public function __construct(
-        public readonly int $id,
-        public readonly string $created_at,
-        public readonly string $updated_at,
-        public readonly string $league_name,
-        public readonly string $poe_version,
-        public readonly bool $is_active
+        public int    $id,
+        public string $created_at,
+        public string $updated_at,
+        public string $league_name,
+        public string $poe_version,
+        public bool   $is_active
     ) {}
 }

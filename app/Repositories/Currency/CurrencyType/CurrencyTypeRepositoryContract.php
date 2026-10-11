@@ -4,13 +4,12 @@ namespace App\Repositories\Currency\CurrencyType;
 
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithPricesDto;
 use App\Repositories\BaseRepositoryContract;
 use Illuminate\Support\Collection;
 
 interface CurrencyTypeRepositoryContract extends BaseRepositoryContract
 {
-    public function findByDetailId(string $detailId): CurrencyTypeWithLeagueDto;
-
     /**
      * @return Collection<CurrencyTypeWithLeagueDto>
      */
@@ -20,6 +19,11 @@ interface CurrencyTypeRepositoryContract extends BaseRepositoryContract
      * @return Collection<CurrencyTypeDto>
      */
     public function getAllByLeague(int $leagueId): Collection;
+
+    /**
+     * @return Collection<CurrencyTypeWithPricesDto>
+     */
+    public function getAllByLeagueWithLatestPrice(int $leagueId): Collection;
 
     public function find(int $id): CurrencyTypeWithLeagueDto;
 

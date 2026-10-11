@@ -4,6 +4,7 @@ namespace App\Repositories\Currency\CurrencyType;
 
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithPricesDto;
 use App\Models\Currency\CurrencyType as CurrencyTypeModel;
 use App\Repositories\BaseEloquentRepository;
 use App\Services\Mapper\MapperService;
@@ -16,19 +17,6 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
         MapperService $mapper
     ) {
         parent::__construct($model, $mapper);
-    }
-
-    public function findByDetailId(string $detailId): CurrencyTypeWithLeagueDto
-    {
-        return $this->mapper->mapFromArray(
-            CurrencyTypeWithLeagueDto::class,
-            $this
-                ->getQuery()
-                ->with('league')
-                ->where('currency_ninja_details_id', $detailId)
-                ->firstOrFail()
-                ->toArray()
-        );
     }
 
     public function getAll(): Collection
@@ -52,6 +40,26 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
     {
         return $this->getQuery()
             ->where('poe_league_id', $leagueId)
+            ->get()
+            ->toBase()
+            ->map(function ($priceType) {
+                return $this->mapper->mapFromArray(
+                    CurrencyTypeDto::class,
+                    $priceType->toArray()
+                );
+            });
+    }
+
+    /**
+     * @return Collection<CurrencyTypeWithPricesDto>
+     */
+    public function getAllByLeagueWithLatestPrice(int $leagueId): Collection
+    {
+        return $this->getQuery()
+            ->where('poe_league_id', $leagueId)
+            ->with(['prices' => static function ($query) {
+                $query->latest();
+            }])
             ->get()
             ->toBase()
             ->map(function ($priceType) {

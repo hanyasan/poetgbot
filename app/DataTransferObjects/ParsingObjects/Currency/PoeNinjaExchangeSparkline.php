@@ -2,11 +2,11 @@
 
 namespace App\DataTransferObjects\ParsingObjects\Currency;
 
-final class PoeNinjaExchangeSparkline
+final readonly class PoeNinjaExchangeSparkline
 {
     public function __construct(
-        public readonly ?float $totalChange,
+        public ?float $totalChange,
         /** @var array<int, float|null> */
-        public readonly array $data,
+        public array  $data,
     ) {}
 }

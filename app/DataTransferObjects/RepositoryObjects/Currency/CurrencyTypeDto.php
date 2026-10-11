@@ -2,14 +2,14 @@
 
 namespace App\DataTransferObjects\RepositoryObjects\Currency;
 
-class CurrencyTypeDto
+final readonly class CurrencyTypeDto
 {
     public function __construct(
-        public readonly int $id,
-        public readonly string $currency_type_name,
-        public readonly string $created_at,
-        public readonly string $updated_at,
-        public readonly ?string $currency_trade_id = null,
-        public readonly ?string $currency_ninja_details_id = null,
+        public int     $id,
+        public string  $currency_type_name,
+        public string  $created_at,
+        public string  $updated_at,
+        public ?string $currency_trade_id = null,
+        public ?string $currency_ninja_details_id = null,
     ) {}
 }
