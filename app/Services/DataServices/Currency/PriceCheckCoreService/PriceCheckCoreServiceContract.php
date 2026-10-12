@@ -56,4 +56,9 @@ interface PriceCheckCoreServiceContract
      * }
      */
     public function prepTypes(PoeNinjaExchangeResponse $prices): array;
+
+    public function flushAll(): void;
+
+    public function flushLeagueId(int $leagueId): void;
+
 }

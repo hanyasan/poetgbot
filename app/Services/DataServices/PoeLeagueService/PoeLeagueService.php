@@ -25,10 +25,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
 
     public function delete(int $id): bool
     {
-        Cache::tags([
-            CacheHelperService::generateCacheTag(self::$leagueIdTag, $id),
-            CacheHelperService::generateCacheTag(self::$leagueGetTag),
-        ])->flush();
+        $this->flushAll();
 
         return $this->repository->delete($id);
     }
@@ -67,7 +64,6 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     public function getAllActive(PoeVersionEnum $version): Collection
     {
         return Cache::tags([
-            CacheHelperService::generateCacheTag(self::$leagueGetTag),
             CacheHelperService::generateCacheTag(self::$leagueTag),
             CacheHelperService::generateCacheTag(self::$leagueVersionTag, $version->value),
         ])->remember(
@@ -87,7 +83,6 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     public function getByVersion(PoeVersionEnum $version): Collection
     {
         return Cache::tags([
-            CacheHelperService::generateCacheTag(self::$leagueGetTag),
             CacheHelperService::generateCacheTag(self::$leagueTag),
             CacheHelperService::generateCacheTag(self::$leagueVersionTag, $version->value),
         ])->remember(
@@ -101,11 +96,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
 
     public function upsertByNinja(PoeVersionEnum $version): void
     {
-        Cache::tags([
-            CacheHelperService::generateCacheTag(self::$leagueGetTag),
-            CacheHelperService::generateCacheTag(self::$leagueTag),
-            CacheHelperService::generateCacheTag(self::$leagueVersionTag, $version->value),
-        ])->flush();
+        $this->flushVersion($version);
 
         $leagues = $this->ninjaService->getAvailableLeagues($version);
 
@@ -137,10 +128,38 @@ final class PoeLeagueService implements PoeLeagueServiceContract
 
     public function truncate(): void
     {
+        $this->flushAll();
+
+        $this->repository->truncate();
+    }
+
+    public function flushAll(): void
+    {
         Cache::tags([
             CacheHelperService::generateCacheTag(self::$leagueTag),
         ])->flush();
+    }
 
-        $this->repository->truncate();
+    public function flushGet(): void
+    {
+        Cache::tags([
+            CacheHelperService::generateCacheTag(self::$leagueGetTag),
+        ])->flush();
+    }
+
+    public function flushId(int $id): void
+    {
+        Cache::tags([
+            CacheHelperService::generateCacheTag(self::$leagueGetTag),
+            CacheHelperService::generateCacheTag(self::$leagueIdTag, $id),
+        ])->flush();
+    }
+
+    public function flushVersion(PoeVersionEnum $version): void
+    {
+        Cache::tags([
+            CacheHelperService::generateCacheTag(self::$leagueGetTag),
+            CacheHelperService::generateCacheTag(self::$leagueVersionTag, $version->value),
+        ])->flush();
     }
 }

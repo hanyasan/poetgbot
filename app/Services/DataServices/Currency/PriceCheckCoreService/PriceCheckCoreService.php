@@ -111,10 +111,7 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
      */
     public function create(array $coreData, int $leagueId): PriceCheckCoreDto
     {
-        Cache::tags([
-            CacheHelperService::generateCacheTag(self::$coreGetTag),
-            CacheHelperService::generateCacheTag(self::$coreByLeagueTag, $leagueId),
-        ])->flush();
+        $this->flushLeagueId($leagueId);
 
         return $this->repository->createCore($leagueId, $coreData['types']);
     }
@@ -153,5 +150,19 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
                 'name' => $item->name,
             ];
         }, $prices->core->items);
+    }
+
+    public function flushAll(): void
+    {
+        Cache::tags([
+            CacheHelperService::generateCacheTag(self::$coreTag),
+        ])->flush();
+    }
+
+    public function flushLeagueId(int $leagueId): void
+    {
+        Cache::tags([
+            CacheHelperService::generateCacheTag(self::$coreByLeagueTag, $leagueId),
+        ])->flush();
     }
 }

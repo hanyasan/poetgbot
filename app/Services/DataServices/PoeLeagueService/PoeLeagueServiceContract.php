@@ -30,4 +30,13 @@ interface PoeLeagueServiceContract
     public function truncate(): void;
 
     public function upsertByNinja(PoeVersionEnum $version): void;
+
+    public function flushAll(): void;
+
+    public function flushGet(): void;
+
+    public function flushId(int $id): void;
+
+    public function flushVersion(PoeVersionEnum $version): void;
+
 }

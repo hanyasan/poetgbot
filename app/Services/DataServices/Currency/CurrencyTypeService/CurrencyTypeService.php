@@ -30,10 +30,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
 
     public function delete(int $id): bool
     {
-        Cache::tags([
-            CacheHelperService::generateCacheTag(self::$currencyTypeIdTad, $id),
-            CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
-        ])->flush();
+        $this->flushId($id);
 
         return $this->repository->delete($id);
     }
@@ -75,10 +72,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
 
     public function freshAllByNinja(): void
     {
-        Cache::tags([
-            CacheHelperService::generateCacheTag(self::$currencyTypeTag),
-            CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
-        ])->flush();
+        $this->flushGet();
 
         $this->leagueService->getAllActive(PoeVersionEnum::POE_1)
             ->merge($this->leagueService->getAllActive(PoeVersionEnum::POE_2))
@@ -98,10 +92,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
      */
     public function upsert(array $typeData, int $leagueId): void
     {
-        Cache::tags([
-            CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
-            CacheHelperService::generateCacheTag(self::$currencyTypeByLeagueTag, $leagueId),
-        ])->flush();
+        $this->flushLeagueId($leagueId);
 
         $insertData = collect($typeData)
             ->map(fn (array $currencyItem) => [
@@ -137,10 +128,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
 
     public function upsertByNinja(int $leagueId): void
     {
-        Cache::tags([
-            CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
-            CacheHelperService::generateCacheTag(self::$currencyTypeByLeagueTag, $leagueId),
-        ])->flush();
+        $this->flushLeagueId($leagueId);
 
         $league = $this->leagueService->find($leagueId);
 
@@ -160,5 +148,35 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
         ;
 
         $this->repository->upsert($insertData);
+    }
+
+    public function flushAll(): void
+    {
+        Cache::tags([
+            CacheHelperService::generateCacheTag(self::$currencyTypeTag),
+        ])->flush();
+    }
+
+    public function flushId(int $id): void
+    {
+        Cache::tags([
+            CacheHelperService::generateCacheTag(self::$currencyTypeIdTad, $id),
+            CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
+        ])->flush();
+    }
+
+    public function flushLeagueId(int $id): void
+    {
+        Cache::tags([
+            CacheHelperService::generateCacheTag(self::$currencyTypeByLeagueTag, $id),
+            CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
+        ])->flush();
+    }
+
+    public function flushGet(): void
+    {
+        Cache::tags([
+            CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
+        ])->flush();
     }
 }

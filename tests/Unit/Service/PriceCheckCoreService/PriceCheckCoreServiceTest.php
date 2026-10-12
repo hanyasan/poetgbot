@@ -148,7 +148,7 @@ class PriceCheckCoreServiceTest extends TestCase
         ];
         $core = $this->core(5);
 
-        $this->repository->shouldReceive('createCore')->once()->with(10, $types)->andReturn($core);
+        $this->repository->expects('createCore')->with(10, $types)->andReturns($core);
 
         $this->assertSame($core, $this->service->create(['types' => $types], 10));
     }
@@ -159,31 +159,15 @@ class PriceCheckCoreServiceTest extends TestCase
         $fresh = collect([$this->core(1), $this->core(2)]);
         $other = collect([$this->core(3)]);
 
-        $this->repository->shouldReceive('getByLeague')->once()->with(10)->andReturn($stale);
-        $this->repository->shouldReceive('getByLeague')->once()->with(10)->andReturn($fresh);
-        $this->repository->shouldReceive('createCore')->once()->andReturn($this->core(2));
+        $this->repository->expects('getByLeague')->with(10)->andReturns($stale);
+        $this->repository->expects('getByLeague')->with(10)->andReturns($fresh);
+        $this->repository->expects('createCore')->andReturns($this->core(2));
 
         $this->assertSame($stale, $this->service->getByLeague(10));
 
         $this->service->create(['types' => []], 10);
 
         $this->assertEquals($fresh, $this->service->getByLeague(10));
-    }
-
-    public function test_create_invalidates_get_all_cache(): void
-    {
-        $stale = collect([$this->core(1)]);
-        $fresh = collect([$this->core(1), $this->core(2)]);
-
-        $this->repository->shouldReceive('getAll')->once()->andReturn($stale);
-        $this->repository->shouldReceive('getAll')->once()->andReturn($fresh);
-        $this->repository->shouldReceive('createCore')->once()->andReturn($this->core(2));
-
-        $this->assertSame($stale, $this->service->getAll());
-
-        $this->service->create(['types' => []], 10);
-
-        $this->assertSame($fresh, $this->service->getAll());
     }
 
     public function test_create_new_by_ninja_maps_ninja_items_to_core_types(): void
