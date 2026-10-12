@@ -12,8 +12,6 @@ interface CurrencyTypeServiceContract
 
     public function delete(int $id): bool;
 
-    public function findByDetail(string $detailId): CurrencyTypeWithLeagueDto;
-
     /**
      * @return Collection<CurrencyTypeWithLeagueDto>
      */

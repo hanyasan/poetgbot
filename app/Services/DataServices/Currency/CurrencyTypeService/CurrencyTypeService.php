@@ -17,10 +17,10 @@ use Illuminate\Support\Facades\Cache;
 final class CurrencyTypeService implements CurrencyTypeServiceContract
 {
     static string $currencyTypeIdTad = 'currency_type_id';
-    static string $currencyTypeDetailTag = 'currency_type_detail';
     static string $currencyTypeGetTag = 'currency_type_get';
     static string $currencyTypeTag = 'currency_type';
     static string $currencyTypeByLeagueTag = 'currency_type_by_league';
+    static string $currencyTypeByCoreTag = 'currency_type_by_core';
 
     public function __construct(
         private readonly CurrencyTypeRepositoryContract $repository,
@@ -36,20 +36,6 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
         ])->flush();
 
         return $this->repository->delete($id);
-    }
-
-    public function findByDetail(string $detailId): CurrencyTypeWithLeagueDto
-    {
-        return Cache::tags([
-            CacheHelperService::generateCacheTag(self::$currencyTypeDetailTag, $detailId),
-            CacheHelperService::generateCacheTag(self::$currencyTypeTag),
-        ])->remember(
-            'by_detail:' . $detailId,
-            CacheHelperService::setHourTtl(),
-            function () use ($detailId) {
-                return $this->repository->findByDetailId($detailId);
-            }
-        );
     }
 
     /**
@@ -113,7 +99,6 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
     public function upsert(array $typeData, int $leagueId): void
     {
         Cache::tags([
-            CacheHelperService::generateCacheTag(self::$currencyTypeTag),
             CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
             CacheHelperService::generateCacheTag(self::$currencyTypeByLeagueTag, $leagueId),
         ])->flush();
@@ -140,6 +125,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
             CacheHelperService::generateCacheTag(self::$currencyTypeTag),
             CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
             CacheHelperService::generateCacheTag(self::$currencyTypeByLeagueTag, $leagueId),
+            CacheHelperService::generateCacheTag(self::$currencyTypeByCoreTag, $coreId),
         ])->remember(
             'all_by_league_core' . $leagueId . '_' . $coreId,
             CacheHelperService::setHourTtl(),
@@ -152,7 +138,6 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
     public function upsertByNinja(int $leagueId): void
     {
         Cache::tags([
-            CacheHelperService::generateCacheTag(self::$currencyTypeTag),
             CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
             CacheHelperService::generateCacheTag(self::$currencyTypeByLeagueTag, $leagueId),
         ])->flush();

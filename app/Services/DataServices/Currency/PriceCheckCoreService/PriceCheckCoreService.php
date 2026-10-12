@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Cache;
 final class PriceCheckCoreService implements PriceCheckCoreServiceContract
 {
     static string $coreTag = 'price_check_core';
+    static string $coreGetTag = 'price_check_core_get';
     static string $coreIdTag = 'price_check_core_id';
     static string $coreByLeagueTag = 'price_check_core_by_league';
 
@@ -46,6 +47,7 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
     public function getAll(): Collection
     {
         return Cache::tags([
+            CacheHelperService::generateCacheTag(self::$coreGetTag),
             CacheHelperService::generateCacheTag(self::$coreTag),
         ])->remember(
             'all',
@@ -110,7 +112,7 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
     public function create(array $coreData, int $leagueId): PriceCheckCoreDto
     {
         Cache::tags([
-            CacheHelperService::generateCacheTag(self::$coreTag),
+            CacheHelperService::generateCacheTag(self::$coreGetTag),
             CacheHelperService::generateCacheTag(self::$coreByLeagueTag, $leagueId),
         ])->flush();
 

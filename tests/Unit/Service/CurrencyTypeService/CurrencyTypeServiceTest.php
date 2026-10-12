@@ -291,10 +291,10 @@ class CurrencyTypeServiceTest extends TestCase
 
     public function test_fresh_all_by_ninja_flushes_cached_types(): void
     {
-        $this->leagueService->shouldReceive('getAllActive')->twice()->andReturn(collect());
+        $this->leagueService->expects('getAllActive')->twice()->andReturns(collect());
 
-        $this->repository->shouldReceive('getAll')->twice()->andReturn(collect());
-        $this->repository->shouldReceive('getAllByLeague')->twice()->with(10)->andReturn(collect());
+        $this->repository->expects('getAll')->twice()->andReturns(collect());
+        $this->repository->expects('getAllByLeague')->twice()->with(10)->andReturns(collect());
 
         $this->service->getAll();
         $this->service->getAllByLeague(10);
@@ -307,7 +307,7 @@ class CurrencyTypeServiceTest extends TestCase
 
     public function test_upsert_adds_the_league_id_to_every_row(): void
     {
-        $this->repository->shouldReceive('upsert')->once()->with([
+        $this->repository->expects('upsert')->with([
             [
                 'currency_type_name' => 'Divine Orb',
                 'currency_trade_id' => 'divine',
@@ -330,7 +330,7 @@ class CurrencyTypeServiceTest extends TestCase
 
     public function test_upsert_drops_keys_that_are_not_type_columns(): void
     {
-        $this->repository->shouldReceive('upsert')->once()->with([
+        $this->repository->expects('upsert')->with([
             [
                 'currency_type_name' => 'Divine Orb',
                 'currency_trade_id' => 'divine',
@@ -352,18 +352,18 @@ class CurrencyTypeServiceTest extends TestCase
     public function test_upsert_does_not_need_ninja_or_the_league_service(): void
     {
         // unlike upsertByNinja(), the caller already holds the poe.ninja data (PriceCheckService)
-        $this->leagueService->shouldNotReceive('find');
-        $this->ninjaService->shouldNotReceive('getCurrencyPrices');
-        $this->repository->shouldReceive('upsert')->once()->with([]);
+        $this->leagueService->allows('find')->never();
+        $this->ninjaService->allows('getCurrencyPrices')->never();
+        $this->repository->expects('upsert')->with([]);
 
         $this->service->upsert([], 7);
     }
 
     public function test_upsert_flushes_cached_types_of_that_league(): void
     {
-        $this->repository->shouldReceive('upsert')->once();
-        $this->repository->shouldReceive('getAll')->twice()->andReturn(collect());
-        $this->repository->shouldReceive('getAllByLeague')->twice()->with(5)->andReturn(collect());
+        $this->repository->expects('upsert');
+        $this->repository->expects('getAll')->twice()->andReturns(collect());
+        $this->repository->expects('getAllByLeague')->twice()->with(5)->andReturns(collect());
 
         $this->service->getAll();
         $this->service->getAllByLeague(5);
@@ -378,7 +378,7 @@ class CurrencyTypeServiceTest extends TestCase
     {
         $types = collect([$this->typeWithPrices(1, 10.0)]);
 
-        $this->repository->shouldReceive('getAllByLeagueWithPriceByCore')->once()->with(10, 77)->andReturn($types);
+        $this->repository->expects('getAllByLeagueWithPriceByCore')->with(10, 77)->andReturns($types);
 
         $this->assertEquals($types, $this->service->getAllByLeagueWithPriceByCore(10, 77));
         $this->assertEquals($types, $this->service->getAllByLeagueWithPriceByCore(10, 77));
@@ -389,8 +389,8 @@ class CurrencyTypeServiceTest extends TestCase
         $first = collect([$this->typeWithPrices(1, 10.0)]);
         $second = collect([$this->typeWithPrices(2, 20.0)]);
 
-        $this->repository->shouldReceive('getAllByLeagueWithPriceByCore')->once()->with(10, 77)->andReturn($first);
-        $this->repository->shouldReceive('getAllByLeagueWithPriceByCore')->once()->with(20, 77)->andReturn($second);
+        $this->repository->expects('getAllByLeagueWithPriceByCore')->with(10, 77)->andReturns($first);
+        $this->repository->expects('getAllByLeagueWithPriceByCore')->with(20, 77)->andReturns($second);
 
         $this->assertSame($first, $this->service->getAllByLeagueWithPriceByCore(10, 77));
         $this->assertSame($second, $this->service->getAllByLeagueWithPriceByCore(20, 77));
@@ -401,8 +401,8 @@ class CurrencyTypeServiceTest extends TestCase
         $oldCore = collect([$this->typeWithPrices(1, 10.0)]);
         $newCore = collect([$this->typeWithPrices(1, 12.0)]);
 
-        $this->repository->shouldReceive('getAllByLeagueWithPriceByCore')->once()->with(10, 77)->andReturn($oldCore);
-        $this->repository->shouldReceive('getAllByLeagueWithPriceByCore')->once()->with(10, 78)->andReturn($newCore);
+        $this->repository->expects('getAllByLeagueWithPriceByCore')->with(10, 77)->andReturns($oldCore);
+        $this->repository->expects('getAllByLeagueWithPriceByCore')->with(10, 78)->andReturns($newCore);
 
         $this->assertSame($oldCore, $this->service->getAllByLeagueWithPriceByCore(10, 77));
         $this->assertSame($newCore, $this->service->getAllByLeagueWithPriceByCore(10, 78));
@@ -410,8 +410,8 @@ class CurrencyTypeServiceTest extends TestCase
 
     public function test_get_all_by_league_with_price_by_core_is_flushed_by_upsert(): void
     {
-        $this->repository->shouldReceive('upsert')->once();
-        $this->repository->shouldReceive('getAllByLeagueWithPriceByCore')->twice()->with(10, 77)->andReturn(collect());
+        $this->repository->expects('upsert');
+        $this->repository->expects('getAllByLeagueWithPriceByCore')->twice()->with(10, 77)->andReturns(collect());
 
         $this->service->getAllByLeagueWithPriceByCore(10, 77);
         $this->service->upsert([], 10);
