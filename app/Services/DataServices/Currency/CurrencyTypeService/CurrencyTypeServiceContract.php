@@ -42,4 +42,13 @@ interface CurrencyTypeServiceContract
     public function getAllByLeagueWithPriceByCore(int $leagueId, int $coreId): Collection;
 
     public function freshAllByNinja(): void;
+
+    public function flushAll(): void;
+
+    public function flushId(int $id): void;
+
+    public function flushLeagueId(int $id): void;
+
+    public function flushGet(): void;
+
 }
