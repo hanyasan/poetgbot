@@ -33,7 +33,7 @@ final readonly class PriceCheckService implements PriceCheckServiceContract
     public function importPickedLeaguesPrices(): Collection
     {
         $leagues = $this->leagueCheckPickerService->pickLeaguesForCheck();
-        $prices = collect();
+        $prices = collect();dump($leagues);
 
         Log::info('Start import picked leagues prices');
 
@@ -88,7 +88,7 @@ final readonly class PriceCheckService implements PriceCheckServiceContract
         } catch (\Throwable $exception) {
             DB::rollBack();
 
-            Log::info($league->league_name . ' league prices import failed');
+            Log::error($league->league_name . ' league prices import failed');
 
             throw $exception;
         }
@@ -122,13 +122,20 @@ final readonly class PriceCheckService implements PriceCheckServiceContract
         array $items,
     ): array {
         $items = collect($items);
+        $prices = collect();
 
-        return $currencyTypes->map(static function (CurrencyTypeDto $currencyType) use ($items, $coreId) {
-            return [
-                'rate' => $items->where('id', $currencyType->currency_trade_id)->first()->primaryValue,
+        foreach ($currencyTypes as $currencyType) {
+            $tradeItem = $items->where('id', $currencyType->currency_trade_id)->first();
+
+            if (! $tradeItem) continue;
+
+            $prices->add([
+                'rate' => $tradeItem->primaryValue,
                 'price_check_core_id' => $coreId,
                 'currency_type_id' => $currencyType->id,
-            ];
-        })->toArray();
+            ]);
+        }
+
+        return $prices->toArray();
     }
 }
