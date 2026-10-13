@@ -20,7 +20,7 @@ class ImportPoeLeagues extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Import current leagues tracked by poeNinja';
 
     /**
      * Execute the console command.

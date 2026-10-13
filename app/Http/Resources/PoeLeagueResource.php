@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Http\Resources;
+
+use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class PoeLeagueResource extends JsonResource
+{
+    public function toArray($request): array
+    {
+        /** @var PoeLeagueDto $league */
+        $league = $this->resource;
+
+        return [
+            'id' => $league->id,
+            'created_at' => $league->created_at,
+            'updated_at' => $league->updated_at,
+            'league_name' => $league->league_name,
+            'poe_version' => $league->poe_version,
+            'is_active' => $league->is_active,
+        ];
+    }
+}

@@ -1,7 +1,6 @@
 <?php
 
-use App\Http\Controllers\Price\CurrencyController;
-use App\Http\Controllers\Telegram\TelegramBotController;
+use App\Http\Controllers\League\LeagueController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,11 +18,16 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 Route::group(['prefix' => 'v1'], function () {
-    Route::group(['prefix' => 'price' ], function () {
-        Route::get('currency/{ninjaDetailsId}', [CurrencyController::class, 'showPrice']);
+    Route::group(['prefix' => 'league'], function () {
+        Route::get('/',  [LeagueController::class, 'index']);
     });
+    //TODO: now disabled
+//    Route::group(['prefix' => 'price' ], function () {
+//        Route::get('currency/{ninjaDetailsId}', [CurrencyController::class, 'showPrice']);
+//    });
 
-    Route::group(['prefix' => 'telegram' ], function () {
-        Route::get('set', [TelegramBotController::class, 'set']);
-    });
+    //TODO: tg now disabled
+//    Route::group(['prefix' => 'telegram' ], function () {
+//        Route::get('set', [TelegramBotController::class, 'set']);
+//    });
 });

@@ -19,7 +19,7 @@ class ImportPickedLeagues extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Import prices for all picked leagues';
 
     /**
      * Execute the console command.
