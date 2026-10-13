@@ -21,6 +21,10 @@ use App\Services\HTTPClientServices\NinjaClientContract;
 use App\Services\Mapper\MapperService;
 use App\Services\PoeNinjaService\PoeNinjaService;
 use App\Services\PoeNinjaService\PoeNinjaServiceContract;
+use App\Services\PriceCheckServices\LeagueCheckPickerService\LeagueCheckPickerService;
+use App\Services\PriceCheckServices\LeagueCheckPickerService\LeagueCheckPickerServiceContract;
+use App\Services\PriceCheckServices\PriceCheckService\PriceCheckService;
+use App\Services\PriceCheckServices\PriceCheckService\PriceCheckServiceContract;
 use App\Services\TelegramBotService\TelegramBotContract;
 use App\Services\TelegramBotService\TelegramBotService;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -43,6 +47,8 @@ class AppServiceProvider extends ServiceProvider
         PoeLeagueServiceContract::class => PoeLeagueService::class,
         PriceCheckCoreRepositoryContract::class => PriceCheckCoreRepository::class,
         PriceCheckCoreServiceContract::class => PriceCheckCoreService::class,
+        PriceCheckServiceContract::class => PriceCheckService::class,
+        LeagueCheckPickerServiceContract::class => LeagueCheckPickerService::class,
     ];
 
     /**
