@@ -1,0 +1,66 @@
+# Local dev:   docker compose up -d
+# Production:  docker compose -f compose.yaml -f compose.prod.yaml up -d --build
+x-app: &app
+  build:
+    context: .
+    target: dev
+  env_file: .env
+  environment:
+    DB_HOST: postgres
+    DB_PORT: 5432
+    REDIS_HOST: redis
+    CACHE_STORE: redis
+  volumes:
+    - .:/app
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_started
+
+services:
+  app:
+    <<: *app
+    ports:
+      - "${APP_PORT:-8080}:80"
+    command: sh -c "composer install --no-interaction && exec frankenphp run --config /etc/caddy/Caddyfile"
+
+  scheduler:
+    <<: *app
+    command: sh -c "until [ -f vendor/autoload.php ]; do sleep 2; done; exec php artisan schedule:work"
+
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-postgres}
+      POSTGRES_USER: ${DB_USERNAME:-root}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+      TZ: Europe/Moscow
+    command: ["postgres", "-c", "timezone=Europe/Moscow", "-c", "log_timezone=Europe/Moscow"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-root} -d ${DB_DATABASE:-postgres}"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      TZ: Europe/Moscow
+    command:
+      - sh
+      - -c
+      - |
+        if [ -n "$$REDIS_PASSWORD" ] && [ "$$REDIS_PASSWORD" != null ]; then
+          exec redis-server --appendonly yes --requirepass "$$REDIS_PASSWORD"
+        else
+          exec redis-server --appendonly yes
+        fi
+    volumes:
+      - redisdata:/data
+
+volumes:
+  pgdata:
+  redisdata:

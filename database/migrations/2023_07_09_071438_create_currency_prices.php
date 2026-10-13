@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('currency_prices', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedFloat('rate');
+            $table->float('rate');
 
             $table->foreignIdFor(\App\Models\Currency\CurrencyPrice::class, 'currency_type_id');
             $table->foreignIdFor(\App\Models\Currency\PriceCheckCore::class, 'price_check_core_id');

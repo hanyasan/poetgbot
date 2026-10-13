@@ -1,0 +1,25 @@
+x-prod: &prod
+  build:
+    target: prod
+  image: poetgbot:latest
+  restart: unless-stopped
+  volumes: !override
+    - storage:/app/storage
+  environment:
+    APP_ENV: production
+    APP_DEBUG: "false"
+
+services:
+  app:
+    <<: *prod
+    command: sh -c "php artisan config:cache && php artisan route:cache && php artisan migrate --force && exec frankenphp run --config /etc/caddy/Caddyfile"
+  scheduler:
+    <<: *prod
+    command: sh -c "php artisan config:cache && exec php artisan schedule:work"
+  postgres:
+    restart: unless-stopped
+  redis:
+    restart: unless-stopped
+
+volumes:
+  storage:

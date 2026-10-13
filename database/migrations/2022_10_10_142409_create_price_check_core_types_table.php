@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
 
             $table->boolean('is_primary')->default(false);
-            $table->unsignedFloat('rate')->default(1);
+            $table->float('rate')->default(1);
             $table->string('type_id', 255);
             $table->string('name', 255);
 
