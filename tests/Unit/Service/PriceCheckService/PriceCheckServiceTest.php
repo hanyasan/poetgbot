@@ -21,7 +21,7 @@ use App\Services\DataServices\Currency\CurrencyTypeService\CurrencyTypeServiceCo
 use App\Services\DataServices\Currency\PriceCheckCoreService\PriceCheckCoreServiceContract;
 use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
 use App\Services\PoeNinjaService\PoeNinjaServiceContract;
-use App\Services\PriceCheckServices\PriceCheckService;
+use App\Services\PriceCheckServices\PriceCheckService\PriceCheckService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Mockery;

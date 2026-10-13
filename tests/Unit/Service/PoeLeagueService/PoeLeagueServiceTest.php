@@ -51,7 +51,7 @@ class PoeLeagueServiceTest extends TestCase
     {
         $league = $this->league(1, 'Test League', PoeVersionEnum::POE_2);
 
-        $this->repository->shouldReceive('find')->once()->with(1)->andReturn($league);
+        $this->repository->expects('find')->with(1)->andReturns($league);
 
         $this->assertEquals($league, $this->service->find(1));
         $this->assertEquals($league, $this->service->find(1));
@@ -75,44 +75,43 @@ class PoeLeagueServiceTest extends TestCase
         $poe1 = collect([$this->league(1, 'One', PoeVersionEnum::POE_1, true)]);
         $poe2 = collect([$this->league(2, 'Two', PoeVersionEnum::POE_2, true)]);
 
-        $this->repository->shouldReceive('getAllActive')->once()->with(PoeVersionEnum::POE_1)->andReturn($poe1);
-        $this->repository->shouldReceive('getAllActive')->once()->with(PoeVersionEnum::POE_2)->andReturn($poe2);
+        $this->repository->expects('getAllActiveByVersion')->with(PoeVersionEnum::POE_1)->andReturns($poe1);
+        $this->repository->expects('getAllActiveByVersion')->with(PoeVersionEnum::POE_2)->andReturns($poe2);
 
-        $this->assertEquals($poe1, $this->service->getAllActive(PoeVersionEnum::POE_1));
-        $this->assertEquals($poe2, $this->service->getAllActive(PoeVersionEnum::POE_2));
-        $this->assertEquals($poe1, $this->service->getAllActive(PoeVersionEnum::POE_1));
-        $this->assertEquals($poe2, $this->service->getAllActive(PoeVersionEnum::POE_2));
+        $this->assertEquals($poe1, $this->service->getAllActiveByVersion(PoeVersionEnum::POE_1));
+        $this->assertEquals($poe2, $this->service->getAllActiveByVersion(PoeVersionEnum::POE_2));
+        $this->assertEquals($poe1, $this->service->getAllActiveByVersion(PoeVersionEnum::POE_1));
+        $this->assertEquals($poe2, $this->service->getAllActiveByVersion(PoeVersionEnum::POE_2));
     }
 
     public function test_get_all_active_is_flushed_by_delete(): void
     {
         $leagues = collect([$this->league(1, 'One', PoeVersionEnum::POE_2, true)]);
 
-        $this->repository->shouldReceive('getAllActive')->twice()->with(PoeVersionEnum::POE_2)->andReturn($leagues);
-        $this->repository->shouldReceive('delete')->once()->with(1)->andReturn(true);
+        $this->repository->expects('getAllActiveByVersion')->twice()->with(PoeVersionEnum::POE_2)->andReturns($leagues);
+        $this->repository->expects('delete')->with(1)->andReturns(true);
 
-        $this->service->getAllActive(PoeVersionEnum::POE_2);
+        $this->service->getAllActiveByVersion(PoeVersionEnum::POE_2);
 
         $this->service->delete(1);
 
-        $this->service->getAllActive(PoeVersionEnum::POE_2);
+        $this->service->getAllActiveByVersion(PoeVersionEnum::POE_2);
     }
 
     public function test_get_all_active_is_flushed_by_upsert_by_ninja(): void
     {
-        $this->repository->shouldReceive('getAllActive')->twice()->with(PoeVersionEnum::POE_2)->andReturn(collect());
-        $this->repository->shouldReceive('getByLeague')->once()->andReturn(collect());
-        $this->repository->shouldReceive('upsert')->once();
+        $this->repository->expects('getAllActiveByVersion')->twice()->with(PoeVersionEnum::POE_2)->andReturns(collect());
+        $this->repository->expects('getByLeague')->andReturns(collect());
+        $this->repository->expects('upsert');
         $this->ninjaService
-            ->shouldReceive('getAvailableLeagues')
-            ->once()
-            ->andReturn(new PoeNinjaLeagueResponse([$this->ninjaLeague('Standard')]));
+            ->expects('getAvailableLeagues')
+            ->andReturns(new PoeNinjaLeagueResponse([$this->ninjaLeague('Standard')]));
 
-        $this->service->getAllActive(PoeVersionEnum::POE_2);
+        $this->service->getAllActiveByVersion(PoeVersionEnum::POE_2);
 
         $this->service->upsertByNinja(PoeVersionEnum::POE_2);
 
-        $this->service->getAllActive(PoeVersionEnum::POE_2);
+        $this->service->getAllActiveByVersion(PoeVersionEnum::POE_2);
     }
 
     public function test_get_by_version_caches_per_version(): void

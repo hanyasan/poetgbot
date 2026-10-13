@@ -33,14 +33,26 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
     }
 
     /**
-     * Get all leagues.
      *
      * @return Collection<PoeLeagueDto>
      */
-    public function getAllActive(PoeVersionEnum $version): Collection
+    public function getAllActiveByVersion(PoeVersionEnum $version): Collection
     {
         return $this->getQuery()
             ->where('poe_version', $version->value)
+            ->where('is_active', true)
+            ->get()
+            ->toBase()
+            ->map(fn ($league) => $this->mapper->mapFromArray(PoeLeagueDto::class, $league->toArray()));
+    }
+
+    /**
+     *
+     * @return Collection<PoeLeagueDto>
+     */
+    public function getAllActive(): Collection
+    {
+        return $this->getQuery()
             ->where('is_active', true)
             ->get()
             ->toBase()

@@ -61,7 +61,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     /**
      * @return Collection<PoeLeagueDto>
      */
-    public function getAllActive(PoeVersionEnum $version): Collection
+    public function getAllActiveByVersion(PoeVersionEnum $version): Collection
     {
         return Cache::tags([
             CacheHelperService::generateCacheTag(self::$leagueTag),
@@ -70,7 +70,24 @@ final class PoeLeagueService implements PoeLeagueServiceContract
             'all_active' . $version->value,
             CacheHelperService::setHourTtl(),
             function () use ($version) {
-                return $this->repository->getAllActive($version);
+                return $this->repository->getAllActiveByVersion($version);
+            }
+        );
+    }
+
+    /**
+     * @return Collection<PoeLeagueDto>
+     */
+    public function getAllActive(): Collection
+    {
+        return Cache::tags([
+            CacheHelperService::generateCacheTag(self::$leagueTag),
+            CacheHelperService::generateCacheTag(self::$leagueGetTag),
+        ])->remember(
+            'all_active_get',
+            CacheHelperService::setHourTtl(),
+            function () {
+                return $this->repository->getAllActive();
             }
         );
     }

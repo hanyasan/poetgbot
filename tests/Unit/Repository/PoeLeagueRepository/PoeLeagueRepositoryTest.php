@@ -103,8 +103,8 @@ class PoeLeagueRepositoryTest extends TestCase
             'is_active' => false,
         ]);
 
-        $poe2 = $this->repository->getAllActive(PoeVersionEnum::POE_2);
-        $poe1 = $this->repository->getAllActive(PoeVersionEnum::POE_1);
+        $poe2 = $this->repository->getAllActiveByVersion(PoeVersionEnum::POE_2);
+        $poe1 = $this->repository->getAllActiveByVersion(PoeVersionEnum::POE_1);
 
         $this->assertContainsOnlyInstancesOf(PoeLeagueDto::class, $poe2);
         $this->assertContains($activePoe2->id, $poe2->pluck('id')->all());
@@ -133,7 +133,7 @@ class PoeLeagueRepositoryTest extends TestCase
 
             $this->assertSame(Collection::class, $this->repository->getAll()::class);
             $this->assertSame(Collection::class, $this->repository->getByLeague(PoeVersionEnum::POE_1)::class);
-            $this->assertSame(Collection::class, $this->repository->getAllActive(PoeVersionEnum::POE_1)::class);
+            $this->assertSame(Collection::class, $this->repository->getAllActiveByVersion(PoeVersionEnum::POE_1)::class);
         } finally {
             DB::rollBack();
         }

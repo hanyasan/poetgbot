@@ -74,8 +74,8 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
     {
         $this->flushGet();
 
-        $this->leagueService->getAllActive(PoeVersionEnum::POE_1)
-            ->merge($this->leagueService->getAllActive(PoeVersionEnum::POE_2))
+        $this->leagueService
+            ->getAllActive()
             ->each(fn (PoeLeagueDto $league) => $this->upsertByNinja($league->id))
         ;
     }

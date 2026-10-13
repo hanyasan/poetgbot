@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\PriceCheckServices;
+namespace App\Services\PriceCheckServices\PriceCheckService;
 
 use App\DataTransferObjects\ServiceObjects\LeaguePricesDto;
 
