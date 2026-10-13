@@ -133,18 +133,18 @@ class PriceCheckServiceTest extends TestCase
         );
         $priced = collect([$this->typeWithPrice(1, 'divine', 1.0), $this->typeWithPrice(2, 'chaos', 0.25)]);
 
-        $this->leagueService->shouldReceive('find')->once()->with(self::LEAGUE_ID)->andReturn($league)->ordered();
-        $this->ninjaService->shouldReceive('getCurrencyPrices')->once()
+        $this->leagueService->expects('find')->with(self::LEAGUE_ID)->andReturn($league)->ordered();
+        $this->ninjaService->expects('getCurrencyPrices')
             ->with(PoeVersionEnum::POE_2, 'Test League')->andReturn($exchange)->ordered();
-        $this->coreService->shouldReceive('prepTypes')->once()->with($exchange)
+        $this->coreService->expects('prepTypes')->with($exchange)
             ->andReturn([['type_id' => 'divine']])->ordered();
-        $this->coreService->shouldReceive('create')->once()
+        $this->coreService->expects('create')
             ->with(['types' => [['type_id' => 'divine']]], self::LEAGUE_ID)->andReturn($core)->ordered();
-        $this->currencyTypeService->shouldReceive('upsert')->once()->andReturnNull()->ordered();
-        $this->currencyTypeService->shouldReceive('getAllByLeague')->once()->with(self::LEAGUE_ID)
+        $this->currencyTypeService->expects('upsert')->andReturnNull()->ordered();
+        $this->currencyTypeService->expects('getAllByLeague')->with(self::LEAGUE_ID)
             ->andReturn(collect([$this->type(1, 'divine'), $this->type(2, 'chaos')]))->ordered();
-        $this->priceRepository->shouldReceive('insert')->once()->andReturnNull()->ordered();
-        $this->currencyTypeService->shouldReceive('getAllByLeagueWithPriceByCore')->once()
+        $this->priceRepository->expects('insert')->andReturnNull()->ordered();
+        $this->currencyTypeService->expects('getAllByLeagueWithPriceByCore')
             ->with(self::LEAGUE_ID, self::CORE_ID)->andReturn($priced)->ordered();
 
         return compact('exchange', 'league', 'core', 'priced');
@@ -175,18 +175,18 @@ class PriceCheckServiceTest extends TestCase
 
     public function test_import_upserts_currency_types_from_ninja_items(): void
     {
-        $this->leagueService->shouldReceive('find')->andReturn($this->league());
-        $this->ninjaService->shouldReceive('getCurrencyPrices')->andReturn($this->exchange(
+        $this->leagueService->allows('find')->andReturn($this->league());
+        $this->ninjaService->allows('getCurrencyPrices')->andReturn($this->exchange(
             [$this->item('divine', 'Divine Orb', 'divine-orb'), $this->item('chaos', 'Chaos Orb', 'chaos-orb')],
             [$this->line('divine', 1.0), $this->line('chaos', 0.25)],
         ));
-        $this->coreService->shouldReceive('prepTypes')->andReturn([]);
-        $this->coreService->shouldReceive('create')->andReturn($this->core());
-        $this->currencyTypeService->shouldReceive('getAllByLeague')->andReturn(collect());
-        $this->priceRepository->shouldReceive('insert');
-        $this->currencyTypeService->shouldReceive('getAllByLeagueWithPriceByCore')->andReturn(collect());
+        $this->coreService->allows('prepTypes')->andReturn([]);
+        $this->coreService->allows('create')->andReturn($this->core());
+        $this->currencyTypeService->allows('getAllByLeague')->andReturn(collect());
+        $this->priceRepository->allows('insert');
+        $this->currencyTypeService->allows('getAllByLeagueWithPriceByCore')->andReturn(collect());
 
-        $this->currencyTypeService->shouldReceive('upsert')->once()->with([
+        $this->currencyTypeService->expects('upsert')->with([
             ['currency_type_name' => 'Divine Orb', 'currency_trade_id' => 'divine', 'currency_ninja_details_id' => 'divine-orb'],
             ['currency_type_name' => 'Chaos Orb', 'currency_trade_id' => 'chaos', 'currency_ninja_details_id' => 'chaos-orb'],
         ], self::LEAGUE_ID);
@@ -196,20 +196,20 @@ class PriceCheckServiceTest extends TestCase
 
     public function test_import_inserts_one_price_per_stored_type_matched_to_ninja_line_by_trade_id(): void
     {
-        $this->leagueService->shouldReceive('find')->andReturn($this->league());
-        $this->ninjaService->shouldReceive('getCurrencyPrices')->andReturn($this->exchange(
+        $this->leagueService->allows('find')->andReturn($this->league());
+        $this->ninjaService->allows('getCurrencyPrices')->andReturn($this->exchange(
             [$this->item('divine', 'Divine Orb', 'divine-orb'), $this->item('chaos', 'Chaos Orb', 'chaos-orb')],
             // lines deliberately in the opposite order to the stored types
             [$this->line('chaos', 0.25), $this->line('divine', 1.0)],
         ));
-        $this->coreService->shouldReceive('prepTypes')->andReturn([]);
-        $this->coreService->shouldReceive('create')->andReturn($this->core());
-        $this->currencyTypeService->shouldReceive('upsert');
-        $this->currencyTypeService->shouldReceive('getAllByLeague')->with(self::LEAGUE_ID)
+        $this->coreService->allows('prepTypes')->andReturn([]);
+        $this->coreService->allows('create')->andReturn($this->core());
+        $this->currencyTypeService->allows('upsert');
+        $this->currencyTypeService->allows('getAllByLeague')->with(self::LEAGUE_ID)
             ->andReturn(collect([$this->type(5, 'divine'), $this->type(6, 'chaos')]));
-        $this->currencyTypeService->shouldReceive('getAllByLeagueWithPriceByCore')->andReturn(collect());
+        $this->currencyTypeService->allows('getAllByLeagueWithPriceByCore')->andReturn(collect());
 
-        $this->priceRepository->shouldReceive('insert')->once()->with([
+        $this->priceRepository->expects('insert')->with([
             ['rate' => 1.0, 'price_check_core_id' => self::CORE_ID, 'currency_type_id' => 5],
             ['rate' => 0.25, 'price_check_core_id' => self::CORE_ID, 'currency_type_id' => 6],
         ]);
@@ -219,17 +219,17 @@ class PriceCheckServiceTest extends TestCase
 
     public function test_import_requests_prices_for_the_league_version_and_name(): void
     {
-        $this->leagueService->shouldReceive('find')->once()->with(3)
+        $this->leagueService->expects('find')->with(3)
             ->andReturn($this->league(3, PoeVersionEnum::POE_1));
-        $this->ninjaService->shouldReceive('getCurrencyPrices')->once()
+        $this->ninjaService->expects('getCurrencyPrices')
             ->with(PoeVersionEnum::POE_1, 'Test League')
             ->andReturn($this->exchange([], []));
-        $this->coreService->shouldReceive('prepTypes')->andReturn([]);
-        $this->coreService->shouldReceive('create')->with(['types' => []], 3)->andReturn($this->core());
-        $this->currencyTypeService->shouldReceive('upsert');
-        $this->currencyTypeService->shouldReceive('getAllByLeague')->andReturn(collect());
-        $this->priceRepository->shouldReceive('insert')->with([]);
-        $this->currencyTypeService->shouldReceive('getAllByLeagueWithPriceByCore')->with(3, self::CORE_ID)->andReturn(collect());
+        $this->coreService->allows('prepTypes')->andReturn([]);
+        $this->coreService->allows('create')->with(['types' => []], 3)->andReturn($this->core());
+        $this->currencyTypeService->allows('upsert');
+        $this->currencyTypeService->allows('getAllByLeague')->andReturn(collect());
+        $this->priceRepository->allows('insert')->with([]);
+        $this->currencyTypeService->allows('getAllByLeagueWithPriceByCore')->with(3, self::CORE_ID)->andReturn(collect());
 
         $result = $this->service->importLeagueLatestPrices(3);
 
@@ -250,11 +250,11 @@ class PriceCheckServiceTest extends TestCase
     {
         $boom = new RuntimeException('poe.ninja is down');
 
-        $this->leagueService->shouldReceive('find')->andReturn($this->league());
-        $this->ninjaService->shouldReceive('getCurrencyPrices')->andThrow($boom);
-        $this->coreService->shouldNotReceive('create');
-        $this->currencyTypeService->shouldNotReceive('upsert');
-        $this->priceRepository->shouldNotReceive('insert');
+        $this->leagueService->allows('find')->andReturn($this->league());
+        $this->ninjaService->allows('getCurrencyPrices')->andThrow($boom);
+        $this->coreService->expects('create')->never();
+        $this->currencyTypeService->expects('upsert')->never();
+        $this->priceRepository->expects('insert')->never();
 
         try {
             $this->service->importLeagueLatestPrices(self::LEAGUE_ID);
@@ -266,7 +266,7 @@ class PriceCheckServiceTest extends TestCase
 
     public function test_failure_restores_the_transaction_level(): void
     {
-        $this->leagueService->shouldReceive('find')->andThrow(new RuntimeException('no such league'));
+        $this->leagueService->allows('find')->andThrow(new RuntimeException('no such league'));
         $levelBefore = DB::transactionLevel();
 
         try {
@@ -284,22 +284,22 @@ class PriceCheckServiceTest extends TestCase
             'poe_version' => PoeVersionEnum::POE_2->value,
         ]);
 
-        $this->leagueService->shouldReceive('find')->andReturn($this->league($league->id));
-        $this->ninjaService->shouldReceive('getCurrencyPrices')->andReturn($this->exchange(
+        $this->leagueService->allows('find')->andReturn($this->league($league->id));
+        $this->ninjaService->allows('getCurrencyPrices')->andReturn($this->exchange(
             [$this->item('divine', 'Divine Orb', 'divine-orb')],
             [$this->line('divine', 1.0)],
         ));
-        $this->coreService->shouldReceive('prepTypes')->andReturn([]);
+        $this->coreService->allows('prepTypes')->andReturn([]);
 
         // the core really is written, as the real PriceCheckCoreService would do
-        $this->coreService->shouldReceive('create')->andReturnUsing(function () use ($league) {
+        $this->coreService->allows('create')->andReturnUsing(function () use ($league) {
             $core = PriceCheckCoreModel::create(['poe_league_id' => $league->id]);
 
             return $this->core($core->id);
         });
-        $this->currencyTypeService->shouldReceive('upsert');
-        $this->currencyTypeService->shouldReceive('getAllByLeague')->andReturn(collect([$this->type(1, 'divine')]));
-        $this->priceRepository->shouldReceive('insert')->andThrow(new RuntimeException('insert failed'));
+        $this->currencyTypeService->allows('upsert');
+        $this->currencyTypeService->allows('getAllByLeague')->andReturn(collect([$this->type(1, 'divine')]));
+        $this->priceRepository->allows('insert')->andThrow(new RuntimeException('insert failed'));
 
         try {
             $this->service->importLeagueLatestPrices($league->id);
@@ -312,18 +312,18 @@ class PriceCheckServiceTest extends TestCase
 
     public function test_currency_type_without_a_ninja_line_aborts_the_import_before_any_price_is_stored(): void
     {
-        $this->leagueService->shouldReceive('find')->andReturn($this->league());
-        $this->ninjaService->shouldReceive('getCurrencyPrices')->andReturn($this->exchange(
+        $this->leagueService->allows('find')->andReturn($this->league());
+        $this->ninjaService->allows('getCurrencyPrices')->andReturn($this->exchange(
             [$this->item('divine', 'Divine Orb', 'divine-orb')],
             [$this->line('divine', 1.0)],
         ));
-        $this->coreService->shouldReceive('prepTypes')->andReturn([]);
-        $this->coreService->shouldReceive('create')->andReturn($this->core());
-        $this->currencyTypeService->shouldReceive('upsert');
+        $this->coreService->allows('prepTypes')->andReturn([]);
+        $this->coreService->allows('create')->andReturn($this->core());
+        $this->currencyTypeService->allows('upsert');
         // "mirror" was stored by an earlier import but poe.ninja no longer prices it
-        $this->currencyTypeService->shouldReceive('getAllByLeague')
+        $this->currencyTypeService->allows('getAllByLeague')
             ->andReturn(collect([$this->type(1, 'divine'), $this->type(2, 'mirror')]));
-        $this->priceRepository->shouldNotReceive('insert');
+        $this->priceRepository->expects('insert')->never();
 
         $levelBefore = DB::transactionLevel();
 

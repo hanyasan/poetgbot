@@ -64,7 +64,7 @@ class PoeLeagueServiceTest extends TestCase
             $this->league(2, 'Two', PoeVersionEnum::POE_2),
         ]);
 
-        $this->repository->shouldReceive('getAll')->once()->andReturn($leagues);
+        $this->repository->expects('getAll')->andReturn($leagues);
 
         $this->assertEquals($leagues, $this->service->getAll());
         $this->assertEquals($leagues, $this->service->getAll());
@@ -119,8 +119,8 @@ class PoeLeagueServiceTest extends TestCase
         $poe1 = collect([$this->league(1, 'One', PoeVersionEnum::POE_1)]);
         $poe2 = collect([$this->league(2, 'Two', PoeVersionEnum::POE_2)]);
 
-        $this->repository->shouldReceive('getByLeague')->once()->with(PoeVersionEnum::POE_1)->andReturn($poe1);
-        $this->repository->shouldReceive('getByLeague')->once()->with(PoeVersionEnum::POE_2)->andReturn($poe2);
+        $this->repository->expects('getByLeague')->with(PoeVersionEnum::POE_1)->andReturn($poe1);
+        $this->repository->expects('getByLeague')->with(PoeVersionEnum::POE_2)->andReturn($poe2);
 
         $this->assertEquals($poe1, $this->service->getByVersion(PoeVersionEnum::POE_1));
         $this->assertEquals($poe2, $this->service->getByVersion(PoeVersionEnum::POE_2));
@@ -133,8 +133,8 @@ class PoeLeagueServiceTest extends TestCase
         $league = $this->league(1, 'Test League', PoeVersionEnum::POE_2);
         $all = collect([$league]);
 
-        $this->repository->shouldReceive('getAll')->twice()->andReturn($all);
-        $this->repository->shouldReceive('delete')->once()->with(1)->andReturn(true);
+        $this->repository->expects('getAll')->twice()->andReturn($all);
+        $this->repository->expects('delete')->with(1)->andReturn(true);
 
         $this->service->getAll();
 
@@ -148,8 +148,8 @@ class PoeLeagueServiceTest extends TestCase
     {
         $league = $this->league(1, 'Test League', PoeVersionEnum::POE_2);
 
-        $this->repository->shouldReceive('find')->twice()->with(1)->andReturn($league);
-        $this->repository->shouldReceive('truncate')->once();
+        $this->repository->expects('find')->twice()->with(1)->andReturn($league);
+        $this->repository->expects('truncate');
 
         $this->service->find(1);
 
@@ -161,8 +161,7 @@ class PoeLeagueServiceTest extends TestCase
     public function test_upsert_by_ninja_upserts_ninja_leagues_as_active(): void
     {
         $this->ninjaService
-            ->shouldReceive('getAvailableLeagues')
-            ->once()
+            ->expects('getAvailableLeagues')
             ->with(PoeVersionEnum::POE_2)
             ->andReturn(new PoeNinjaLeagueResponse([
                 $this->ninjaLeague('Fresh League'),
@@ -170,14 +169,12 @@ class PoeLeagueServiceTest extends TestCase
             ]));
 
         $this->repository
-            ->shouldReceive('getByLeague')
-            ->once()
+            ->expects('getByLeague')
             ->with(PoeVersionEnum::POE_2)
             ->andReturn(collect());
 
         $this->repository
-            ->shouldReceive('upsert')
-            ->once()
+            ->expects('upsert')
             ->withArgs(function ($params): bool {
                 $this->assertEquals([
                     ['league_name' => 'Fresh League', 'poe_version' => 'poe2', 'is_active' => true],
@@ -193,16 +190,14 @@ class PoeLeagueServiceTest extends TestCase
     public function test_upsert_by_ninja_deactivates_leagues_missing_from_ninja(): void
     {
         $this->ninjaService
-            ->shouldReceive('getAvailableLeagues')
-            ->once()
+            ->expects('getAvailableLeagues')
             ->with(PoeVersionEnum::POE_2)
             ->andReturn(new PoeNinjaLeagueResponse([
                 $this->ninjaLeague('Standard'),
             ]));
 
         $this->repository
-            ->shouldReceive('getByLeague')
-            ->once()
+            ->expects('getByLeague')
             ->with(PoeVersionEnum::POE_2)
             ->andReturn(collect([
                 $this->league(1, 'Standard', PoeVersionEnum::POE_2, true),
@@ -211,8 +206,7 @@ class PoeLeagueServiceTest extends TestCase
             ]));
 
         $this->repository
-            ->shouldReceive('upsert')
-            ->once()
+            ->expects('upsert')
             ->withArgs(function ($params): bool {
                 $byName = collect($params)->keyBy('league_name');
 
@@ -229,12 +223,11 @@ class PoeLeagueServiceTest extends TestCase
 
     public function test_upsert_by_ninja_flushes_cached_leagues(): void
     {
-        $this->repository->shouldReceive('getAll')->twice()->andReturn(collect());
-        $this->repository->shouldReceive('getByLeague')->once()->andReturn(collect());
-        $this->repository->shouldReceive('upsert')->once();
+        $this->repository->expects('getAll')->twice()->andReturn(collect());
+        $this->repository->expects('getByLeague')->andReturn(collect());
+        $this->repository->expects('upsert');
         $this->ninjaService
-            ->shouldReceive('getAvailableLeagues')
-            ->once()
+            ->expects('getAvailableLeagues')
             ->andReturn(new PoeNinjaLeagueResponse([$this->ninjaLeague('Standard')]));
 
         $this->service->getAll();

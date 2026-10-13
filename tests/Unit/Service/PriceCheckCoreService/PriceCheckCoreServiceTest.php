@@ -89,7 +89,7 @@ class PriceCheckCoreServiceTest extends TestCase
     {
         $cores = collect([$this->core(1), $this->core(2)]);
 
-        $this->repository->shouldReceive('getAll')->once()->andReturn($cores);
+        $this->repository->expects('getAll')->andReturn($cores);
 
         $this->assertEquals($cores, $this->service->getAll());
         $this->assertEquals($cores, $this->service->getAll());
@@ -100,8 +100,8 @@ class PriceCheckCoreServiceTest extends TestCase
         $first = collect([$this->core(1)]);
         $second = collect([$this->core(2)]);
 
-        $this->repository->shouldReceive('getByLeague')->once()->with(10)->andReturn($first);
-        $this->repository->shouldReceive('getByLeague')->once()->with(20)->andReturn($second);
+        $this->repository->expects('getByLeague')->with(10)->andReturn($first);
+        $this->repository->expects('getByLeague')->with(20)->andReturn($second);
 
         $this->assertEquals($first, $this->service->getByLeague(10));
         $this->assertEquals($first, $this->service->getByLeague(10));
@@ -113,8 +113,8 @@ class PriceCheckCoreServiceTest extends TestCase
         $first = $this->core(1);
         $second = $this->core(2);
 
-        $this->repository->shouldReceive('getLatestByLeague')->once()->with(10)->andReturn($first);
-        $this->repository->shouldReceive('getLatestByLeague')->once()->with(20)->andReturn($second);
+        $this->repository->expects('getLatestByLeague')->with(10)->andReturn($first);
+        $this->repository->expects('getLatestByLeague')->with(20)->andReturn($second);
 
         $this->assertEquals($first, $this->service->getLatestByLeague(10));
         $this->assertEquals($first, $this->service->getLatestByLeague(10));
@@ -128,10 +128,10 @@ class PriceCheckCoreServiceTest extends TestCase
         $a = collect([$this->core(1)]);
         $b = collect([$this->core(2)]);
 
-        $this->repository->shouldReceive('getFromDateByLeague')->once()->withArgs(
+        $this->repository->expects('getFromDateByLeague')->withArgs(
             fn ($date, $league) => $date->equalTo($from) && $league === 10
         )->andReturn($a);
-        $this->repository->shouldReceive('getFromDateByLeague')->once()->withArgs(
+        $this->repository->expects('getFromDateByLeague')->withArgs(
             fn ($date, $league) => $date->equalTo($later) && $league === 10
         )->andReturn($b);
 
@@ -188,13 +188,12 @@ class PriceCheckCoreServiceTest extends TestCase
         );
         $core = $this->core(7);
 
-        $this->leagueService->shouldReceive('find')->once()->with(10)->andReturn($league);
+        $this->leagueService->expects('find')->with(10)->andReturn($league);
         $this->ninjaService
-            ->shouldReceive('getCurrencyPrices')
-            ->once()
+            ->expects('getCurrencyPrices')
             ->with(PoeVersionEnum::POE_2, 'Test League')
             ->andReturn($response);
-        $this->repository->shouldReceive('createCore')->once()->with(10, [
+        $this->repository->expects('createCore')->with(10, [
             ['is_primary' => true, 'rate' => 1, 'type_id' => 'divine', 'name' => 'Divine Orb'],
             ['is_primary' => false, 'rate' => 0.25, 'type_id' => 'chaos', 'name' => 'Chaos Orb'],
         ])->andReturn($core);

@@ -31,7 +31,7 @@ class PoeNinjaLeagueMappingTest extends TestCase
     private function service(string $json): PoeNinjaService
     {
         $client = Mockery::mock(NinjaClientContract::class);
-        $client->shouldReceive('getAvailableLeagues')->andReturn($json);
+        $client->allows('getAvailableLeagues')->andReturn($json);
 
         return new PoeNinjaService($client);
     }

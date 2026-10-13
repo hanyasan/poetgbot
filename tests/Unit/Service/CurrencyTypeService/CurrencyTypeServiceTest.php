@@ -116,8 +116,8 @@ class CurrencyTypeServiceTest extends TestCase
     public function test_get_all_by_league_does_not_mix_up_league_ids(): void
     {
         // ids 1 and 11 must not collide in the cache key ("all_by_league1" + "1" vs "all_by_league" + "11")
-        $this->repository->shouldReceive('getAllByLeague')->once()->with(1)->andReturn(collect([$this->type(1)]));
-        $this->repository->shouldReceive('getAllByLeague')->once()->with(11)->andReturn(collect([$this->type(11)]));
+        $this->repository->expects('getAllByLeague')->with(1)->andReturn(collect([$this->type(1)]));
+        $this->repository->expects('getAllByLeague')->with(11)->andReturn(collect([$this->type(11)]));
 
         $this->assertEquals(1, $this->service->getAllByLeague(1)->first()->id);
         $this->assertEquals(11, $this->service->getAllByLeague(11)->first()->id);
@@ -127,8 +127,8 @@ class CurrencyTypeServiceTest extends TestCase
     {
         $all = collect([$this->type(1)]);
 
-        $this->repository->shouldReceive('getAllByLeague')->twice()->with(10)->andReturn($all);
-        $this->repository->shouldReceive('delete')->once()->with(1)->andReturn(true);
+        $this->repository->expects('getAllByLeague')->twice()->with(10)->andReturn($all);
+        $this->repository->expects('delete')->with(1)->andReturn(true);
 
         $this->service->getAllByLeague(10);
 
@@ -143,11 +143,10 @@ class CurrencyTypeServiceTest extends TestCase
     {
         $league = $this->league(5, $leagueName, $version);
 
-        $this->leagueService->shouldReceive('find')->once()->with(5)->andReturn($league);
+        $this->leagueService->expects('find')->with(5)->andReturn($league);
 
         $this->ninjaService
-            ->shouldReceive('getCurrencyPrices')
-            ->once()
+            ->expects('getCurrencyPrices')
             ->with($version, $leagueName)
             ->andReturn($this->ninjaResponse([
                 $this->ninjaItem('divine', 'Divine Orb', 'divine-orb'),
@@ -155,8 +154,7 @@ class CurrencyTypeServiceTest extends TestCase
             ]));
 
         $this->repository
-            ->shouldReceive('upsert')
-            ->once()
+            ->expects('upsert')
             ->with([
                 [
                     'currency_type_name' => 'Divine Orb',
@@ -188,16 +186,16 @@ class CurrencyTypeServiceTest extends TestCase
         $poe1 = $this->league(1, 'Standard', PoeVersionEnum::POE_1);
         $poe2 = $this->league(2, 'Hardcore', PoeVersionEnum::POE_2);
 
-        $this->leagueService->shouldReceive('find')->with(1)->andReturn($poe1);
-        $this->leagueService->shouldReceive('find')->with(2)->andReturn($poe2);
+        $this->leagueService->allows('find')->with(1)->andReturn($poe1);
+        $this->leagueService->allows('find')->with(2)->andReturn($poe2);
 
-        $this->ninjaService->shouldReceive('getCurrencyPrices')->once()->with(PoeVersionEnum::POE_1, 'Standard')
+        $this->ninjaService->expects('getCurrencyPrices')->with(PoeVersionEnum::POE_1, 'Standard')
             ->andReturn($this->ninjaResponse([$this->ninjaItem('a', 'A', 'a-details')]));
-        $this->ninjaService->shouldReceive('getCurrencyPrices')->once()->with(PoeVersionEnum::POE_2, 'Hardcore')
+        $this->ninjaService->expects('getCurrencyPrices')->with(PoeVersionEnum::POE_2, 'Hardcore')
             ->andReturn($this->ninjaResponse([$this->ninjaItem('b', 'B', 'b-details')]));
 
         $leagueIds = [];
-        $this->repository->shouldReceive('upsert')->twice()->withArgs(function (array $data) use (&$leagueIds): bool {
+        $this->repository->expects('upsert')->twice()->withArgs(function (array $data) use (&$leagueIds): bool {
             $leagueIds[] = array_column($data, 'poe_league_id');
 
             return true;
@@ -211,22 +209,22 @@ class CurrencyTypeServiceTest extends TestCase
 
     public function test_upsert_by_ninja_with_no_items_upserts_empty_list(): void
     {
-        $this->leagueService->shouldReceive('find')->once()->with(5)
+        $this->leagueService->expects('find')->with(5)
             ->andReturn($this->league(5, 'Standard', PoeVersionEnum::POE_1));
-        $this->ninjaService->shouldReceive('getCurrencyPrices')->once()->andReturn($this->ninjaResponse([]));
-        $this->repository->shouldReceive('upsert')->once()->with([]);
+        $this->ninjaService->expects('getCurrencyPrices')->andReturn($this->ninjaResponse([]));
+        $this->repository->expects('upsert')->with([]);
 
         $this->service->upsertByNinja(5);
     }
 
     public function test_upsert_by_ninja_flushes_cached_types_of_that_league(): void
     {
-        $this->leagueService->shouldReceive('find')->once()->with(5)
+        $this->leagueService->expects('find')->with(5)
             ->andReturn($this->league(5, 'Standard', PoeVersionEnum::POE_1));
-        $this->ninjaService->shouldReceive('getCurrencyPrices')->once()->andReturn($this->ninjaResponse([]));
-        $this->repository->shouldReceive('upsert')->once();
-        $this->repository->shouldReceive('getAll')->twice()->andReturn(collect());
-        $this->repository->shouldReceive('getAllByLeague')->twice()->with(5)->andReturn(collect());
+        $this->ninjaService->expects('getCurrencyPrices')->andReturn($this->ninjaResponse([]));
+        $this->repository->expects('upsert');
+        $this->repository->expects('getAll')->twice()->andReturn(collect());
+        $this->repository->expects('getAllByLeague')->twice()->with(5)->andReturn(collect());
 
         $this->service->getAll();
         $this->service->getAllByLeague(5);
