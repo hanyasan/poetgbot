@@ -29,6 +29,11 @@ services:
     <<: *app
     command: sh -c "until [ -f vendor/autoload.php ]; do sleep 2; done; exec php artisan schedule:work"
 
+  # Idle container used as the PhpStorm CLI interpreter for running PHPUnit.
+  test:
+    <<: *app
+    command: sh -c "until [ -f vendor/autoload.php ]; do sleep 2; done; exec sleep infinity"
+
   postgres:
     image: postgres:17-alpine
     environment:

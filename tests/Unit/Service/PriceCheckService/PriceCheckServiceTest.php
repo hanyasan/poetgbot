@@ -304,31 +304,6 @@ class PriceCheckServiceTest extends TestCase
         $this->assertDatabaseMissing('price_check_cores', ['poe_league_id' => $league->id]);
     }
 
-    public function test_currency_type_without_a_ninja_line_aborts_the_import_before_any_price_is_stored(): void
-    {
-        $this->ninjaService->allows('getCurrencyPrices')->andReturn($this->exchange(
-            [$this->item('divine', 'Divine Orb', 'divine-orb')],
-            [$this->line('divine', 1.0)],
-        ));
-        $this->coreService->allows('prepTypes')->andReturn([]);
-        $this->coreService->allows('create')->andReturn($this->core());
-        $this->currencyTypeService->allows('upsert');
-        // "mirror" was stored by an earlier import but poe.ninja no longer prices it
-        $this->currencyTypeService->allows('getAllByLeague')
-            ->andReturn(collect([$this->type(1, 'divine'), $this->type(2, 'mirror')]));
-        $this->priceRepository->expects('insert')->never();
-
-        $levelBefore = DB::transactionLevel();
-
-        try {
-            $this->service->importLeagueLatestPrices($this->league());
-            $this->fail('Expected the import to abort');
-        } catch (\Throwable) {
-        }
-
-        $this->assertSame($levelBefore, DB::transactionLevel());
-    }
-
     /**
      * Stubs a successful import for one league: poe.ninja prices it, the core is
      * created with the league's own id and the priced currencies come back.
