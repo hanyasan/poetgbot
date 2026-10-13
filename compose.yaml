@@ -42,6 +42,8 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
       TZ: Europe/Moscow
     command: ["postgres", "-c", "timezone=Europe/Moscow", "-c", "log_timezone=Europe/Moscow"]
+    ports:
+      - "127.0.0.1:${DB_FORWARD_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
