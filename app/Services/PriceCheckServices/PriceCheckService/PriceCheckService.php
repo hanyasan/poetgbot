@@ -33,7 +33,7 @@ final readonly class PriceCheckService implements PriceCheckServiceContract
     public function importPickedLeaguesPrices(): Collection
     {
         $leagues = $this->leagueCheckPickerService->pickLeaguesForCheck();
-        $prices = collect();dump($leagues);
+        $prices = collect();
 
         Log::info('Start import picked leagues prices');
 
@@ -54,7 +54,12 @@ final readonly class PriceCheckService implements PriceCheckServiceContract
     {
         DB::beginTransaction();
 
-        Log::info('Importing ' . $league->league_name . ' league prices');
+        Log::info('Importing ' .
+            $league->league_name .
+            ' ' .
+            $league->poe_version .
+            ' league prices'
+        );
 
         try {
             $exchangeResponse = $this->poeNinjaService->getCurrencyPrices(
@@ -125,9 +130,10 @@ final readonly class PriceCheckService implements PriceCheckServiceContract
         $prices = collect();
 
         foreach ($currencyTypes as $currencyType) {
+            /** @var PoeNinjaExchangeLine $tradeItem */
             $tradeItem = $items->where('id', $currencyType->currency_trade_id)->first();
 
-            if (! $tradeItem) continue;
+            if (! $tradeItem || ! $tradeItem->primaryValue) continue;
 
             $prices->add([
                 'rate' => $tradeItem->primaryValue,
