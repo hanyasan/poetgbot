@@ -6,6 +6,8 @@ use App\Services\TelegramBotService\TelegramBotContract;
 use Illuminate\Routing\Controller as BaseController;
 use Longman\TelegramBot\Exception\TelegramException;
 
+//todo: change or remove
+/** @psalm-suppress UnusedClass */
 final class TelegramBotController extends BaseController
 {
     public function __construct(

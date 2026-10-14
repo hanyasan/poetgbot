@@ -11,7 +11,8 @@ interface PriceCheckServiceContract
     public function importLeagueLatestPrices(PoeLeagueDto $league): LeaguePricesDto;
 
     /**
-     * @return Collection<LeaguePricesDto>
+     * @psalm-suppress PossiblyUnusedReturnValue
+     * @return Collection<int, LeaguePricesDto>
      */
     public function importPickedLeaguesPrices(): Collection;
 }

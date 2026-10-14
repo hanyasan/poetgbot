@@ -7,6 +7,8 @@ use Illuminate\Routing\Controller as BaseController;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Exception\TelegramLogException;
 
+//todo: change or remove
+/** @psalm-suppress UnusedClass */
 final class HookController extends BaseController
 {
     public function __construct(

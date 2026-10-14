@@ -33,6 +33,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\ServiceProvider;
 
+/** @psalm-suppress UnusedClass */
 final class AppServiceProvider extends ServiceProvider
 {
     public array $singletons = [

@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Http\Request;
 
+/** @psalm-suppress UnusedClass */
 final class Authenticate extends Middleware
 {
     /**

@@ -114,7 +114,7 @@ final readonly class PriceCheckService implements PriceCheckServiceContract
     }
 
     /**
-     * @param Collection<CurrencyTypeDto> $currencyTypes
+     * @param Collection<int, CurrencyTypeDto> $currencyTypes
      * @param array<int, PoeNinjaExchangeLine> $items
      *
      * @return array<int, array{

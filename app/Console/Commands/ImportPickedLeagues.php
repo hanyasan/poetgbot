@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Services\PriceCheckServices\PriceCheckService\PriceCheckServiceContract;
 use Illuminate\Console\Command;
 
+/** @psalm-suppress UnusedClass */
 final class ImportPickedLeagues extends Command
 {
     /**

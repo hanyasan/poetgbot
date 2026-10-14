@@ -14,7 +14,7 @@ final readonly class LeagueCheckPickerService implements LeagueCheckPickerServic
     }
 
     /**
-     * @return Collection<PoeLeagueDto>
+     * @return Collection<int, PoeLeagueDto>
      */
     #[\Override]
     public function pickLeaguesForCheck(): Collection

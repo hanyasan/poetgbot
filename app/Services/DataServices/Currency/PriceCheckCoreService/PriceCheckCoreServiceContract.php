@@ -12,19 +12,19 @@ interface PriceCheckCoreServiceContract
     public function find(int $id): PriceCheckCoreDto;
 
     /**
-     * @return Collection<PriceCheckCoreDto>
+     * @return Collection<int, PriceCheckCoreDto>
      */
     public function getAll(): Collection;
 
     /**
-     * @return Collection<PriceCheckCoreDto>
+     * @return Collection<int, PriceCheckCoreDto>
      */
     public function getByLeague(int $leagueId): Collection;
 
     public function getLatestByLeague(int $leagueId): PriceCheckCoreDto;
 
     /**
-     * @return Collection<PriceCheckCoreDto>
+     * @return Collection<int, PriceCheckCoreDto>
      */
     public function getFromDateByLeague(Carbon $dateFrom, int $leagueId): Collection;
 

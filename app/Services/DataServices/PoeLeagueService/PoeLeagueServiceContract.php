@@ -13,22 +13,22 @@ interface PoeLeagueServiceContract
     public function find(int $id): PoeLeagueDto;
 
     /**
-     * @return Collection<PoeLeagueDto>
+     * @return Collection<int, PoeLeagueDto>
      */
     public function getAll(): Collection;
 
     /**
-     * @return Collection<PoeLeagueDto>
+     * @return Collection<int, PoeLeagueDto>
      */
     public function getAllActiveByVersion(PoeVersionEnum $version): Collection;
 
     /**
-     * @return Collection<PoeLeagueDto>
+     * @return Collection<int, PoeLeagueDto>
      */
     public function getAllActive(): Collection;
 
     /**
-     * @return Collection<PoeLeagueDto>
+     * @return Collection<int, PoeLeagueDto>
      */
     public function getByVersion(PoeVersionEnum $version): Collection;
 

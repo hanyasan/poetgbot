@@ -7,6 +7,7 @@ use App\Http\Resources\PoeLeagueResource;
 use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
 use Illuminate\Http\JsonResponse;
 
+/** @psalm-suppress UnusedClass */
 final class LeagueController extends Controller
 {
     public function __construct(

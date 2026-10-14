@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 interface LeagueCheckPickerServiceContract
 {
     /**
-     * @return Collection<PoeLeagueDto>
+     * @return Collection<int, PoeLeagueDto>
      */
     public function pickLeaguesForCheck(): Collection;
 }

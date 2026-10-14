@@ -37,7 +37,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
     }
 
     /**
-     * @return Collection<CurrencyTypeWithLeagueDto>
+     * @return Collection<int, CurrencyTypeWithLeagueDto>
      */
     #[\Override]
     public function getAll(): Collection
@@ -55,7 +55,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
     }
 
     /**
-     * @psalm-return Collection<\App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto>
+     * @psalm-return Collection<int, \App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto>
      */
     #[\Override]
     public function getAllByLeague(int $leagueId): Collection
@@ -113,7 +113,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
     }
 
     /**
-     * @return Collection<CurrencyTypeWithPricesDto>
+     * @return Collection<int, CurrencyTypeWithPricesDto>
      */
     #[\Override]
     public function getAllByLeagueWithPriceByCore(int $leagueId, int $coreId): Collection

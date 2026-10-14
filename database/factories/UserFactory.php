@@ -32,6 +32,7 @@ final class UserFactory extends Factory
      */
     public function unverified(): static
     {
+        /** @psalm-suppress UnusedClosureParam */
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);

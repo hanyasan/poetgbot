@@ -11,22 +11,22 @@ use Illuminate\Support\Collection;
 interface CurrencyTypeRepositoryContract extends BaseRepositoryContract
 {
     /**
-     * @return Collection<CurrencyTypeWithLeagueDto>
+     * @return Collection<int, CurrencyTypeWithLeagueDto>
      */
     public function getAll(): Collection;
 
     /**
-     * @return Collection<CurrencyTypeDto>
+     * @return Collection<int, CurrencyTypeDto>
      */
     public function getAllByLeague(int $leagueId): Collection;
 
     /**
-     * @return Collection<CurrencyTypeWithPricesDto>
+     * @return Collection<int, CurrencyTypeWithPricesDto>
      */
     public function getAllByLeagueWithLatestPrice(int $leagueId): Collection;
 
     /**
-     * @return Collection<CurrencyTypeWithPricesDto>
+     * @return Collection<int, CurrencyTypeWithPricesDto>
      */
     public function getAllByLeagueWithPriceByCore(int $leagueId, int $coreId): Collection;
 

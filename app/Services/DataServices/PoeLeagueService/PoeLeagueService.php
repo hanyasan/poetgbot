@@ -62,7 +62,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     }
 
     /**
-     * @return Collection<PoeLeagueDto>
+     * @return Collection<int, PoeLeagueDto>
      */
     #[\Override]
     public function getAllActiveByVersion(PoeVersionEnum $version): Collection
@@ -80,7 +80,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     }
 
     /**
-     * @return Collection<PoeLeagueDto>
+     * @return Collection<int, PoeLeagueDto>
      */
     #[\Override]
     public function getAllActive(): Collection
@@ -100,7 +100,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     /**
      * Get all leagues belonging to the given PoE version.
      *
-     * @return Collection<PoeLeagueDto>
+     * @return Collection<int, PoeLeagueDto>
      */
     #[\Override]
     public function getByVersion(PoeVersionEnum $version): Collection
