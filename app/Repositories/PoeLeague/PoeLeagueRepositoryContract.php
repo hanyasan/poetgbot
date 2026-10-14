@@ -56,5 +56,5 @@ interface PoeLeagueRepositoryContract extends BaseRepositoryContract
      */
     public function upsert(array $paramsWithValues): void;
 
-    public function updateOrCreateRule(int $minutesToCheck, int $leagueId): void;
+    public function updateOrCreateRule(int|null $minutesToCheck, int $leagueId): void;
 }

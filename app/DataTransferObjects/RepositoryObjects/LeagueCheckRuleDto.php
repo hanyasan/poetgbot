@@ -6,6 +6,6 @@ final readonly class LeagueCheckRuleDto
 {
     public function __construct(
         public int $id,
-        public int|null $minutes_to_check,
+        public int|null $minutes_check,
     ) {}
 }

@@ -4,6 +4,7 @@ namespace Tests\Unit\Repository\PoeLeagueRepository;
 
 use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
+use App\Models\LeagueCheckRule;
 use App\Models\PoeLeague as PoeLeagueModel;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -204,5 +205,52 @@ class PoeLeagueRepositoryTest extends TestCase
         $this->assertSame($this->poeLeague->id, $league->id);
         $this->assertSame('Test League', $league->league_name);
         $this->assertSame(PoeVersionEnum::POE_2->value, $league->poe_version);
+    }
+
+    public function test_update_or_create_rule_creates_rule(): void
+    {
+        $this->repository->updateOrCreateRule(15, $this->poeLeague->id);
+
+        $this->assertDatabaseHas('league_check_rules', [
+            'poe_league_id' => $this->poeLeague->id,
+            'minutes_check' => 15,
+        ]);
+    }
+
+    public function test_update_or_create_rule_updates_existing_rule(): void
+    {
+        $this->repository->updateOrCreateRule(15, $this->poeLeague->id);
+        $this->repository->updateOrCreateRule(30, $this->poeLeague->id);
+
+        $this->assertSame(1, LeagueCheckRule::where('poe_league_id', $this->poeLeague->id)->count());
+        $this->assertDatabaseHas('league_check_rules', [
+            'poe_league_id' => $this->poeLeague->id,
+            'minutes_check' => 30,
+        ]);
+    }
+
+    public function test_update_or_create_rule_accepts_null_minutes(): void
+    {
+        $this->repository->updateOrCreateRule(15, $this->poeLeague->id);
+        $this->repository->updateOrCreateRule(null, $this->poeLeague->id);
+
+        $this->assertDatabaseHas('league_check_rules', [
+            'poe_league_id' => $this->poeLeague->id,
+            'minutes_check' => null,
+        ]);
+    }
+
+    public function test_update_or_create_rule_does_not_touch_other_leagues(): void
+    {
+        $other = $this->repository->create([
+            'league_name' => 'Other League',
+            'poe_version' => PoeVersionEnum::POE_1->value,
+        ]);
+
+        $this->repository->updateOrCreateRule(10, $other->id);
+        $this->repository->updateOrCreateRule(20, $this->poeLeague->id);
+
+        $this->assertDatabaseHas('league_check_rules', ['poe_league_id' => $other->id, 'minutes_check' => 10]);
+        $this->assertDatabaseHas('league_check_rules', ['poe_league_id' => $this->poeLeague->id, 'minutes_check' => 20]);
     }
 }

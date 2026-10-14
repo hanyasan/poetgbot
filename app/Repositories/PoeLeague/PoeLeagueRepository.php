@@ -114,7 +114,7 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
             ->updateOrCreate(
                 ['poe_league_id' => $leagueId],
                 [
-                    'minutes_to_check' => $minutesToCheck,
+                    'minutes_check' => $minutesToCheck,
                     'poe_league_id' => $leagueId,
                 ]
             );

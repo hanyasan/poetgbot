@@ -9,6 +9,7 @@ use App\Enums\PoeVersionEnum;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
 use App\Services\DataServices\PoeLeagueService\PoeLeagueService;
 use App\Services\PoeNinjaService\PoeNinjaServiceContract;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Mockery;
@@ -235,5 +236,43 @@ class PoeLeagueServiceTest extends TestCase
         $this->service->upsertByNinja(PoeVersionEnum::POE_1);
 
         $this->service->getAll();
+    }
+
+    public function test_update_or_create_rule_delegates_to_repository(): void
+    {
+        $this->repository->expects('find')->with(1)->andReturns($this->league(1, 'Test League', PoeVersionEnum::POE_2));
+        $this->repository->expects('updateOrCreateRule')->with(15, 1);
+
+        $this->service->updateOrCreateRule(15, 1);
+    }
+
+    public function test_update_or_create_rule_passes_null_minutes(): void
+    {
+        $this->repository->expects('find')->with(1)->andReturns($this->league(1, 'Test League', PoeVersionEnum::POE_2));
+        $this->repository->expects('updateOrCreateRule')->with(null, 1);
+
+        $this->service->updateOrCreateRule(null, 1);
+    }
+
+    public function test_update_or_create_rule_throws_and_skips_write_when_league_missing(): void
+    {
+        $this->repository->expects('find')->with(99)->andThrow(new ModelNotFoundException());
+        $this->repository->shouldNotReceive('updateOrCreateRule');
+
+        $this->expectException(ModelNotFoundException::class);
+
+        $this->service->updateOrCreateRule(15, 99);
+    }
+
+    public function test_update_or_create_rule_flushes_cached_league(): void
+    {
+        $this->repository->expects('find')->with(1)->twice()->andReturns($this->league(1, 'Test League', PoeVersionEnum::POE_2));
+        $this->repository->expects('updateOrCreateRule')->with(15, 1);
+
+        $this->service->find(1);
+        $this->service->updateOrCreateRule(15, 1);
+
+        // cache was flushed by the rule update, so this hits the repository again
+        $this->service->find(1);
     }
 }
