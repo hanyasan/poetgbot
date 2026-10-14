@@ -1,5 +1,6 @@
 <?php
 
+use App\DataTransferObjects\RepositoryObjects\LeagueCheckRuleDto;
 use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
 use App\DataTransferObjects\ServiceObjects\LeaguePricesDto;
 use Carbon\Carbon;
@@ -147,6 +148,7 @@ return [
         App\DataTransferObjects\RepositoryObjects\Currency\PriceCheckCoreTypeDto::class,
         LeaguePricesDto::class,
         Carbon::class,
+        LeagueCheckRuleDto::class,
     ],
 
 ];
