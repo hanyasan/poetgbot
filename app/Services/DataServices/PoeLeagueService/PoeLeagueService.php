@@ -23,6 +23,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         private readonly PoeNinjaServiceContract $ninjaService,
     ) {}
 
+    #[\Override]
     public function delete(int $id): bool
     {
         $this->flushAll();
@@ -30,6 +31,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         return $this->repository->delete($id);
     }
 
+    #[\Override]
     public function find(int $id): PoeLeagueDto
     {
         return Cache::tags([
@@ -44,6 +46,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         );
     }
 
+    #[\Override]
     public function getAll(): Collection
     {
         return Cache::tags([
@@ -61,6 +64,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     /**
      * @return Collection<PoeLeagueDto>
      */
+    #[\Override]
     public function getAllActiveByVersion(PoeVersionEnum $version): Collection
     {
         return Cache::tags([
@@ -78,6 +82,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     /**
      * @return Collection<PoeLeagueDto>
      */
+    #[\Override]
     public function getAllActive(): Collection
     {
         return Cache::tags([
@@ -97,6 +102,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
      *
      * @return Collection<PoeLeagueDto>
      */
+    #[\Override]
     public function getByVersion(PoeVersionEnum $version): Collection
     {
         return Cache::tags([
@@ -111,6 +117,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         );
     }
 
+    #[\Override]
     public function upsertByNinja(PoeVersionEnum $version): void
     {
         $this->flushVersion($version);
@@ -143,6 +150,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         $this->repository->upsert($leagues->values()->all());
     }
 
+    #[\Override]
     public function truncate(): void
     {
         $this->flushAll();
@@ -150,6 +158,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         $this->repository->truncate();
     }
 
+    #[\Override]
     public function flushAll(): void
     {
         Cache::tags([
@@ -157,6 +166,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         ])->flush();
     }
 
+    #[\Override]
     public function flushGet(): void
     {
         Cache::tags([
@@ -164,6 +174,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         ])->flush();
     }
 
+    #[\Override]
     public function flushId(int $id): void
     {
         Cache::tags([
@@ -172,6 +183,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         ])->flush();
     }
 
+    #[\Override]
     public function flushVersion(PoeVersionEnum $version): void
     {
         Cache::tags([

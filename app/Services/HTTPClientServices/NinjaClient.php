@@ -5,7 +5,7 @@ namespace App\Services\HTTPClientServices;
 use App\Enums\PoeVersionEnum;
 use GuzzleHttp\Client;
 
-class NinjaClient implements NinjaClientContract
+final class NinjaClient implements NinjaClientContract
 {
     private Client $client;
 
@@ -16,6 +16,7 @@ class NinjaClient implements NinjaClientContract
           ]);
     }
 
+    #[\Override]
     public function getCurrencyPrices(PoeVersionEnum $version, string $league): string
     {
         $response = $this->client->get( $this->setLeagueForUrl($version) . '/api/economy/exchange/current/overview', [
@@ -29,6 +30,7 @@ class NinjaClient implements NinjaClientContract
     }
 
 
+    #[\Override]
     public function getAvailableLeagues(PoeVersionEnum $version): string
     {
         $response = $this->client->get( $this->setLeagueForUrl($version) . '/api/data/index-state');

@@ -9,13 +9,14 @@ use App\Services\HTTPClientServices\NinjaClientContract;
 use CuyZ\Valinor\Mapper\Source\Source;
 use CuyZ\Valinor\MapperBuilder;
 
-class PoeNinjaService implements PoeNinjaServiceContract
+final class PoeNinjaService implements PoeNinjaServiceContract
 {
     public function __construct(
         private readonly NinjaClientContract $client,
     ) {
     }
 
+    #[\Override]
     public function getCurrencyPrices(
         PoeVersionEnum $version,
         string         $league,
@@ -31,6 +32,7 @@ class PoeNinjaService implements PoeNinjaServiceContract
             );
     }
 
+    #[\Override]
     public function getAvailableLeagues(
         PoeVersionEnum $version,
     ): PoeNinjaLeagueResponse {

@@ -2,9 +2,14 @@
 
 namespace App\Services;
 
-class CacheHelperService
+final class CacheHelperService
 {
-    public static function generateCacheTag(string $pref, ...$args): string
+    /**
+     * @param int|string $args
+     *
+     * @psalm-param 'poe1'|'poe2'|int $args
+     */
+    public static function generateCacheTag(string $pref, string|int ...$args): string
     {
         return sha1($pref . serialize($args));
     }

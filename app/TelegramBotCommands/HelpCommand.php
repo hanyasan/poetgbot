@@ -7,7 +7,7 @@ use Longman\TelegramBot\Commands\UserCommand;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Exception\TelegramException;
 
-class HelpCommand extends UserCommand
+final class HelpCommand extends UserCommand
 {
     /**
      * @var string
@@ -35,6 +35,7 @@ class HelpCommand extends UserCommand
      * @return ServerResponse
      * @throws TelegramException
      */
+    #[\Override]
     public function execute(): ServerResponse
     {
         $message = $this->getMessage();

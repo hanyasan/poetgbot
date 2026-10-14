@@ -7,13 +7,13 @@ use Illuminate\Routing\Controller as BaseController;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Exception\TelegramLogException;
 
-class HookController extends BaseController
+final class HookController extends BaseController
 {
     public function __construct(
         protected TelegramBotContract $telegramBot
     ) {}
 
-    public function handle()
+    public function handle(): void
     {
         try {
             $this

@@ -27,6 +27,7 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
         private readonly PoeLeagueServiceContract $leagueService,
     ) {}
 
+    #[\Override]
     public function find(int $id): PriceCheckCoreDto
     {
         return Cache::tags([
@@ -44,6 +45,7 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getAll(): Collection
     {
         return Cache::tags([
@@ -61,6 +63,7 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getByLeague(int $leagueId): Collection
     {
         return Cache::tags([
@@ -75,6 +78,7 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
         );
     }
 
+    #[\Override]
     public function getLatestByLeague(int $leagueId): PriceCheckCoreDto
     {
         return Cache::tags([
@@ -92,6 +96,7 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getFromDateByLeague(Carbon $dateFrom, int $leagueId): Collection
     {
         return Cache::tags([
@@ -109,6 +114,7 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function create(array $coreData, int $leagueId): PriceCheckCoreDto
     {
         $this->flushLeagueId($leagueId);
@@ -116,6 +122,7 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
         return $this->repository->createCore($leagueId, $coreData['types']);
     }
 
+    #[\Override]
     public function createNewByNinja(int $leagueId): PriceCheckCoreDto
     {
         $league = $this->leagueService->find($leagueId);
@@ -130,14 +137,12 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
 
     /**
      * @param PoeNinjaExchangeResponse $prices
-
-     * @return array{
-     *     is_primary: bool,
-     *     rate: float,
-     *     type_id: string,
-     *     name: string,
-     * }
+     *
+     * @return (bool|float|int|string)[][]
+     *
+     * @psalm-return array<array{is_primary: bool, rate: 1|float, type_id: string, name: string}>
      */
+    #[\Override]
     public function prepTypes(PoeNinjaExchangeResponse $prices): array
     {
         return array_map(static function (PoeNinjaExchangeItem $item) use ($prices) {
@@ -152,6 +157,7 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
         }, $prices->core->items);
     }
 
+    #[\Override]
     public function flushAll(): void
     {
         Cache::tags([
@@ -159,6 +165,7 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
         ])->flush();
     }
 
+    #[\Override]
     public function flushLeagueId(int $leagueId): void
     {
         Cache::tags([

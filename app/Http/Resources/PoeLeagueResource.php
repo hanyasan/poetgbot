@@ -5,8 +5,9 @@ namespace App\Http\Resources;
 use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PoeLeagueResource extends JsonResource
+final class PoeLeagueResource extends JsonResource
 {
+    #[\Override]
     public function toArray($request): array
     {
         /** @var PoeLeagueDto $league */

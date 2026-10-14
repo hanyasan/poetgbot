@@ -43,6 +43,7 @@ interface PoeLeagueRepositoryContract extends BaseRepositoryContract
      *
      * @throws ModelNotFoundException<Model> When the league does not exist
      */
+    #[\Override]
     public function find(int $id): PoeLeagueDto;
 
     /**

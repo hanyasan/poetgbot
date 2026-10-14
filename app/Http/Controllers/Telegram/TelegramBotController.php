@@ -6,13 +6,13 @@ use App\Services\TelegramBotService\TelegramBotContract;
 use Illuminate\Routing\Controller as BaseController;
 use Longman\TelegramBot\Exception\TelegramException;
 
-class TelegramBotController extends BaseController
+final class TelegramBotController extends BaseController
 {
     public function __construct(
         protected TelegramBotContract $telegramBot
     ) {}
 
-    public function set()
+    public function set(): void
     {
         try {
             $this->telegramBot->setTelegramWebhook();

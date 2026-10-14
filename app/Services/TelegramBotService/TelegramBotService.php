@@ -4,9 +4,10 @@ namespace App\Services\TelegramBotService;
 
 use Longman\TelegramBot\Telegram;
 
-class TelegramBotService implements TelegramBotContract
+final class TelegramBotService implements TelegramBotContract
 {
 
+    #[\Override]
     public function getTelegram(): Telegram
     {
         return new Telegram(
@@ -15,11 +16,13 @@ class TelegramBotService implements TelegramBotContract
         );
     }
 
+    #[\Override]
     public function setTelegramWebhook(): void
     {
         $this->getTelegram()->setWebhook('https://hanyasan.ru/hook/telegram');
     }
 
+    #[\Override]
     public function getTelegramWithCommands(): Telegram
     {
         return $this

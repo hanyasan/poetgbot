@@ -28,8 +28,9 @@ final readonly class PriceCheckService implements PriceCheckServiceContract
     ) {}
 
     /**
-     * @return Collection<LeaguePricesDto>
+     * @psalm-return Collection<int, never>|Collection<never, never>
      */
+    #[\Override]
     public function importPickedLeaguesPrices(): Collection
     {
         $leagues = $this->leagueCheckPickerService->pickLeaguesForCheck();
@@ -50,6 +51,7 @@ final readonly class PriceCheckService implements PriceCheckServiceContract
         return $prices;
     }
 
+    #[\Override]
     public function importLeagueLatestPrices(PoeLeagueDto $league): LeaguePricesDto
     {
         DB::beginTransaction();

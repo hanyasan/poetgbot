@@ -20,7 +20,7 @@ use Illuminate\Support\Carbon;
  * @property-read int $poe_league_id
  * @property-read PoeLeague $league
  */
-class PriceCheckCore extends Model
+final class PriceCheckCore extends Model
 {
     protected $table = 'price_check_cores';
 

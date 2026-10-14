@@ -24,7 +24,10 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
 
     /**
      * {@inheritDoc}
+     *
+     * @psalm-return Collection<int, object>
      */
+    #[\Override]
     public function getAll(): Collection
     {
         return $this->getQuery()->get()->toBase()->map(
@@ -33,9 +36,9 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
     }
 
     /**
-     *
-     * @return Collection<PoeLeagueDto>
+     * @psalm-return Collection<int, object>
      */
+    #[\Override]
     public function getAllActiveByVersion(PoeVersionEnum $version): Collection
     {
         return $this->getQuery()
@@ -47,9 +50,9 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
     }
 
     /**
-     *
-     * @return Collection<PoeLeagueDto>
+     * @psalm-return Collection<int, object>
      */
+    #[\Override]
     public function getAllActive(): Collection
     {
         return $this->getQuery()
@@ -61,7 +64,10 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
 
     /**
      * {@inheritDoc}
+     *
+     * @psalm-return Collection<int, object>
      */
+    #[\Override]
     public function getByLeague(PoeVersionEnum $version): Collection
     {
         return $this->getQuery()
@@ -74,6 +80,7 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function find(int $id): PoeLeagueDto
     {
         return $this->mapper->mapFromArray(
@@ -89,6 +96,7 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
      *     is_active: bool,
      * }> $paramsWithValues
      */
+    #[\Override]
     public function upsert(array $paramsWithValues): void
     {
         parent::getQuery()->upsert(

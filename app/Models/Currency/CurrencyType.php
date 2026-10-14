@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property-read PoeLeague $league
  *
  */
-class CurrencyType extends Model
+final class CurrencyType extends Model
 {
     protected $table = 'currency_types';
 

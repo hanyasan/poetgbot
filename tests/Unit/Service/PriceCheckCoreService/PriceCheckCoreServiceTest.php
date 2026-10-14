@@ -11,7 +11,7 @@ use App\Enums\PoeVersionEnum;
 use App\Repositories\Currency\PriceCheckCore\PriceCheckCoreRepositoryContract;
 use App\Services\DataServices\Currency\PriceCheckCoreService\PriceCheckCoreService;
 use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
-use App\Services\PoeNinjaService\PoeNinjaService;
+use App\Services\PoeNinjaService\PoeNinjaServiceContract;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -23,7 +23,7 @@ class PriceCheckCoreServiceTest extends TestCase
 {
     private MockInterface|PriceCheckCoreRepositoryContract $repository;
 
-    private MockInterface|PoeNinjaService $ninjaService;
+    private MockInterface|PoeNinjaServiceContract $ninjaService;
 
     private MockInterface|PoeLeagueServiceContract $leagueService;
 
@@ -38,7 +38,7 @@ class PriceCheckCoreServiceTest extends TestCase
 
         $this->repository = Mockery::mock(PriceCheckCoreRepositoryContract::class);
 
-        $this->ninjaService = Mockery::mock(PoeNinjaService::class);
+        $this->ninjaService = Mockery::mock(PoeNinjaServiceContract::class);
         $this->leagueService = Mockery::mock(PoeLeagueServiceContract::class);
 
         $this->service = new PriceCheckCoreService($this->repository, $this->ninjaService, $this->leagueService);

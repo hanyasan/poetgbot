@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property PoeVersionEnum $poe_version
  * @property bool $is_active
  */
-class PoeLeague extends Model
+final class PoeLeague extends Model
 {
     protected $table = 'poe_leagues';
 

@@ -12,7 +12,7 @@ use Illuminate\Support\Collection;
 /**
  * @property-read PriceCheckCore $model
  */
-class PriceCheckCoreRepository extends BaseEloquentRepository implements PriceCheckCoreRepositoryContract
+final class PriceCheckCoreRepository extends BaseEloquentRepository implements PriceCheckCoreRepositoryContract
 {
     public function __construct(
         PriceCheckCore $model,
@@ -21,6 +21,7 @@ class PriceCheckCoreRepository extends BaseEloquentRepository implements PriceCh
         parent::__construct($model, $mapper);
     }
 
+    #[\Override]
     public function find(int $id): PriceCheckCoreDto
     {
         return $this->mapper->mapFromArray(
@@ -30,8 +31,9 @@ class PriceCheckCoreRepository extends BaseEloquentRepository implements PriceCh
     }
 
     /**
-     * @return Collection<PriceCheckCoreDto>
+     * @psalm-return Collection<int, object>
      */
+    #[\Override]
     public function getAll(): Collection
     {
         return $this
@@ -43,8 +45,9 @@ class PriceCheckCoreRepository extends BaseEloquentRepository implements PriceCh
     }
 
     /**
-     * @return Collection<PriceCheckCoreDto>
+     * @psalm-return Collection<int, object>
      */
+    #[\Override]
     public function getByLeague(int $leagueId): Collection
     {
         return $this
@@ -56,6 +59,7 @@ class PriceCheckCoreRepository extends BaseEloquentRepository implements PriceCh
             ->map(fn ($core) => $this->mapper->mapFromArray(PriceCheckCoreDto::class, $core->toArray()));
     }
 
+    #[\Override]
     public function getLatestByLeague(int $leagueId): PriceCheckCoreDto
     {
         $core = $this
@@ -69,8 +73,9 @@ class PriceCheckCoreRepository extends BaseEloquentRepository implements PriceCh
     }
 
     /**
-     * @return Collection<PriceCheckCoreDto>
+     * @psalm-return Collection<int, object>
      */
+    #[\Override]
     public function getFromDateByLeague(Carbon $dateFrom, int $leagueId): Collection
     {
         return $this
@@ -94,6 +99,7 @@ class PriceCheckCoreRepository extends BaseEloquentRepository implements PriceCh
      *
      * @return PriceCheckCoreDto
      */
+    #[\Override]
     public function createCore(
         int $leagueId,
         array $types,

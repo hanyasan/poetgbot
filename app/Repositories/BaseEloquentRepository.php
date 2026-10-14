@@ -20,11 +20,13 @@ class BaseEloquentRepository implements BaseRepositoryContract
         return $this->model->newQuery();
     }
 
+    #[\Override]
     public function delete(int $id): bool
     {
-        return $this->getQuery()->findOrFail($id)->delete();
+        return (bool) $this->getQuery()->findOrFail($id)->delete();
     }
 
+    #[\Override]
     public function truncate(): void
     {
         $this->getQuery()->truncate();
@@ -33,11 +35,13 @@ class BaseEloquentRepository implements BaseRepositoryContract
     /**
      * @throws ModelNotFoundException<Model>
      */
+    #[\Override]
     public function find(int $id): object
     {
         return $this->getQuery()->findOrFail($id);
     }
 
+    #[\Override]
     public function create(array $params): object
     {
         return $this->getQuery()->create($params);
@@ -46,11 +50,13 @@ class BaseEloquentRepository implements BaseRepositoryContract
     /**
      * @throws Throwable
      */
+    #[\Override]
     public function updateOne(int $id, array $params): bool
     {
         return $this->getQuery()->findOrFail($id)->updateOrFail($params);
     }
 
+    #[\Override]
     public function updateOrCreate(array $paramsToMatch, array $params): object
     {
         return $this->getQuery()->updateOrCreate($paramsToMatch, $params);

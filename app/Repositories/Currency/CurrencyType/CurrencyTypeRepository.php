@@ -20,6 +20,10 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
         parent::__construct($model, $mapper);
     }
 
+    /**
+     * @psalm-return Collection<int, object>
+     */
+    #[\Override]
     public function getAll(): Collection
     {
         return $this->getQuery()
@@ -35,8 +39,9 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
     }
 
     /**
-     * @return Collection<CurrencyTypeDto>
+     * @psalm-return Collection<int, object>
      */
+    #[\Override]
     public function getAllByLeague(int $leagueId): Collection
     {
         return $this->getQuery()
@@ -52,8 +57,9 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
     }
 
     /**
-     * @return Collection<CurrencyTypeWithPricesDto>
+     * @psalm-return Collection<int, object>
      */
+    #[\Override]
     public function getAllByLeagueWithPriceByCore(int $leagueId, int $coreId): Collection
     {
         return $this->getQuery()
@@ -72,8 +78,9 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
     }
 
     /**
-     * @return Collection<CurrencyTypeWithPricesDto>
+     * @psalm-return Collection<int, object>
      */
+    #[\Override]
     public function getAllByLeagueWithLatestPrice(int $leagueId): Collection
     {
         $latestCoreId = PriceCheckCore::query()
@@ -98,6 +105,7 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
             });
     }
 
+    #[\Override]
     public function find(int $id): CurrencyTypeWithLeagueDto
     {
         return $this->mapper->mapFromArray(
@@ -116,6 +124,7 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
      *
      * @return void
      */
+    #[\Override]
     public function upsert(array $insertData): void
     {
         $this->getQuery()->upsert(

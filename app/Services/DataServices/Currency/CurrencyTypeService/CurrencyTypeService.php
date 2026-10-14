@@ -28,6 +28,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
         private readonly PoeLeagueServiceContract $leagueService,
     ) {}
 
+    #[\Override]
     public function delete(int $id): bool
     {
         $this->flushId($id);
@@ -38,6 +39,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
     /**
      * @return Collection<CurrencyTypeWithLeagueDto>
      */
+    #[\Override]
     public function getAll(): Collection
     {
         return Cache::tags([
@@ -53,8 +55,9 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
     }
 
     /**
-     * @return Collection<CurrencyTypeWithLeagueDto>
+     * @psalm-return Collection<\App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto>
      */
+    #[\Override]
     public function getAllByLeague(int $leagueId): Collection
     {
         return Cache::tags([
@@ -70,6 +73,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
         );
     }
 
+    #[\Override]
     public function freshAllByNinja(): void
     {
         $this->flushGet();
@@ -90,6 +94,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
      *
      * @return void
      */
+    #[\Override]
     public function upsert(array $typeData, int $leagueId): void
     {
         $this->flushLeagueId($leagueId);
@@ -110,6 +115,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
     /**
      * @return Collection<CurrencyTypeWithPricesDto>
      */
+    #[\Override]
     public function getAllByLeagueWithPriceByCore(int $leagueId, int $coreId): Collection
     {
         return Cache::tags([
@@ -126,6 +132,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
         );
     }
 
+    #[\Override]
     public function upsertByNinja(int $leagueId): void
     {
         $this->flushLeagueId($leagueId);
@@ -150,6 +157,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
         $this->repository->upsert($insertData);
     }
 
+    #[\Override]
     public function flushAll(): void
     {
         Cache::tags([
@@ -157,6 +165,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
         ])->flush();
     }
 
+    #[\Override]
     public function flushId(int $id): void
     {
         Cache::tags([
@@ -165,6 +174,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
         ])->flush();
     }
 
+    #[\Override]
     public function flushLeagueId(int $id): void
     {
         Cache::tags([
@@ -173,6 +183,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
         ])->flush();
     }
 
+    #[\Override]
     public function flushGet(): void
     {
         Cache::tags([

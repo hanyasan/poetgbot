@@ -6,7 +6,7 @@ use Longman\TelegramBot\Commands\UserCommand;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Exception\TelegramException;
 
-class DivineCommand extends UserCommand
+final class DivineCommand extends UserCommand
 {
     /**
      * @var string
@@ -38,6 +38,7 @@ class DivineCommand extends UserCommand
      * @return ServerResponse
      * @throws TelegramException
      */
+    #[\Override]
     public function execute(): ServerResponse
     {
         //TODO: implement new logic, not now

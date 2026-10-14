@@ -6,7 +6,7 @@ use CuyZ\Valinor\Mapper\TreeMapper;
 use CuyZ\Valinor\MapperBuilder;
 use CuyZ\Valinor\Mapper\Source\Source;
 
-readonly class MapperService
+final readonly class MapperService
 {
     private TreeMapper $mapper;
 

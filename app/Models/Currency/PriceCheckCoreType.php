@@ -19,7 +19,7 @@ use Illuminate\Support\Carbon;
   * @property-read int $price_check_core_id
  * @property-read PriceCheckCore $priceCheckCore
  */
-class PriceCheckCoreType extends Model
+final class PriceCheckCoreType extends Model
 {
     protected $table = 'price_check_core_types';
 

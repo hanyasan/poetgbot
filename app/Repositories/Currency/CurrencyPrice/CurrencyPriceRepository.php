@@ -6,7 +6,7 @@ use App\Models\Currency\CurrencyPrice;
 use App\Repositories\BaseEloquentRepository;
 use App\Services\Mapper\MapperService;
 
-class CurrencyPriceRepository extends BaseEloquentRepository implements CurrencyPriceRepositoryContract
+final class CurrencyPriceRepository extends BaseEloquentRepository implements CurrencyPriceRepositoryContract
 {
     public function __construct(
         CurrencyPrice $model,
@@ -22,6 +22,7 @@ class CurrencyPriceRepository extends BaseEloquentRepository implements Currency
      *     currency_type_id: int,
      * }> $pricesData
      */
+    #[\Override]
     public function insert(array $pricesData): void
     {
         $this->model

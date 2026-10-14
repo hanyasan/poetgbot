@@ -6,7 +6,7 @@ use App\Enums\PoeVersionEnum;
 use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
 use Illuminate\Console\Command;
 
-class ImportPoeLeagues extends Command
+final class ImportPoeLeagues extends Command
 {
     /**
      * The name and signature of the console command.
@@ -25,9 +25,8 @@ class ImportPoeLeagues extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
-        /** @var PoeLeagueServiceContract $service */
         $service = app(PoeLeagueServiceContract::class);
 
         $service->upsertByNinja(PoeVersionEnum::POE_1);

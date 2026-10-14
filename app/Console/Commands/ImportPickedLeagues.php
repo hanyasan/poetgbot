@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Services\PriceCheckServices\PriceCheckService\PriceCheckServiceContract;
 use Illuminate\Console\Command;
 
-class ImportPickedLeagues extends Command
+final class ImportPickedLeagues extends Command
 {
     /**
      * The name and signature of the console command.
@@ -24,9 +24,8 @@ class ImportPickedLeagues extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
-        /** @var PriceCheckServiceContract $service */
         $service = app(PriceCheckServiceContract::class);
 
         $service->importPickedLeaguesPrices();

@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read int $price_check_core_id
  * @property-read PriceCheckCore $priceCheck
  */
-class CurrencyPrice extends Model
+final class CurrencyPrice extends Model
 {
     protected $table = 'currency_prices';
 
