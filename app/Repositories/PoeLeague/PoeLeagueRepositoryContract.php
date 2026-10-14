@@ -4,6 +4,7 @@ namespace App\Repositories\PoeLeague;
 
 use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
+use App\Models\PoeLeague;
 use App\Repositories\BaseRepositoryContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -54,4 +55,6 @@ interface PoeLeagueRepositoryContract extends BaseRepositoryContract
      * }> $paramsWithValues
      */
     public function upsert(array $paramsWithValues): void;
+
+    public function updateOrCreateRule(int $minutesToCheck, int $leagueId): void;
 }

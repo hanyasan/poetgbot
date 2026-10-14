@@ -12,6 +12,8 @@ final readonly class PoeLeagueDto
         public string $updated_at,
         public string $league_name,
         public string $poe_version,
-        public bool   $is_active
+        public bool   $is_active,
+        /** @var null|LeagueCheckRuleDto $check_rule */
+        public null|object $check_rule = null,
     ) {}
 }

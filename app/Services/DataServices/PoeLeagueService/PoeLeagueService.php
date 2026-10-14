@@ -8,6 +8,7 @@ use App\Enums\PoeVersionEnum;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
 use App\Services\CacheHelperService;
 use App\Services\PoeNinjaService\PoeNinjaServiceContract;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -31,6 +32,12 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         return $this->repository->delete($id);
     }
 
+    /**
+     * @param int $id
+     * @return PoeLeagueDto
+     *
+     * @psalm-suppress PossiblyUnusedReturnValue
+     */
     #[\Override]
     public function find(int $id): PoeLeagueDto
     {
@@ -190,5 +197,15 @@ final class PoeLeagueService implements PoeLeagueServiceContract
             CacheHelperService::generateCacheTag(self::$leagueGetTag),
             CacheHelperService::generateCacheTag(self::$leagueVersionTag, $version->value),
         ])->flush();
+    }
+
+    #[\Override]
+    public function updateOrCreateRule(int|null $minutesToCheck, int $leagueId): void
+    {
+        $this->find($leagueId);
+
+        $this->flushId($leagueId);
+
+        $this->repository->updateOrCreateRule($minutesToCheck, $leagueId);
     }
 }

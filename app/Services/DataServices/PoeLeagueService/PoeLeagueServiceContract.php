@@ -44,4 +44,6 @@ interface PoeLeagueServiceContract
 
     public function flushVersion(PoeVersionEnum $version): void;
 
+    public function updateOrCreateRule(int|null $minutesToCheck, int $leagueId): void;
+
 }

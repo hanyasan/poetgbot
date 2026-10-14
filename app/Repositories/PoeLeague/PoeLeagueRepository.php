@@ -4,6 +4,7 @@ namespace App\Repositories\PoeLeague;
 
 use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
+use App\Models\LeagueCheckRule;
 use App\Models\PoeLeague as PoeLeagueModel;
 use App\Repositories\BaseEloquentRepository;
 use App\Services\Mapper\MapperService;
@@ -104,5 +105,18 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
             ['league_name', 'poe_version'],
             ['is_active'],
         );
+    }
+
+    #[\Override]
+    public function updateOrCreateRule(int|null $minutesToCheck, int $leagueId): void
+    {
+        LeagueCheckRule::query()
+            ->updateOrCreate(
+                ['poe_league_id' => $leagueId],
+                [
+                    'minutes_to_check' => $minutesToCheck,
+                    'poe_league_id' => $leagueId,
+                ]
+            );
     }
 }
