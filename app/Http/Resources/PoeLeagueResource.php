@@ -20,6 +20,7 @@ final class PoeLeagueResource extends JsonResource
             'league_name' => $league->league_name,
             'poe_version' => $league->poe_version,
             'is_active' => $league->is_active,
+            'check_rule' => LeagueCheckRule::make($league->check_rule),
         ];
     }
 }

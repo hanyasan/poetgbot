@@ -130,6 +130,7 @@ class PoeLeagueRepositoryTest extends TestCase
             DB::table('currency_prices')->delete();
             DB::table('price_check_cores')->delete();
             DB::table('currency_types')->delete();
+            DB::table('league_check_rules')->delete();
             PoeLeagueModel::query()->delete();
 
             $this->assertSame(Collection::class, $this->repository->getAll()::class);
