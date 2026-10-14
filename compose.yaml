@@ -16,7 +16,7 @@ x-app: &app
     postgres:
       condition: service_healthy
     redis:
-      condition: service_started
+      condition: service_healthy
 
 services:
   app:
@@ -25,9 +25,16 @@ services:
       - "${APP_PORT:-8080}:80"
     command: sh -c "composer install --no-interaction && exec frankenphp run --config /etc/caddy/Caddyfile"
 
+  # Not started in dev (profile); compose.prod.yaml clears the profile.
+  # To run it locally: docker compose --profile scheduler up -d
   scheduler:
     <<: *app
+    profiles: ["scheduler"]
     command: sh -c "until [ -f vendor/autoload.php ]; do sleep 2; done; exec php artisan schedule:work"
+
+  queue:
+    <<: *app
+    command: sh -c "until [ -f vendor/autoload.php ]; do sleep 2; done; exec php artisan queue:work --queue=scheduled"
 
   # Idle container used as the PhpStorm CLI interpreter for running PHPUnit.
   test:
@@ -67,6 +74,10 @@ services:
         fi
     volumes:
       - redisdata:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" ping 2>/dev/null | grep -q PONG || redis-cli ping | grep -q PONG"]
+      interval: 5s
+      retries: 10
 
 volumes:
   pgdata:

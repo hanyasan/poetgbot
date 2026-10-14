@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\PriceCheck;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -49,5 +50,6 @@ return Application::configure(basePath: dirname(__DIR__))
         );
     })
     ->withSchedule(function (Schedule $schedule): void {
-        $schedule->command('app:check-currency-price')->everyMinute();
-    })->create();
+        $schedule->job(PriceCheck::class)->everyTenMinutes();
+    })
+    ->create();
