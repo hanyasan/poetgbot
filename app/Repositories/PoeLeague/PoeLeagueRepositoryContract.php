@@ -61,5 +61,5 @@ interface PoeLeagueRepositoryContract extends BaseRepositoryContract
     /**
      * @return Collection<int, PoeLeagueWithLastCoreDto>
      */
-    public function getActiveByLatestCore(): Collection;
+    public function getActiveWithLatestCore(): Collection;
 }

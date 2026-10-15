@@ -214,7 +214,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
      * @return Collection<int, PoeLeagueWithLastCoreDto>
      */
     #[\Override]
-    public function getActiveByLatestCore(): Collection
+    public function getActiveWithLatestCore(): Collection
     {
         return Cache::tags([
             CacheHelperService::generateCacheTag(self::$leagueTag),
@@ -225,7 +225,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
             'with_latest_core',
             CacheHelperService::setHourTtl(),
             function () {
-                return $this->repository->getActiveByLatestCore();
+                return $this->repository->getActiveWithLatestCore();
             }
         );
     }

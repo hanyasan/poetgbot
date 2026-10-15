@@ -127,7 +127,7 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
      * @return Collection<int, PoeLeagueWithLastCoreDto>
      */
     #[\Override]
-    public function getActiveByLatestCore(): Collection
+    public function getActiveWithLatestCore(): Collection
     {
         $coreQ = PriceCheckCore::query()
             ->select(
