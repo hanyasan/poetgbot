@@ -11,6 +11,7 @@
     <projectFiles>
         <directory name="app" />
         <directory name="database/factories" />
+        <directory name="routes" />
         <ignoreFiles>
             <directory name="vendor" />
         </ignoreFiles>
