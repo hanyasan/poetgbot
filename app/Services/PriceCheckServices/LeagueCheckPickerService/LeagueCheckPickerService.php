@@ -18,18 +18,25 @@ final readonly class LeagueCheckPickerService implements LeagueCheckPickerServic
     }
 
     /**
-     * @return Collection<int, PoeLeagueWithLastCoreDto>
+     * @return Collection<int, PoeLeagueDto>
      */
     #[\Override]
     public function pickLeaguesForCheck(): Collection
     {
         return $this->poeLeagueService->getActiveWithLatestCore()
             ->filter(function (PoeLeagueWithLastCoreDto $poeLeagueDto) {
-                return CarbonImmutable::now()->lessThanOrEqualTo(
-                    CarbonImmutable::parse($poeLeagueDto->last_core_created_at)->addMinutes($poeLeagueDto->check_rule->minutes_check)
+                $minutesCheck = $poeLeagueDto->check_rule?->minutes_check;
+
+                // No rule (or a null interval) means the league is not scheduled for checks.
+                if ($minutesCheck === null) {
+                    return false;
+                }
+
+                return CarbonImmutable::now()->greaterThanOrEqualTo(
+                    CarbonImmutable::parse($poeLeagueDto->last_core_created_at)->addMinutes($minutesCheck)
                 );
             })
-            ->map(fn ($league) => $this->mapperService->mapFromArray(PoeLeagueDto::class, $league->toArray()))
+            ->map(fn (PoeLeagueWithLastCoreDto $league) => $this->mapperService->mapFromArray(PoeLeagueDto::class, get_object_vars($league)))
             ;
     }
 }
