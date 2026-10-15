@@ -24,9 +24,9 @@ Route::group(['prefix' => 'v1', 'middleware' => 'auth:api'], function () {
     });
 
     Route::group(['prefix' => 'auth'], function () {
-        Route::post('/login',  [AuthController::class, 'login']);
+        Route::post('/login',  [AuthController::class, 'login'])->withoutMiddleware('auth:api');
 
-        Route::post('/register',  [AuthController::class, 'register']);
+        Route::post('/register',  [AuthController::class, 'register'])->withoutMiddleware('auth:api');
 
         Route::post('/logout',  [AuthController::class, 'logout']);
 

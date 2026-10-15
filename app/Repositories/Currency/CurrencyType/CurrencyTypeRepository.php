@@ -9,6 +9,8 @@ use App\Models\Currency\CurrencyType as CurrencyTypeModel;
 use App\Models\Currency\PriceCheckCore;
 use App\Repositories\BaseEloquentRepository;
 use App\Services\Mapper\MapperService;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 
 final class CurrencyTypeRepository extends BaseEloquentRepository implements CurrencyTypeRepositoryContract
@@ -21,7 +23,7 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
     }
 
     /**
-     * @psalm-return Collection<int, object>
+     * @psalm-return Collection<int, CurrencyTypeWithLeagueDto>
      */
     #[\Override]
     public function getAll(): Collection
@@ -39,7 +41,7 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
     }
 
     /**
-     * @psalm-return Collection<int, object>
+     * @psalm-return Collection<int, CurrencyTypeDto>
      */
     #[\Override]
     public function getAllByLeague(int $leagueId): Collection
@@ -57,14 +59,14 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
     }
 
     /**
-     * @psalm-return Collection<int, object>
+     * @psalm-return Collection<int, CurrencyTypeWithPricesDto>
      */
     #[\Override]
     public function getAllByLeagueWithPriceByCore(int $leagueId, int $coreId): Collection
     {
         return $this->getQuery()
             ->where('poe_league_id', $leagueId)
-            ->with(['prices' => static function ($query) use ($coreId) {
+            ->with(['prices' => static function (Relation $query) use ($coreId) {
                 $query->where('price_check_core_id', $coreId);
             }])
             ->get()
@@ -78,7 +80,7 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
     }
 
     /**
-     * @psalm-return Collection<int, object>
+     * @psalm-return Collection<int, CurrencyTypeWithPricesDto>
      */
     #[\Override]
     public function getAllByLeagueWithLatestPrice(int $leagueId): Collection
@@ -92,7 +94,7 @@ final class CurrencyTypeRepository extends BaseEloquentRepository implements Cur
 
         return $this->getQuery()
             ->where('poe_league_id', $leagueId)
-            ->with(['prices' => static function ($query) use ($latestCoreId) {
+            ->with(['prices' => static function (Relation $query) use ($latestCoreId) {
                 $query->where('price_check_core_id', $latestCoreId);
             }])
             ->get()

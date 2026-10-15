@@ -12,11 +12,11 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
-    public function response(JsonResource|array|string|int|float $responseData): JsonResponse
+    public function response(JsonResource|array|string|int|float|null $responseData = null): JsonResponse
     {
         return \response()->json([
             'success' => true,
-            'data' => $responseData ?: 'ok'
+            'data' => is_null($responseData) ? 'ok' : $responseData,
         ]);
     }
 }

@@ -31,7 +31,7 @@ final class PriceCheckCoreRepository extends BaseEloquentRepository implements P
     }
 
     /**
-     * @psalm-return Collection<int, object>
+     * @psalm-return Collection<int, PriceCheckCoreDto>
      */
     #[\Override]
     public function getAll(): Collection
@@ -45,7 +45,7 @@ final class PriceCheckCoreRepository extends BaseEloquentRepository implements P
     }
 
     /**
-     * @psalm-return Collection<int, object>
+     * @psalm-return Collection<int, PriceCheckCoreDto>
      */
     #[\Override]
     public function getByLeague(int $leagueId): Collection
@@ -67,13 +67,13 @@ final class PriceCheckCoreRepository extends BaseEloquentRepository implements P
             ->with('priceCheckCoreTypes')
             ->where('poe_league_id', $leagueId)
             ->latest()
-            ->first();
+            ->firstOrFail();
 
         return $this->mapper->mapFromArray(PriceCheckCoreDto::class, $core->toArray());
     }
 
     /**
-     * @psalm-return Collection<int, object>
+     * @psalm-return Collection<int, PriceCheckCoreDto>
      */
     #[\Override]
     public function getFromDateByLeague(Carbon $dateFrom, int $leagueId): Collection
@@ -101,12 +101,12 @@ final class PriceCheckCoreRepository extends BaseEloquentRepository implements P
 
     /**
      * @param int $leagueId
-     * @param array{
+     * @param array<int, array{
      *      is_primary: bool,
      *      rate: float,
      *      type_id: string,
      *      name: string,
-     * } $types
+     * }> $types
      *
      * @return PriceCheckCoreDto
      */
@@ -124,12 +124,12 @@ final class PriceCheckCoreRepository extends BaseEloquentRepository implements P
     }
 
     /**
-     * @param array{
+     * @param array<int, array{
      *      is_primary: bool,
      *      rate: float,
      *      type_id: string,
      *      name: string,
-     * } $types
+     * }> $types
      * @param PriceCheckCore $core
      *
      * @return void

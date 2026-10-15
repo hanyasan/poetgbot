@@ -138,9 +138,12 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
     /**
      * @param PoeNinjaExchangeResponse $prices
      *
-     * @return (bool|float|int|string)[][]
-     *
-     * @psalm-return array<array{is_primary: bool, rate: 1|float, type_id: string, name: string}>
+     * @return array<int, array{
+     *     is_primary: bool,
+     *     rate: float,
+     *     type_id: string,
+     *     name: string,
+     * }>
      */
     #[\Override]
     public function prepTypes(PoeNinjaExchangeResponse $prices): array

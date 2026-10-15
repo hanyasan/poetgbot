@@ -30,12 +30,12 @@ interface PriceCheckCoreServiceContract
 
     /**
      * @param array{
-     *     types: array{
+     *     types: array<int, array{
      *          is_primary: bool,
      *          rate: float,
      *          type_id: string,
      *          name: string,
-     *     }
+     *     }>
      * } $coreData
      * @param int $leagueId
      *
@@ -48,12 +48,12 @@ interface PriceCheckCoreServiceContract
     /**
      * @param PoeNinjaExchangeResponse $prices
 
-     * @return array{
+     * @return array<int, array{
      *     is_primary: bool,
      *     rate: float,
      *     type_id: string,
      *     name: string,
-     * }
+     * }>
      */
     public function prepTypes(PoeNinjaExchangeResponse $prices): array;
 

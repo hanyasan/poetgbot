@@ -15,6 +15,12 @@ final readonly class MapperService
         $this->mapper = (new MapperBuilder())->allowSuperfluousKeys()->mapper();
     }
 
+    /**
+     * @template T of object
+     * @param class-string<T> $dtoClass
+     * @param array<array-key, mixed> $data
+     * @return T
+     */
     public function mapFromArray(string $dtoClass, array $data): object
     {
         return $this
@@ -25,6 +31,11 @@ final readonly class MapperService
             );
     }
 
+    /**
+     * @template T of object
+     * @param class-string<T> $dtoClass
+     * @return T
+     */
     public function mapFromJson(string $dtoClass, string $data): object
     {
         return $this

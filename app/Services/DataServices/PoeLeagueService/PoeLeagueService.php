@@ -37,7 +37,6 @@ final class PoeLeagueService implements PoeLeagueServiceContract
      * @param int $id
      * @return PoeLeagueDto
      *
-     * @psalm-suppress PossiblyUnusedReturnValue
      */
     #[\Override]
     public function find(int $id): PoeLeagueDto

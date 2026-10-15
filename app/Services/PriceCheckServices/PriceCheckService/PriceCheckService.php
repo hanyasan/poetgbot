@@ -28,7 +28,7 @@ final readonly class PriceCheckService implements PriceCheckServiceContract
     ) {}
 
     /**
-     * @psalm-return Collection<int, never>|Collection<never, never>
+     * @psalm-return Collection<int, LeaguePricesDto>|Collection<never, never>
      */
     #[\Override]
     public function importPickedLeaguesPrices(): Collection
@@ -40,6 +40,7 @@ final readonly class PriceCheckService implements PriceCheckServiceContract
 
         foreach ($leagues as $league) {
             try {
+                /** @var Collection<int, LeaguePricesDto> $prices */
                 $prices->add($this->importLeagueLatestPrices($league));
             } catch (\Throwable $exception) {
                 Log::error($exception->getMessage());
@@ -129,21 +130,21 @@ final readonly class PriceCheckService implements PriceCheckServiceContract
         array $items,
     ): array {
         $items = collect($items);
-        $prices = collect();
+        $prices = [];
 
         foreach ($currencyTypes as $currencyType) {
-            /** @var PoeNinjaExchangeLine $tradeItem */
+            /** @var PoeNinjaExchangeLine|null $tradeItem */
             $tradeItem = $items->where('id', $currencyType->currency_trade_id)->first();
 
-            if (! $tradeItem || ! $tradeItem->primaryValue) continue;
+            if (! $tradeItem || is_null($tradeItem->primaryValue)) continue;
 
-            $prices->add([
+            $prices[] = [
                 'rate' => $tradeItem->primaryValue,
                 'price_check_core_id' => $coreId,
                 'currency_type_id' => $currencyType->id,
-            ]);
+            ];
         }
 
-        return $prices->toArray();
+        return $prices;
     }
 }

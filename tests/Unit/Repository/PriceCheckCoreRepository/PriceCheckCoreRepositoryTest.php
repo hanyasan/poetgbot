@@ -9,6 +9,7 @@ use App\Models\Currency\PriceCheckCore as PriceCheckCoreModel;
 use App\Models\PoeLeague as PoeLeagueModel;
 use App\Repositories\Currency\PriceCheckCore\PriceCheckCoreRepositoryContract;
 use Error;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -133,7 +134,7 @@ class PriceCheckCoreRepositoryTest extends TestCase
 
     public function test_get_latest_by_league_throws_when_league_is_empty(): void
     {
-        $this->expectException(Error::class);
+        $this->expectException(ModelNotFoundException::class);
 
         $this->repository->getLatestByLeague($this->league->id);
     }

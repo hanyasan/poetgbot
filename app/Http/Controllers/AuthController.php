@@ -2,29 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use PHPOpenSourceSaver\JWTAuth\JWTGuard;
 
 final class AuthController extends Controller
 {
-
-    public function __construct()
+    public function login(LoginRequest $request): JsonResponse
     {
-        $this->middleware('auth:api', ['except' => ['login','register']]);
-    }
-
-    public function login(Request $request): JsonResponse
-    {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
+        /** @var JWTGuard $jwtGuard */
+        $jwtGuard = Auth::guard('api');
+        $token = $jwtGuard->attempt([
+            'email' => $request->email,
+            'password' => $request->password,
         ]);
-        $credentials = $request->only('email', 'password');
 
-        $token = Auth::guard('api')->attempt($credentials);
+        /** @psalm-suppress RiskyTruthyFalsyComparison */
         if (! $token) {
             return response()->json([
                 'success' => false,
@@ -42,21 +40,18 @@ final class AuthController extends Controller
             ]);
     }
 
-    public function register(Request $request): JsonResponse
+    public function register(RegisterRequest $request): JsonResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
-        ]);
-
-        $user = User::create([
+        $user = User::query()->create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        $token = Auth::guard('api')->login($user);
+        /** @var JWTGuard $jwtGuard */
+        $jwtGuard = Auth::guard('api');
+        $token = $jwtGuard->login($user);
+
         return $this->response([
             'message' => 'User created successfully',
             'authorisation' => [
@@ -68,7 +63,10 @@ final class AuthController extends Controller
 
     public function logout(): JsonResponse
     {
-        Auth::guard('api')->logout();
+        /** @var JWTGuard $jwtGuard */
+        $jwtGuard = Auth::guard('api');
+        $jwtGuard->logout();
+
         return $this->response([
             'message' => 'Successfully logged out',
         ]);
@@ -76,9 +74,12 @@ final class AuthController extends Controller
 
     public function refresh(): JsonResponse
     {
+        /** @var JWTGuard $jwtGuard */
+        $jwtGuard = Auth::guard('api');
+
         return $this->response([
             'authorisation' => [
-                'token' => Auth::guard('api')->refresh(),
+                'token' => $jwtGuard->refresh(),
                 'type' => 'bearer',
             ]
         ]);

@@ -6,7 +6,7 @@ use App\Enums\PoeVersionEnum;
 use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
 use Illuminate\Console\Command;
 
-/** @psalm-suppress UnusedClass */
+/** @psalm-suppress UnusedClass, PropertyNotSetInConstructor */
 final class ImportPoeLeagues extends Command
 {
     /**

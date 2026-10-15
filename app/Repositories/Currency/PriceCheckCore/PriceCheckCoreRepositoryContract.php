@@ -29,12 +29,12 @@ interface PriceCheckCoreRepositoryContract
 
     /**
      * @param int $leagueId
-     * @param array{
+     * @param array<int, array{
      *      is_primary: bool,
      *      rate: float,
      *      type_id: string,
      *      name: string,
-     * } $types
+     * }> $types
      *
      * @return PriceCheckCoreDto
      */
