@@ -5,7 +5,7 @@ namespace App\Services\DataServices\Currency\CurrencyTypeService;
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeItem;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithLeagueDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithPricesDto;
-use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\Currency\CurrencyType\CurrencyTypeRepositoryContract;
 use App\Services\CacheHelperService;

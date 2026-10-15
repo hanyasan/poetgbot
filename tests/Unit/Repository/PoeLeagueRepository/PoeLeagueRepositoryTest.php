@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Repository\PoeLeagueRepository;
 
-use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
 use App\Models\LeagueCheckRule;
 use App\Models\PoeLeague as PoeLeagueModel;

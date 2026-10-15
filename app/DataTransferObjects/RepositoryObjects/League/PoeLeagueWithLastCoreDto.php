@@ -1,10 +1,8 @@
 <?php
 
-namespace App\DataTransferObjects\RepositoryObjects;
+namespace App\DataTransferObjects\RepositoryObjects\League;
 
-use Illuminate\Support\Carbon;
-
-final readonly class PoeLeagueDto
+final readonly class PoeLeagueWithLastCoreDto
 {
     public function __construct(
         public int    $id,
@@ -15,5 +13,7 @@ final readonly class PoeLeagueDto
         public bool   $is_active,
         /** @var null|LeagueCheckRuleDto $check_rule */
         public null|object $check_rule = null,
+        public string $last_core_created_at,
+        public int $last_core_id,
     ) {}
 }

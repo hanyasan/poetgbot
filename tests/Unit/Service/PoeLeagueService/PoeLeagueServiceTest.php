@@ -4,7 +4,8 @@ namespace Tests\Unit\Service\PoeLeagueService;
 
 use App\DataTransferObjects\ParsingObjects\PoeNinjaLeague;
 use App\DataTransferObjects\ParsingObjects\PoeNinjaLeagueResponse;
-use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\League\LeagueCheckRuleDto;
+use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
 use App\Services\DataServices\PoeLeagueService\PoeLeagueService;
@@ -38,9 +39,11 @@ class PoeLeagueServiceTest extends TestCase
         Cache::flush();
     }
 
-    private function league(int $id, string $name, PoeVersionEnum $version, bool $active = false): PoeLeagueDto
+    private function league(int $id, string $name, PoeVersionEnum $version, bool $active = false, int|null $checkRuleId = null): PoeLeagueDto
     {
-        return new PoeLeagueDto($id, Carbon::now()->toDateTimeString(), Carbon::now()->toDateTimeString(), $name, $version->value, $active);
+        $checkRule =  $checkRuleId ? (new LeagueCheckRuleDto($checkRuleId, 60, Carbon::now()->toDateTimeString(), Carbon::now()->toDateTimeString())) : null;
+
+        return new PoeLeagueDto($id, Carbon::now()->toDateTimeString(), Carbon::now()->toDateTimeString(), $name, $version->value, $active, $checkRule);
     }
 
     private function ninjaLeague(string $name): PoeNinjaLeague
@@ -73,8 +76,8 @@ class PoeLeagueServiceTest extends TestCase
 
     public function test_get_all_active_caches_per_version(): void
     {
-        $poe1 = collect([$this->league(1, 'One', PoeVersionEnum::POE_1, true)]);
-        $poe2 = collect([$this->league(2, 'Two', PoeVersionEnum::POE_2, true)]);
+        $poe1 = collect([$this->league(1, 'One', PoeVersionEnum::POE_1, true, 1)]);
+        $poe2 = collect([$this->league(2, 'Two', PoeVersionEnum::POE_2, true, 2)]);
 
         $this->repository->expects('getAllActiveByVersion')->with(PoeVersionEnum::POE_1)->andReturns($poe1);
         $this->repository->expects('getAllActiveByVersion')->with(PoeVersionEnum::POE_2)->andReturns($poe2);

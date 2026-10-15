@@ -3,12 +3,13 @@
 namespace App\Services\DataServices\PoeLeagueService;
 
 use App\DataTransferObjects\ParsingObjects\PoeNinjaLeague;
-use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueWithLastCoreDto;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
 use App\Services\CacheHelperService;
+use App\Services\DataServices\Currency\PriceCheckCoreService\PriceCheckCoreService;
 use App\Services\PoeNinjaService\PoeNinjaServiceContract;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -207,5 +208,25 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         $this->flushId($leagueId);
 
         $this->repository->updateOrCreateRule($minutesToCheck, $leagueId);
+    }
+
+    /**
+     * @return Collection<int, PoeLeagueWithLastCoreDto>
+     */
+    #[\Override]
+    public function getActiveByLatestCore(): Collection
+    {
+        return Cache::tags([
+            CacheHelperService::generateCacheTag(self::$leagueTag),
+            CacheHelperService::generateCacheTag(self::$leagueGetTag),
+            CacheHelperService::generateCacheTag(PriceCheckCoreService::$coreTag),
+            CacheHelperService::generateCacheTag(PriceCheckCoreService::$coreGetTag),
+        ])->remember(
+            'with_latest_core',
+            CacheHelperService::setHourTtl(),
+            function () {
+                return $this->repository->getActiveByLatestCore();
+            }
+        );
     }
 }

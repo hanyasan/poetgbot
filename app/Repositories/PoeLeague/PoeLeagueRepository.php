@@ -2,13 +2,16 @@
 
 namespace App\Repositories\PoeLeague;
 
-use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueWithLastCoreDto;
 use App\Enums\PoeVersionEnum;
+use App\Models\Currency\PriceCheckCore;
 use App\Models\LeagueCheckRule;
 use App\Models\PoeLeague as PoeLeagueModel;
 use App\Repositories\BaseEloquentRepository;
 use App\Services\Mapper\MapperService;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLeagueRepositoryContract
 {
@@ -118,5 +121,39 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
                     'poe_league_id' => $leagueId,
                 ]
             );
+    }
+
+    /**
+     * @return Collection<int, PoeLeagueWithLastCoreDto>
+     */
+    #[\Override]
+    public function getActiveByLatestCore(): Collection
+    {
+        $coreQ = PriceCheckCore::query()
+            ->select(
+                'price_check_cores.poe_league_id as last_core_poe_league_id',
+                DB::raw('MAX(created_at) as last_core_created_at'),
+            )
+            ->groupBy('last_core_poe_league_id');
+
+        $coreQ = PriceCheckCore::query()
+            ->select(
+                'price_check_cores.poe_league_id',
+                'price_check_cores.created_at as last_core_created_at',
+                'price_check_cores.id as last_core_id',
+            )
+            ->joinSub($coreQ, 'latest_cores', function ($join) {
+                $join->on('latest_cores.last_core_poe_league_id', '=', 'price_check_cores.poe_league_id')
+                    ->whereRaw(DB::raw('latest_cores.last_core_created_at = price_check_cores.created_at'));
+            });
+
+        return $this->getQuery()
+            ->joinSub($coreQ, 'latest_cores', function ($join) {
+                $join->on('poe_leagues.id', '=', 'latest_cores.poe_league_id');
+            })
+            ->where('is_active', true)
+            ->get()
+            ->toBase()
+            ->map(fn ($league) => $this->mapper->mapFromArray(PoeLeagueWithLastCoreDto::class, $league->toArray()));
     }
 }

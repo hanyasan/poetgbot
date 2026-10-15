@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DataTransferObjects\RepositoryObjects;
+namespace App\DataTransferObjects\RepositoryObjects\League;
 
 final readonly class LeagueCheckRuleDto
 {

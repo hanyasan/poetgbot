@@ -2,7 +2,7 @@
 
 namespace App\DataTransferObjects\RepositoryObjects\Currency;
 
-use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 
 final readonly class CurrencyTypeWithLeagueDto
 {

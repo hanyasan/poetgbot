@@ -5,7 +5,7 @@ namespace App\Services\PriceCheckServices\PriceCheckService;
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeItem;
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeLine;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto;
-use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 use App\DataTransferObjects\ServiceObjects\LeaguePricesDto;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\Currency\CurrencyPrice\CurrencyPriceRepositoryContract;

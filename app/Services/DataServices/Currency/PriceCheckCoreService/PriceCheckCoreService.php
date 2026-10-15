@@ -169,6 +169,7 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
     public function flushLeagueId(int $leagueId): void
     {
         Cache::tags([
+            CacheHelperService::generateCacheTag(self::$coreGetTag),
             CacheHelperService::generateCacheTag(self::$coreByLeagueTag, $leagueId),
         ])->flush();
     }

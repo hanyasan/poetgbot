@@ -2,7 +2,8 @@
 
 namespace App\Services\DataServices\PoeLeagueService;
 
-use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueWithLastCoreDto;
 use App\Enums\PoeVersionEnum;
 use Illuminate\Support\Collection;
 
@@ -45,5 +46,10 @@ interface PoeLeagueServiceContract
     public function flushVersion(PoeVersionEnum $version): void;
 
     public function updateOrCreateRule(int|null $minutesToCheck, int $leagueId): void;
+
+    /**
+     * @return Collection<int, PoeLeagueWithLastCoreDto>
+     */
+    public function getActiveByLatestCore(): Collection;
 
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 final class PoeLeagueResource extends JsonResource

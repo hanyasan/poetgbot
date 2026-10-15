@@ -6,7 +6,7 @@ use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeCore;
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeItem;
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeResponse;
 use App\DataTransferObjects\RepositoryObjects\Currency\PriceCheckCoreDto;
-use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\Currency\PriceCheckCore\PriceCheckCoreRepositoryContract;
 use App\Services\DataServices\Currency\PriceCheckCoreService\PriceCheckCoreService;

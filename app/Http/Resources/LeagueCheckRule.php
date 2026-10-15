@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\DataTransferObjects\RepositoryObjects\LeagueCheckRuleDto;
+use App\DataTransferObjects\RepositoryObjects\League\LeagueCheckRuleDto;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class LeagueCheckRule extends JsonResource

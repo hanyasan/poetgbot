@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Service\LeagueCheckPickerService;
 
-use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
 use App\Services\PriceCheckServices\LeagueCheckPickerService\LeagueCheckPickerService;
 use Illuminate\Support\Collection;

@@ -9,7 +9,7 @@ use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyPriceDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithLeagueDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithPricesDto;
-use App\DataTransferObjects\RepositoryObjects\PoeLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\Currency\CurrencyType\CurrencyTypeRepositoryContract;
 use App\Services\DataServices\Currency\CurrencyTypeService\CurrencyTypeService;
@@ -18,8 +18,8 @@ use App\Services\PoeNinjaService\PoeNinjaServiceContract;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Mockery;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionClass;
 use Tests\TestCase;
 

@@ -88,6 +88,17 @@ final class PriceCheckCoreRepository extends BaseEloquentRepository implements P
             ->map(fn ($core) => $this->mapper->mapFromArray(PriceCheckCoreDto::class, $core->toArray()));
     }
 
+//    public function getLatestWithLeague(): Collection
+//    {
+//        return $this
+//            ->getQuery()
+//            ->with([
+//                'priceCheckCoreTypes',
+//                'league',
+//            ])
+//            ->latest()
+//    }
+
     /**
      * @param int $leagueId
      * @param array{
