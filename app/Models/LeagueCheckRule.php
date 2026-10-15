@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property int|null $minutes_check
  */
-class LeagueCheckRule extends Model
+final class LeagueCheckRule extends Model
 {
     protected $table = 'league_check_rules';
 

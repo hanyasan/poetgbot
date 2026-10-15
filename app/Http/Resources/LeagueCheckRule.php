@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use App\DataTransferObjects\RepositoryObjects\League\LeagueCheckRuleDto;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class LeagueCheckRule extends JsonResource
+final class LeagueCheckRule extends JsonResource
 {
     #[\Override]
     public function toArray($request): array
