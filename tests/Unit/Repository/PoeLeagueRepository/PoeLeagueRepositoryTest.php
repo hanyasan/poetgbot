@@ -3,11 +3,14 @@
 namespace Tests\Unit\Repository\PoeLeagueRepository;
 
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueWithLastCoreDto;
 use App\Enums\PoeVersionEnum;
+use App\Models\Currency\PriceCheckCore;
 use App\Models\LeagueCheckRule;
 use App\Models\PoeLeague as PoeLeagueModel;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -253,5 +256,113 @@ class PoeLeagueRepositoryTest extends TestCase
 
         $this->assertDatabaseHas('league_check_rules', ['poe_league_id' => $other->id, 'minutes_check' => 10]);
         $this->assertDatabaseHas('league_check_rules', ['poe_league_id' => $this->poeLeague->id, 'minutes_check' => 20]);
+    }
+
+    private function createCore(int $leagueId, string $createdAt): PriceCheckCore
+    {
+        return PriceCheckCore::query()->create([
+            'poe_league_id' => $leagueId,
+            'created_at' => $createdAt,
+            'updated_at' => $createdAt,
+        ]);
+    }
+
+    public function test_get_active_with_latest_core_returns_latest_core_per_league(): void
+    {
+        $league = $this->repository->create([
+            'league_name' => 'Cored League',
+            'poe_version' => PoeVersionEnum::POE_1->value,
+            'is_active' => true,
+        ]);
+
+        $this->createCore($league->id, '2030-01-01 10:00:00');
+        $latest = $this->createCore($league->id, '2030-01-01 12:00:00');
+        $this->createCore($league->id, '2030-01-01 11:00:00');
+
+        $result = $this->repository->getActiveWithLatestCore();
+
+        $this->assertContainsOnlyInstancesOf(PoeLeagueWithLastCoreDto::class, $result);
+
+        $rows = $result->where('id', $league->id);
+        $this->assertCount(1, $rows);
+
+        $dto = $rows->first();
+        $this->assertSame($latest->id, $dto->last_core_id);
+        $this->assertSame('Cored League', $dto->league_name);
+        $this->assertSame(PoeVersionEnum::POE_1->value, $dto->poe_version);
+        $this->assertTrue($dto->is_active);
+        $this->assertSame(
+            Carbon::parse('2030-01-01 12:00:00')->getTimestamp(),
+            Carbon::parse($dto->last_core_created_at)->getTimestamp(),
+        );
+    }
+
+    public function test_get_active_with_latest_core_resolves_each_league_separately(): void
+    {
+        $first = $this->repository->create([
+            'league_name' => 'First Cored',
+            'poe_version' => PoeVersionEnum::POE_1->value,
+            'is_active' => true,
+        ]);
+        $second = $this->repository->create([
+            'league_name' => 'Second Cored',
+            'poe_version' => PoeVersionEnum::POE_2->value,
+            'is_active' => true,
+        ]);
+
+        $this->createCore($first->id, '2030-02-01 10:00:00');
+        $firstLatest = $this->createCore($first->id, '2030-02-02 10:00:00');
+        $secondLatest = $this->createCore($second->id, '2030-02-01 08:00:00');
+
+        $result = $this->repository->getActiveWithLatestCore();
+
+        $this->assertSame($firstLatest->id, $result->firstWhere('id', $first->id)->last_core_id);
+        $this->assertSame($secondLatest->id, $result->firstWhere('id', $second->id)->last_core_id);
+    }
+
+    public function test_get_active_with_latest_core_excludes_inactive_leagues(): void
+    {
+        $inactive = $this->repository->create([
+            'league_name' => 'Inactive Cored',
+            'poe_version' => PoeVersionEnum::POE_1->value,
+            'is_active' => false,
+        ]);
+        $this->createCore($inactive->id, '2030-03-01 10:00:00');
+
+        $result = $this->repository->getActiveWithLatestCore();
+
+        $this->assertNotContains($inactive->id, $result->pluck('id')->all());
+    }
+
+    public function test_get_active_with_latest_core_excludes_leagues_without_cores(): void
+    {
+        $withoutCore = $this->repository->create([
+            'league_name' => 'Active Without Core',
+            'poe_version' => PoeVersionEnum::POE_1->value,
+            'is_active' => true,
+        ]);
+
+        $result = $this->repository->getActiveWithLatestCore();
+
+        $this->assertNotContains($withoutCore->id, $result->pluck('id')->all());
+        $this->assertNotContains($this->poeLeague->id, $result->pluck('id')->all());
+    }
+
+    public function test_get_active_with_latest_core_returns_base_collection_when_empty(): void
+    {
+        DB::beginTransaction();
+
+        try {
+            DB::table('price_check_core_types')->delete();
+            DB::table('currency_prices')->delete();
+            DB::table('price_check_cores')->delete();
+
+            $result = $this->repository->getActiveWithLatestCore();
+
+            $this->assertSame(Collection::class, $result::class);
+            $this->assertTrue($result->isEmpty());
+        } finally {
+            DB::rollBack();
+        }
     }
 }

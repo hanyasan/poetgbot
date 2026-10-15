@@ -6,6 +6,7 @@ use App\DataTransferObjects\ParsingObjects\PoeNinjaLeague;
 use App\DataTransferObjects\ParsingObjects\PoeNinjaLeagueResponse;
 use App\DataTransferObjects\RepositoryObjects\League\LeagueCheckRuleDto;
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueWithLastCoreDto;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
 use App\Services\DataServices\PoeLeagueService\PoeLeagueService;
@@ -277,5 +278,93 @@ class PoeLeagueServiceTest extends TestCase
 
         // cache was flushed by the rule update, so this hits the repository again
         $this->service->find(1);
+    }
+
+    private function leagueWithCore(int $id, string $name, int $coreId): PoeLeagueWithLastCoreDto
+    {
+        return new PoeLeagueWithLastCoreDto(
+            $id,
+            Carbon::now()->toDateTimeString(),
+            Carbon::now()->toDateTimeString(),
+            $name,
+            PoeVersionEnum::POE_1->value,
+            true,
+            null,
+            Carbon::now()->toDateTimeString(),
+            $coreId,
+        );
+    }
+
+    public function test_get_active_with_latest_core_returns_repository_result_and_caches_it(): void
+    {
+        $leagues = collect([
+            $this->leagueWithCore(1, 'One', 10),
+            $this->leagueWithCore(2, 'Two', 20),
+        ]);
+
+        $this->repository->expects('getActiveWithLatestCore')->once()->andReturn($leagues);
+
+        $this->assertEquals($leagues, $this->service->getActiveWithLatestCore());
+        $this->assertEquals($leagues, $this->service->getActiveWithLatestCore());
+    }
+
+    public function test_get_active_with_latest_core_caches_empty_result(): void
+    {
+        $this->repository->expects('getActiveWithLatestCore')->once()->andReturn(collect());
+
+        $this->assertTrue($this->service->getActiveWithLatestCore()->isEmpty());
+        $this->assertTrue($this->service->getActiveWithLatestCore()->isEmpty());
+    }
+
+    public function test_get_active_with_latest_core_is_flushed_by_delete(): void
+    {
+        $leagues = collect([$this->leagueWithCore(1, 'One', 10)]);
+
+        $this->repository->expects('getActiveWithLatestCore')->twice()->andReturn($leagues);
+        $this->repository->expects('delete')->with(1)->andReturn(true);
+
+        $this->service->getActiveWithLatestCore();
+
+        $this->service->delete(1);
+
+        $this->service->getActiveWithLatestCore();
+    }
+
+    public function test_get_active_with_latest_core_is_flushed_by_flush_get(): void
+    {
+        $leagues = collect([$this->leagueWithCore(1, 'One', 10)]);
+
+        $this->repository->expects('getActiveWithLatestCore')->twice()->andReturn($leagues);
+
+        $this->service->getActiveWithLatestCore();
+
+        $this->service->flushGet();
+
+        $this->service->getActiveWithLatestCore();
+    }
+
+    public function test_get_active_with_latest_core_is_flushed_by_core_tags(): void
+    {
+        $leagues = collect([$this->leagueWithCore(1, 'One', 10)]);
+
+        $this->repository->expects('getActiveWithLatestCore')->times(3)->andReturn($leagues);
+
+        $this->service->getActiveWithLatestCore();
+
+        Cache::tags([
+            \App\Services\CacheHelperService::generateCacheTag(
+                \App\Services\DataServices\Currency\PriceCheckCoreService\PriceCheckCoreService::$coreTag
+            ),
+        ])->flush();
+
+        $this->service->getActiveWithLatestCore();
+
+        Cache::tags([
+            \App\Services\CacheHelperService::generateCacheTag(
+                \App\Services\DataServices\Currency\PriceCheckCoreService\PriceCheckCoreService::$coreGetTag
+            ),
+        ])->flush();
+
+        $this->service->getActiveWithLatestCore();
     }
 }
