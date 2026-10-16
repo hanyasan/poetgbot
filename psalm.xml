@@ -13,6 +13,8 @@
         <directory name="app" />
         <directory name="database/factories" />
         <directory name="routes" />
+        <directory name="config" />
+        <directory name="bootstrap" />
         <ignoreFiles>
             <directory name="vendor" />
         </ignoreFiles>

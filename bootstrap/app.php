@@ -7,6 +7,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -45,9 +46,27 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo('/home');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
-        );
+        if (config('app.env') === 'local') {
+            $exceptions->shouldRenderJsonWhen(
+                fn (Request $request) => $request->is('api/*') || $request->expectsJson()
+            );
+
+            return;
+        }
+
+        $exceptions->render(function (NotFoundHttpException $exception) {
+            return response()->json([
+                'success' => false,
+                'data' => 'Not found',
+            ], 404);
+        });
+
+        $exceptions->render(function (\Throwable $throwable) {
+            return response()->json([
+                'success' => false,
+                'data' => 'Server error',
+            ], 500);
+        });
     })
     ->withSchedule(function (Schedule $schedule): void {
         $schedule->job(PriceCheck::class)->everyTenMinutes();
