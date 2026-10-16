@@ -43,9 +43,9 @@ class LeagueCheckPickerServiceTest extends TestCase
             $name,
             'poe1',
             true,
-            new LeagueCheckRuleDto($id, $minutesCheck, $now, $now),
             Carbon::now()->subMinutes($minutesSinceLastCore)->toDateTimeString(),
             $id * 100,
+            new LeagueCheckRuleDto($id, $minutesCheck, $now, $now),
         );
     }
 
@@ -134,10 +134,22 @@ class LeagueCheckPickerServiceTest extends TestCase
         $now = Carbon::now()->toDateTimeString();
 
         $this->leagueService->expects('getActiveWithLatestCore')->andReturn(collect([
-            new PoeLeagueWithLastCoreDto(1, $now, $now, 'No Rule', 'poe1', true, null, $now, 100),
+            new PoeLeagueWithLastCoreDto(1, $now, $now, 'No Rule', 'poe1', true, $now, 100, null),
         ]));
 
         $this->assertInstanceOf(Collection::class, $this->service->pickLeaguesForCheck());
+    }
+
+    public function test_leagues_without_cores_returns(): void
+    {
+        $now = Carbon::now()->toDateTimeString();
+        $old = Carbon::now()->subCenturies(1)->toDateTimeString();
+
+        $this->leagueService->expects('getActiveWithLatestCore')->andReturn(collect([
+            new PoeLeagueWithLastCoreDto(1, $now, $now, 'No Core', 'poe1', true, null, null, new LeagueCheckRuleDto(1, 1, $old, $old)),
+        ]));
+
+        $this->assertInstanceOf(PoeLeagueDto::class, $this->service->pickLeaguesForCheck()->first());
     }
 
     public function test_does_not_fail_when_minutes_check_is_null(): void

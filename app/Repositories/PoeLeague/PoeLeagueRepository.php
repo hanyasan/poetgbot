@@ -149,7 +149,7 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
             });
 
         return $this->getQuery()
-            ->joinSub($coreQ, 'latest_cores', function (JoinClause $join) {
+            ->leftJoinSub($coreQ, 'latest_cores', function (JoinClause $join) {
                 $join->on('poe_leagues.id', '=', 'latest_cores.poe_league_id');
             })
             ->where('is_active', true)

@@ -280,7 +280,7 @@ class PoeLeagueServiceTest extends TestCase
         $this->service->find(1);
     }
 
-    private function leagueWithCore(int $id, string $name, int $coreId): PoeLeagueWithLastCoreDto
+    private function leagueWithCore(int $id, string $name, ?int $coreId): PoeLeagueWithLastCoreDto
     {
         return new PoeLeagueWithLastCoreDto(
             $id,
@@ -289,9 +289,9 @@ class PoeLeagueServiceTest extends TestCase
             $name,
             PoeVersionEnum::POE_1->value,
             true,
-            null,
             Carbon::now()->toDateTimeString(),
             $coreId,
+            null,
         );
     }
 

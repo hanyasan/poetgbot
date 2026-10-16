@@ -32,7 +32,7 @@ final readonly class LeagueCheckPickerService implements LeagueCheckPickerServic
                     return false;
                 }
 
-                return CarbonImmutable::now()->greaterThanOrEqualTo(
+                return is_null($poeLeagueDto->last_core_created_at) || CarbonImmutable::now()->greaterThanOrEqualTo(
                     CarbonImmutable::parse($poeLeagueDto->last_core_created_at)->addMinutes($minutesCheck)
                 );
             })

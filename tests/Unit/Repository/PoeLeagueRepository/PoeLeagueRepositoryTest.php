@@ -7,6 +7,7 @@ use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueWithLastCoreDto;
 use App\Enums\PoeVersionEnum;
 use App\Models\Currency\PriceCheckCore;
 use App\Models\LeagueCheckRule;
+use App\Models\PoeLeague;
 use App\Models\PoeLeague as PoeLeagueModel;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -334,28 +335,12 @@ class PoeLeagueRepositoryTest extends TestCase
         $this->assertNotContains($inactive->id, $result->pluck('id')->all());
     }
 
-    public function test_get_active_with_latest_core_excludes_leagues_without_cores(): void
-    {
-        $withoutCore = $this->repository->create([
-            'league_name' => 'Active Without Core',
-            'poe_version' => PoeVersionEnum::POE_1->value,
-            'is_active' => true,
-        ]);
-
-        $result = $this->repository->getActiveWithLatestCore();
-
-        $this->assertNotContains($withoutCore->id, $result->pluck('id')->all());
-        $this->assertNotContains($this->poeLeague->id, $result->pluck('id')->all());
-    }
-
     public function test_get_active_with_latest_core_returns_base_collection_when_empty(): void
     {
         DB::beginTransaction();
 
         try {
-            DB::table('price_check_core_types')->delete();
-            DB::table('currency_prices')->delete();
-            DB::table('price_check_cores')->delete();
+            PoeLeague::query()->update(['is_active' => false]);
 
             $result = $this->repository->getActiveWithLatestCore();
 
