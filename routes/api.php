@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\League\LeagueController;
+use App\Http\Controllers\Pricing\PricingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,6 +20,10 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 Route::group(['prefix' => 'v1', 'middleware' => 'auth:api'], function () {
+    Route::group(['prefix' => 'pricing'], function () {
+        Route::get('/latest',  [PricingController::class, 'latest']);
+    });
+
     Route::group(['prefix' => 'league'], function () {
         Route::get('/',  [LeagueController::class, 'index']);
     });
