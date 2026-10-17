@@ -24,9 +24,9 @@ final readonly class LeagueRuleRepository implements LeagueRuleRepositoryContrac
     {
         $rule = $this->model->newQuery()
             ->updateOrCreate(
-                ['league_id' => $leagueId],
+                ['poe_league_id' => $leagueId],
                 [
-                    'league_id' => $leagueId,
+                    'poe_league_id' => $leagueId,
                     'minutes_check' => $minutesToCheck,
                 ]
             );
@@ -42,14 +42,14 @@ final readonly class LeagueRuleRepository implements LeagueRuleRepositoryContrac
     {
         $defaultRules = array_map(static function (int $id) {
             return [
-                'league_id' => $id,
+                'poe_league_id' => $id,
                 'minutes_check' => config('price_check.default_hours_check') * 60,
             ];
         }, $leaguesId);
 
         $this->model->newQuery()->upsert(
             $defaultRules,
-            ['league_id'],
+            ['poe_league_id'],
             ['minutes_check'],
         );
     }
