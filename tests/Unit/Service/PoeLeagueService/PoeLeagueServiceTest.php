@@ -115,6 +115,8 @@ class PoeLeagueServiceTest extends TestCase
         $this->ninjaService
             ->expects('getAvailableLeagues')
             ->andReturns(new PoeNinjaLeagueResponse([$this->ninjaLeague('Standard')]));
+        $this->ruleRepository->expects('upsertDefaultForLeagues');
+        $this->repository->expects('getAllWithoutRules')->andReturns(collect());
 
         $this->service->getAllActiveByVersion(PoeVersionEnum::POE_2);
 
@@ -193,6 +195,9 @@ class PoeLeagueServiceTest extends TestCase
                 return true;
             });
 
+        $this->ruleRepository->expects('upsertDefaultForLeagues');
+        $this->repository->expects('getAllWithoutRules')->andReturns(collect());
+
         $this->service->upsertByNinja(PoeVersionEnum::POE_2);
     }
 
@@ -227,6 +232,9 @@ class PoeLeagueServiceTest extends TestCase
                 return true;
             });
 
+        $this->ruleRepository->expects('upsertDefaultForLeagues');
+        $this->repository->expects('getAllWithoutRules')->andReturns(collect());
+
         $this->service->upsertByNinja(PoeVersionEnum::POE_2);
     }
 
@@ -238,6 +246,9 @@ class PoeLeagueServiceTest extends TestCase
         $this->ninjaService
             ->expects('getAvailableLeagues')
             ->andReturn(new PoeNinjaLeagueResponse([$this->ninjaLeague('Standard')]));
+
+        $this->ruleRepository->expects('upsertDefaultForLeagues');
+        $this->repository->expects('getAllWithoutRules')->andReturns(collect());
 
         $this->service->getAll();
 

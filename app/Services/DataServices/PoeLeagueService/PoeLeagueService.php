@@ -157,6 +157,10 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         ;
 
         $this->repository->upsert($leagues->values()->all());
+
+        $this->leagueRuleRepository->upsertDefaultForLeagues(
+            $this->repository->getAllWithoutRules()->pluck('id')->toArray()
+        );
     }
 
     #[\Override]

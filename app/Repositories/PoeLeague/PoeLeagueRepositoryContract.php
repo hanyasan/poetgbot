@@ -23,6 +23,11 @@ interface PoeLeagueRepositoryContract
     public function getAll(): Collection;
 
     /**
+     * @return Collection<int, PoeLeagueDto>
+     */
+    public function getAllWithoutRules(): Collection;
+
+    /**
      * Get all leagues.
      *
      * @return Collection<int, PoeLeagueDto>

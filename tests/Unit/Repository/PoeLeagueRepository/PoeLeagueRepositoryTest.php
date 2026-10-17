@@ -300,4 +300,21 @@ class PoeLeagueRepositoryTest extends TestCase
             DB::rollBack();
         }
     }
+
+    public function test_get_all_without_rules(): void
+    {
+        $noRuleLeague = $this->createPoeLeague([
+            'league_name' => 'No Rules',
+            'poe_version' => PoeVersionEnum::POE_1->value,
+            'is_active' => false,
+        ]);
+
+        $result = $this->repository->getAllWithoutRules();
+
+        $this->assertSame(Collection::class, $result::class);
+        $this->assertEquals(PoeLeagueDto::class, $result->where('id', $noRuleLeague->id)->first()::class);
+        $this->assertDatabaseMissing('league_check_rules', ['poe_league_id' => $noRuleLeague->id]);
+    }
+
+
 }

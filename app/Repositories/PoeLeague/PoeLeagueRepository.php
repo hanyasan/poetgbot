@@ -49,6 +49,21 @@ final readonly class PoeLeagueRepository implements PoeLeagueRepositoryContract
     }
 
     /**
+     * @return Collection<int, PoeLeagueDto>
+     */
+    #[\Override]
+    public function getAllWithoutRules(): Collection
+    {
+        return $this->model->newQuery()
+            ->whereDoesntHave('check_rule')
+            ->get()
+            ->toBase()
+            ->map(
+                fn ($league) => $this->mapper->mapFromArray(PoeLeagueDto::class, $league->toArray())
+            );
+    }
+
+    /**
      * @psalm-return Collection<int, PoeLeagueDto>
      */
     #[\Override]

@@ -68,4 +68,11 @@ class LeagueRuleRepositoryTest extends TestCase
         $this->assertDatabaseHas('league_check_rules', ['poe_league_id' => $this->league2->id]);
         $this->assertDatabaseHas('league_check_rules', ['poe_league_id' => $this->league2->id, 'minutes_check' => config('price_check.default_hours_check') * 60]);
     }
+
+    public function test_upsert_defaults_for_leagues_can_take_empty_array(): void
+    {
+        $this->leagueRuleRepository->upsertDefaultForLeagues([]);
+
+        $this->assertTrue(true);
+    }
 }
