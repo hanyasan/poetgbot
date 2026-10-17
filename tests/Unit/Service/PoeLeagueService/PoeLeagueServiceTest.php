@@ -8,6 +8,7 @@ use App\DataTransferObjects\RepositoryObjects\League\LeagueCheckRuleDto;
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueWithLastCoreDto;
 use App\Enums\PoeVersionEnum;
+use App\Repositories\PoeLeague\LeagueRuleRepositoryContract;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
 use App\Services\DataServices\PoeLeagueService\PoeLeagueService;
 use App\Services\PoeNinjaService\PoeNinjaServiceContract;
@@ -22,6 +23,8 @@ class PoeLeagueServiceTest extends TestCase
 {
     private MockInterface|PoeLeagueRepositoryContract $repository;
 
+    private MockInterface|LeagueRuleRepositoryContract $ruleRepository;
+
     private MockInterface|PoeNinjaServiceContract $ninjaService;
 
     private PoeLeagueService $service;
@@ -34,8 +37,9 @@ class PoeLeagueServiceTest extends TestCase
 
         $this->repository = Mockery::mock(PoeLeagueRepositoryContract::class);
         $this->ninjaService = Mockery::mock(PoeNinjaServiceContract::class);
+        $this->ruleRepository = Mockery::mock(LeagueRuleRepositoryContract::class);
 
-        $this->service = new PoeLeagueService($this->repository, $this->ninjaService);
+        $this->service = new PoeLeagueService($this->repository, $this->ninjaService, $this->ruleRepository);
 
         Cache::flush();
     }
@@ -244,16 +248,32 @@ class PoeLeagueServiceTest extends TestCase
 
     public function test_update_or_create_rule_delegates_to_repository(): void
     {
+        $now = Carbon::now()->toDateString();
+
         $this->repository->expects('find')->with(1)->andReturns($this->league(1, 'Test League', PoeVersionEnum::POE_2));
-        $this->repository->expects('updateOrCreateRule')->with(15, 1);
+        $this->ruleRepository->expects('updateOrCreate')->with(15, 1)->andReturns(
+            new LeagueCheckRuleDto(
+                1,
+                15,
+                $now, $now,
+            )
+        );
 
         $this->service->updateOrCreateRule(15, 1);
     }
 
     public function test_update_or_create_rule_passes_null_minutes(): void
     {
+        $now = Carbon::now()->toDateString();
+
         $this->repository->expects('find')->with(1)->andReturns($this->league(1, 'Test League', PoeVersionEnum::POE_2));
-        $this->repository->expects('updateOrCreateRule')->with(null, 1);
+        $this->ruleRepository->expects('updateOrCreate')->with(null, 1)->andReturns(
+            new LeagueCheckRuleDto(
+                1,
+                15,
+                $now, $now,
+            )
+        );
 
         $this->service->updateOrCreateRule(null, 1);
     }
@@ -261,7 +281,7 @@ class PoeLeagueServiceTest extends TestCase
     public function test_update_or_create_rule_throws_and_skips_write_when_league_missing(): void
     {
         $this->repository->expects('find')->with(99)->andThrow(new ModelNotFoundException());
-        $this->repository->shouldNotReceive('updateOrCreateRule');
+        $this->ruleRepository->allows('updateOrCreate')->never();
 
         $this->expectException(ModelNotFoundException::class);
 
@@ -270,8 +290,16 @@ class PoeLeagueServiceTest extends TestCase
 
     public function test_update_or_create_rule_flushes_cached_league(): void
     {
+        $now = Carbon::now()->toDateString();
+
         $this->repository->expects('find')->with(1)->twice()->andReturns($this->league(1, 'Test League', PoeVersionEnum::POE_2));
-        $this->repository->expects('updateOrCreateRule')->with(15, 1);
+        $this->ruleRepository->expects('updateOrCreate')->with(15, 1)->andReturns(
+            new LeagueCheckRuleDto(
+                1,
+                15,
+                $now, $now,
+            )
+        );
 
         $this->service->find(1);
         $this->service->updateOrCreateRule(15, 1);

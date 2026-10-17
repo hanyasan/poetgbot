@@ -4,7 +4,6 @@ namespace App\Repositories\Currency\PriceCheckCore;
 
 use App\DataTransferObjects\RepositoryObjects\Currency\PriceCheckCoreDto;
 use App\Models\Currency\PriceCheckCore;
-use App\Repositories\BaseEloquentRepository;
 use App\Services\Mapper\MapperService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -12,21 +11,19 @@ use Illuminate\Support\Collection;
 /**
  * @property-read PriceCheckCore $model
  */
-final class PriceCheckCoreRepository extends BaseEloquentRepository implements PriceCheckCoreRepositoryContract
+final class PriceCheckCoreRepository implements PriceCheckCoreRepositoryContract
 {
     public function __construct(
-        PriceCheckCore $model,
-        MapperService $mapper
-    ) {
-        parent::__construct($model, $mapper);
-    }
+        private readonly PriceCheckCore $model,
+        private readonly MapperService $mapper
+    ) {}
 
     #[\Override]
     public function find(int $id): PriceCheckCoreDto
     {
         return $this->mapper->mapFromArray(
             PriceCheckCoreDto::class,
-            $this->getQuery()->with('priceCheckCoreTypes')->findOrFail($id)->toArray()
+            $this->model->newQuery()->with('priceCheckCoreTypes')->findOrFail($id)->toArray()
         );
     }
 
@@ -37,7 +34,8 @@ final class PriceCheckCoreRepository extends BaseEloquentRepository implements P
     public function getAll(): Collection
     {
         return $this
-            ->getQuery()
+            ->model
+            ->newQuery()
             ->with('priceCheckCoreTypes')
             ->get()
             ->toBase()
@@ -51,7 +49,8 @@ final class PriceCheckCoreRepository extends BaseEloquentRepository implements P
     public function getByLeague(int $leagueId): Collection
     {
         return $this
-            ->getQuery()
+            ->model
+            ->newQuery()
             ->with('priceCheckCoreTypes')
             ->where('poe_league_id', $leagueId)
             ->get()
@@ -63,7 +62,8 @@ final class PriceCheckCoreRepository extends BaseEloquentRepository implements P
     public function getLatestByLeague(int $leagueId): PriceCheckCoreDto
     {
         $core = $this
-            ->getQuery()
+            ->model
+            ->newQuery()
             ->with('priceCheckCoreTypes')
             ->where('poe_league_id', $leagueId)
             ->latest()
@@ -79,7 +79,8 @@ final class PriceCheckCoreRepository extends BaseEloquentRepository implements P
     public function getFromDateByLeague(Carbon $dateFrom, int $leagueId): Collection
     {
         return $this
-            ->getQuery()
+            ->model
+            ->newQuery()
             ->with('priceCheckCoreTypes')
             ->where('poe_league_id', $leagueId)
             ->whereDate('created_at', '>=', $dateFrom)
@@ -87,17 +88,6 @@ final class PriceCheckCoreRepository extends BaseEloquentRepository implements P
             ->toBase()
             ->map(fn ($core) => $this->mapper->mapFromArray(PriceCheckCoreDto::class, $core->toArray()));
     }
-
-//    public function getLatestWithLeague(): Collection
-//    {
-//        return $this
-//            ->getQuery()
-//            ->with([
-//                'priceCheckCoreTypes',
-//                'league',
-//            ])
-//            ->latest()
-//    }
 
     /**
      * @param int $leagueId
@@ -116,7 +106,7 @@ final class PriceCheckCoreRepository extends BaseEloquentRepository implements P
         array $types,
     ): PriceCheckCoreDto {
         /** @var PriceCheckCore $core */
-        $core = $this->create(['poe_league_id' => $leagueId]);
+        $core = $this->model->newQuery()->create(['poe_league_id' => $leagueId]);
 
         $this->createTypes($types, $core);
 

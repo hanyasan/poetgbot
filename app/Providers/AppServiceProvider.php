@@ -8,6 +8,8 @@ use App\Repositories\Currency\CurrencyType\CurrencyTypeRepository;
 use App\Repositories\Currency\CurrencyType\CurrencyTypeRepositoryContract;
 use App\Repositories\Currency\PriceCheckCore\PriceCheckCoreRepository;
 use App\Repositories\Currency\PriceCheckCore\PriceCheckCoreRepositoryContract;
+use App\Repositories\PoeLeague\LeagueRuleRepository;
+use App\Repositories\PoeLeague\LeagueRuleRepositoryContract;
 use App\Repositories\PoeLeague\PoeLeagueRepository;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
 use App\Services\DataServices\Currency\CurrencyTypeService\CurrencyTypeService;
@@ -50,6 +52,7 @@ final class AppServiceProvider extends ServiceProvider
         PriceCheckCoreServiceContract::class => PriceCheckCoreService::class,
         PriceCheckServiceContract::class => PriceCheckService::class,
         LeagueCheckPickerServiceContract::class => LeagueCheckPickerService::class,
+        LeagueRuleRepositoryContract::class => LeagueRuleRepository::class,
     ];
 
     /**

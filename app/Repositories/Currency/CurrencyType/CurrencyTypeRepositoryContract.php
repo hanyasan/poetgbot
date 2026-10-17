@@ -5,11 +5,12 @@ namespace App\Repositories\Currency\CurrencyType;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithLeagueDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithPricesDto;
-use App\Repositories\BaseRepositoryContract;
 use Illuminate\Support\Collection;
 
-interface CurrencyTypeRepositoryContract extends BaseRepositoryContract
+interface CurrencyTypeRepositoryContract
 {
+    public function delete(int $id): bool;
+
     /**
      * @return Collection<int, CurrencyTypeWithLeagueDto>
      */
@@ -30,7 +31,6 @@ interface CurrencyTypeRepositoryContract extends BaseRepositoryContract
      */
     public function getAllByLeagueWithPriceByCore(int $leagueId, int $coreId): Collection;
 
-    #[\Override]
     public function find(int $id): CurrencyTypeWithLeagueDto;
 
     /**

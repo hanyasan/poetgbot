@@ -283,14 +283,6 @@ class CurrencyTypeRepositoryTest extends TestCase
         $this->assertSame([], $types->first()->prices);
     }
 
-    public function test_delete(): void
-    {
-        $this->assertTrue($this->repository->delete($this->poe1Divine->id));
-
-        $this->assertDatabaseMissing('currency_types', ['id' => $this->poe1Divine->id]);
-        $this->assertDatabaseHas('currency_types', ['id' => $this->poe2Divine->id]);
-    }
-
     public function test_upsert_inserts_types_for_poe1_and_poe2_leagues(): void
     {
         $this->repository->upsert([

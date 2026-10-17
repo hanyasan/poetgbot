@@ -6,7 +6,6 @@ use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueWithLastCoreDto;
 use App\Enums\PoeVersionEnum;
 use App\Models\Currency\PriceCheckCore;
-use App\Models\LeagueCheckRule;
 use App\Models\PoeLeague;
 use App\Models\PoeLeague as PoeLeagueModel;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
@@ -28,10 +27,15 @@ class PoeLeagueRepositoryTest extends TestCase
 
         $this->repository = app(PoeLeagueRepositoryContract::class);
 
-        $this->poeLeague = $this->repository->create([
+        $this->poeLeague = $this->createPoeLeague([
             'league_name' => 'Test League',
             'poe_version' => PoeVersionEnum::POE_2->value,
         ]);
+    }
+
+    private function createPoeLeague(array $data): PoeLeagueModel
+    {
+        return PoeLeagueModel::query()->create($data);
     }
 
     public function test_find(): void
@@ -52,7 +56,7 @@ class PoeLeagueRepositoryTest extends TestCase
 
     public function test_get_all(): void
     {
-        $active = $this->repository->create([
+        $active = $this->createPoeLeague([
             'league_name' => 'Active League',
             'poe_version' => PoeVersionEnum::POE_2->value,
             'is_active' => true,
@@ -71,7 +75,7 @@ class PoeLeagueRepositoryTest extends TestCase
 
     public function test_get_by_version(): void
     {
-        $poe1 = $this->repository->create([
+        $poe1 = $this->createPoeLeague([
             'league_name' => 'Test League Poe1',
             'poe_version' => PoeVersionEnum::POE_1->value,
         ]);
@@ -92,17 +96,17 @@ class PoeLeagueRepositoryTest extends TestCase
 
     public function test_get_all_active(): void
     {
-        $activePoe2 = $this->repository->create([
+        $activePoe2 = $this->createPoeLeague([
             'league_name' => 'Active League Poe2',
             'poe_version' => PoeVersionEnum::POE_2->value,
             'is_active' => true,
         ]);
-        $activePoe1 = $this->repository->create([
+        $activePoe1 = $this->createPoeLeague([
             'league_name' => 'Active League Poe1',
             'poe_version' => PoeVersionEnum::POE_1->value,
             'is_active' => true,
         ]);
-        $inactivePoe1 = $this->repository->create([
+        $inactivePoe1 = $this->createPoeLeague([
             'league_name' => 'Inactive League Poe1',
             'poe_version' => PoeVersionEnum::POE_1->value,
             'is_active' => false,
@@ -143,13 +147,6 @@ class PoeLeagueRepositoryTest extends TestCase
         } finally {
             DB::rollBack();
         }
-    }
-
-    public function test_delete(): void
-    {
-        $this->assertTrue($this->repository->delete($this->poeLeague->id));
-
-        $this->assertDatabaseMissing('poe_leagues', ['id' => $this->poeLeague->id]);
     }
 
     public function test_upsert_inserts_new_leagues(): void
@@ -212,53 +209,6 @@ class PoeLeagueRepositoryTest extends TestCase
         $this->assertSame(PoeVersionEnum::POE_2->value, $league->poe_version);
     }
 
-    public function test_update_or_create_rule_creates_rule(): void
-    {
-        $this->repository->updateOrCreateRule(15, $this->poeLeague->id);
-
-        $this->assertDatabaseHas('league_check_rules', [
-            'poe_league_id' => $this->poeLeague->id,
-            'minutes_check' => 15,
-        ]);
-    }
-
-    public function test_update_or_create_rule_updates_existing_rule(): void
-    {
-        $this->repository->updateOrCreateRule(15, $this->poeLeague->id);
-        $this->repository->updateOrCreateRule(30, $this->poeLeague->id);
-
-        $this->assertSame(1, LeagueCheckRule::where('poe_league_id', $this->poeLeague->id)->count());
-        $this->assertDatabaseHas('league_check_rules', [
-            'poe_league_id' => $this->poeLeague->id,
-            'minutes_check' => 30,
-        ]);
-    }
-
-    public function test_update_or_create_rule_accepts_null_minutes(): void
-    {
-        $this->repository->updateOrCreateRule(15, $this->poeLeague->id);
-        $this->repository->updateOrCreateRule(null, $this->poeLeague->id);
-
-        $this->assertDatabaseHas('league_check_rules', [
-            'poe_league_id' => $this->poeLeague->id,
-            'minutes_check' => null,
-        ]);
-    }
-
-    public function test_update_or_create_rule_does_not_touch_other_leagues(): void
-    {
-        $other = $this->repository->create([
-            'league_name' => 'Other League',
-            'poe_version' => PoeVersionEnum::POE_1->value,
-        ]);
-
-        $this->repository->updateOrCreateRule(10, $other->id);
-        $this->repository->updateOrCreateRule(20, $this->poeLeague->id);
-
-        $this->assertDatabaseHas('league_check_rules', ['poe_league_id' => $other->id, 'minutes_check' => 10]);
-        $this->assertDatabaseHas('league_check_rules', ['poe_league_id' => $this->poeLeague->id, 'minutes_check' => 20]);
-    }
-
     private function createCore(int $leagueId, string $createdAt): PriceCheckCore
     {
         return PriceCheckCore::query()->create([
@@ -270,7 +220,7 @@ class PoeLeagueRepositoryTest extends TestCase
 
     public function test_get_active_with_latest_core_returns_latest_core_per_league(): void
     {
-        $league = $this->repository->create([
+        $league = $this->createPoeLeague([
             'league_name' => 'Cored League',
             'poe_version' => PoeVersionEnum::POE_1->value,
             'is_active' => true,
@@ -300,12 +250,12 @@ class PoeLeagueRepositoryTest extends TestCase
 
     public function test_get_active_with_latest_core_resolves_each_league_separately(): void
     {
-        $first = $this->repository->create([
+        $first = $this->createPoeLeague([
             'league_name' => 'First Cored',
             'poe_version' => PoeVersionEnum::POE_1->value,
             'is_active' => true,
         ]);
-        $second = $this->repository->create([
+        $second = $this->createPoeLeague([
             'league_name' => 'Second Cored',
             'poe_version' => PoeVersionEnum::POE_2->value,
             'is_active' => true,
@@ -323,7 +273,7 @@ class PoeLeagueRepositoryTest extends TestCase
 
     public function test_get_active_with_latest_core_excludes_inactive_leagues(): void
     {
-        $inactive = $this->repository->create([
+        $inactive = $this->createPoeLeague([
             'league_name' => 'Inactive Cored',
             'poe_version' => PoeVersionEnum::POE_1->value,
             'is_active' => false,

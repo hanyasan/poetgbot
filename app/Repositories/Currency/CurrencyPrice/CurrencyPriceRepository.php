@@ -3,17 +3,12 @@
 namespace App\Repositories\Currency\CurrencyPrice;
 
 use App\Models\Currency\CurrencyPrice;
-use App\Repositories\BaseEloquentRepository;
-use App\Services\Mapper\MapperService;
 
-final class CurrencyPriceRepository extends BaseEloquentRepository implements CurrencyPriceRepositoryContract
+final readonly class CurrencyPriceRepository implements CurrencyPriceRepositoryContract
 {
     public function __construct(
-        CurrencyPrice $model,
-        MapperService $mapper
-    ) {
-        parent::__construct($model, $mapper);
-    }
+        private CurrencyPrice $model,
+    ) {}
 
     /**
      * @param array<int, array{

@@ -6,25 +6,33 @@ use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueWithLastCoreDto;
 use App\Enums\PoeVersionEnum;
 use App\Models\Currency\PriceCheckCore;
-use App\Models\LeagueCheckRule;
 use App\Models\PoeLeague as PoeLeagueModel;
-use App\Repositories\BaseEloquentRepository;
 use App\Services\Mapper\MapperService;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLeagueRepositoryContract
+final readonly class PoeLeagueRepository implements PoeLeagueRepositoryContract
 {
     /**
      * @param  PoeLeagueModel  $model  Eloquent model the repository queries
      * @param  MapperService  $mapper  Maps raw model arrays into PoeLeagueDto DTOs
      */
     public function __construct(
-        PoeLeagueModel $model,
-        MapperService $mapper
-    ) {
-        parent::__construct($model, $mapper);
+        private PoeLeagueModel $model,
+        private MapperService $mapper
+    ) {}
+
+    #[\Override]
+    public function delete(int $id): bool
+    {
+        return $this->model->newQuery()->where('id', $id)->delete();
+    }
+
+    #[\Override]
+    public function truncate(): void
+    {
+        $this->model->newQuery()->truncate();
     }
 
     /**
@@ -35,7 +43,7 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
     #[\Override]
     public function getAll(): Collection
     {
-        return $this->getQuery()->get()->toBase()->map(
+        return $this->model->newQuery()->get()->toBase()->map(
             fn ($league) => $this->mapper->mapFromArray(PoeLeagueDto::class, $league->toArray())
         );
     }
@@ -46,7 +54,7 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
     #[\Override]
     public function getAllActiveByVersion(PoeVersionEnum $version): Collection
     {
-        return $this->getQuery()
+        return $this->model->newQuery()
             ->where('poe_version', $version->value)
             ->where('is_active', true)
             ->get()
@@ -60,7 +68,7 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
     #[\Override]
     public function getAllActive(): Collection
     {
-        return $this->getQuery()
+        return $this->model->newQuery()
             ->where('is_active', true)
             ->get()
             ->toBase()
@@ -75,7 +83,7 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
     #[\Override]
     public function getByLeague(PoeVersionEnum $version): Collection
     {
-        return $this->getQuery()
+        return $this->model->newQuery()
             ->where('poe_version', $version->value)
             ->get()
             ->toBase()
@@ -90,7 +98,7 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
     {
         return $this->mapper->mapFromArray(
             PoeLeagueDto::class,
-            parent::find($id)->toArray()
+            $this->model->newQuery()->findOrFail($id)->toArray()
         );
     }
 
@@ -104,24 +112,11 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
     #[\Override]
     public function upsert(array $paramsWithValues): void
     {
-        parent::getQuery()->upsert(
+        $this->model->newQuery()->upsert(
             $paramsWithValues,
             ['league_name', 'poe_version'],
             ['is_active'],
         );
-    }
-
-    #[\Override]
-    public function updateOrCreateRule(int|null $minutesToCheck, int $leagueId): void
-    {
-        LeagueCheckRule::query()
-            ->updateOrCreate(
-                ['poe_league_id' => $leagueId],
-                [
-                    'minutes_check' => $minutesToCheck,
-                    'poe_league_id' => $leagueId,
-                ]
-            );
     }
 
     /**
@@ -148,7 +143,7 @@ final class PoeLeagueRepository extends BaseEloquentRepository implements PoeLea
                     ->whereRaw(DB::raw('latest_cores.last_core_created_at = price_check_cores.created_at'));
             });
 
-        return $this->getQuery()
+        return $this->model->newQuery()
             ->leftJoinSub($coreQ, 'latest_cores', function (JoinClause $join) {
                 $join->on('poe_leagues.id', '=', 'latest_cores.poe_league_id');
             })

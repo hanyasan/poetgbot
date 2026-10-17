@@ -5,13 +5,16 @@ namespace App\Repositories\PoeLeague;
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueWithLastCoreDto;
 use App\Enums\PoeVersionEnum;
-use App\Repositories\BaseRepositoryContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 
-interface PoeLeagueRepositoryContract extends BaseRepositoryContract
+interface PoeLeagueRepositoryContract
 {
+    public function truncate(): void;
+
+    public function delete(int $id): bool;
+
     /**
      * Get all leagues.
      *
@@ -44,7 +47,6 @@ interface PoeLeagueRepositoryContract extends BaseRepositoryContract
      *
      * @throws ModelNotFoundException<Model> When the league does not exist
      */
-    #[\Override]
     public function find(int $id): PoeLeagueDto;
 
     /**
@@ -55,8 +57,6 @@ interface PoeLeagueRepositoryContract extends BaseRepositoryContract
      * }> $paramsWithValues
      */
     public function upsert(array $paramsWithValues): void;
-
-    public function updateOrCreateRule(int|null $minutesToCheck, int $leagueId): void;
 
     /**
      * @return Collection<int, PoeLeagueWithLastCoreDto>

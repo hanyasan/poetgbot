@@ -6,6 +6,7 @@ use App\DataTransferObjects\ParsingObjects\PoeNinjaLeague;
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueWithLastCoreDto;
 use App\Enums\PoeVersionEnum;
+use App\Repositories\PoeLeague\LeagueRuleRepositoryContract;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
 use App\Services\CacheHelperService;
 use App\Services\DataServices\Currency\PriceCheckCoreService\PriceCheckCoreService;
@@ -23,6 +24,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     public function __construct(
         private readonly PoeLeagueRepositoryContract $repository,
         private readonly PoeNinjaServiceContract $ninjaService,
+        private readonly LeagueRuleRepositoryContract $leagueRuleRepository,
     ) {}
 
     #[\Override]
@@ -206,7 +208,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
 
         $this->flushId($leagueId);
 
-        $this->repository->updateOrCreateRule($minutesToCheck, $leagueId);
+        $this->leagueRuleRepository->updateOrCreate($minutesToCheck, $leagueId);
     }
 
     /**
