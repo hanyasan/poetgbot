@@ -117,6 +117,19 @@ final readonly class PoeLeagueRepository implements PoeLeagueRepositoryContract
         );
     }
 
+    #[\Override]
+    public function findByNameVersion(string $name, PoeVersionEnum $version): PoeLeagueDto
+    {
+        return $this->mapper->mapFromArray(
+            PoeLeagueDto::class,
+            $this->model->newQuery()
+            ->where('poe_version', $version->value)
+            ->where('league_name', $name)
+            ->firstOrFail()
+            ->toArray()
+        );
+    }
+
     /**
      * @param  array<int, array{
      *     league_name: string,

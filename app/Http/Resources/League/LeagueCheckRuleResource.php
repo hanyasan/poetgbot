@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\League;
 
 use App\DataTransferObjects\RepositoryObjects\League\LeagueCheckRuleDto;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-final class LeagueCheckRule extends JsonResource
+final class LeagueCheckRuleResource extends JsonResource
 {
     #[\Override]
     public function toArray($request): array

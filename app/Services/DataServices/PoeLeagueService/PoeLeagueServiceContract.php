@@ -11,6 +11,8 @@ interface PoeLeagueServiceContract
 {
     public function delete(int $id): bool;
 
+    public function findByNameVersion(string $name, PoeVersionEnum $version): PoeLeagueDto;
+
     public function find(int $id): PoeLeagueDto;
 
     /**

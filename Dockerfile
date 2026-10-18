@@ -6,7 +6,7 @@ COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --no-interaction --ignore-platform-reqs
 
 FROM dunglas/frankenphp:1-php8.4-alpine AS base
-RUN install-php-extensions pdo_pgsql pgsql redis opcache pcntl
+RUN install-php-extensions bcmath pdo_pgsql pgsql redis opcache pcntl
 COPY docker/Caddyfile /etc/caddy/Caddyfile
 WORKDIR /app
 

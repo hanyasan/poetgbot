@@ -20,6 +20,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     static string $leagueGetTag = 'poe_league_get';
     static string $leagueTag = 'poe_league';
     static string $leagueVersionTag = 'poe_league_version';
+    static string $leagueNameTag = 'poe_league_name';
 
     public function __construct(
         private readonly PoeLeagueRepositoryContract $repository,
@@ -46,11 +47,28 @@ final class PoeLeagueService implements PoeLeagueServiceContract
         return Cache::tags([
             CacheHelperService::generateCacheTag(self::$leagueIdTag, $id),
             CacheHelperService::generateCacheTag(self::$leagueTag),
+            CacheHelperService::generateCacheTag(self::$leagueGetTag),
         ])->remember(
             'by_id:' . $id,
             CacheHelperService::setHourTtl(),
             function () use ($id) {
                 return $this->repository->find($id);
+            }
+        );
+    }
+
+    #[\Override]
+    public function findByNameVersion(string $name, PoeVersionEnum $version): PoeLeagueDto
+    {
+        return Cache::tags([
+            CacheHelperService::generateCacheTag(self::$leagueVersionTag, $version->value),
+            CacheHelperService::generateCacheTag(self::$leagueTag),
+            CacheHelperService::generateCacheTag(self::$leagueNameTag, $name),
+        ])->remember(
+            'by_name_version:' . $name . ' ' . $version->value,
+            CacheHelperService::setHourTtl(),
+            function () use ($name, $version) {
+                return $this->repository->findByNameVersion($name, $version);
             }
         );
     }

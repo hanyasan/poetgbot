@@ -14,7 +14,8 @@
         "laravel/framework": "^13.0",
         "laravel/tinker": "^3.0",
         "longman/telegram-bot": "^0.83",
-        "php-open-source-saver/jwt-auth": "^2.9"
+        "php-open-source-saver/jwt-auth": "^2.9",
+        "ext-bcmath": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

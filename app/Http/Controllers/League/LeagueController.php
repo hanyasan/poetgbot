@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\League;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\PoeLeagueResource;
+use App\Http\Resources\League\PoeLeagueResource;
 use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
 use Illuminate\Http\JsonResponse;
 

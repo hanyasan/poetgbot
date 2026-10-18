@@ -5,9 +5,10 @@ namespace App\Services;
 final class CacheHelperService
 {
     /**
-     * @param int|string $args
+     * @param string $pref
+     * @param string|int ...$args
      *
-     * @psalm-param 'poe1'|'poe2'|int $args
+     * @return string
      */
     public static function generateCacheTag(string $pref, string|int ...$args): string
     {
