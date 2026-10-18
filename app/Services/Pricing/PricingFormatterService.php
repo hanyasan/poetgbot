@@ -61,7 +61,7 @@ final readonly class PricingFormatterService
         foreach ($coreTypes as $coreType) {
             if (empty($currencyType->prices)) break;
 
-            $value = bcmul($coreType->rate, $currencyType->prices[0]->rate, 10);
+            $value = bcmul((string) $coreType->rate, (string) $currencyType->prices[0]->rate, 10);
 
             $prices[] = [
                 'is_primary' => $coreType->is_primary,
