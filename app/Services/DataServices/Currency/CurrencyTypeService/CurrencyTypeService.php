@@ -3,6 +3,7 @@
 namespace App\Services\DataServices\Currency\CurrencyTypeService;
 
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeItem;
+use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithLeagueDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithPricesDto;
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
@@ -55,7 +56,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
     }
 
     /**
-     * @psalm-return Collection<int, \App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto>
+     * @psalm-return Collection<int, CurrencyTypeDto>
      */
     #[\Override]
     public function getAllByLeague(int $leagueId): Collection

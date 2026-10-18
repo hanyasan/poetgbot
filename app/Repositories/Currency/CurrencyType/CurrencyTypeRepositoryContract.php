@@ -24,11 +24,6 @@ interface CurrencyTypeRepositoryContract
     /**
      * @return Collection<int, CurrencyTypeWithPricesDto>
      */
-    public function getAllByLeagueWithLatestPrice(int $leagueId): Collection;
-
-    /**
-     * @return Collection<int, CurrencyTypeWithPricesDto>
-     */
     public function getAllByLeagueWithPriceByCore(int $leagueId, int $coreId): Collection;
 
     public function find(int $id): CurrencyTypeWithLeagueDto;

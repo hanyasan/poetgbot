@@ -27,6 +27,8 @@ use App\Services\PriceCheckServices\LeagueCheckPickerService\LeagueCheckPickerSe
 use App\Services\PriceCheckServices\LeagueCheckPickerService\LeagueCheckPickerServiceContract;
 use App\Services\PriceCheckServices\PriceCheckService\PriceCheckService;
 use App\Services\PriceCheckServices\PriceCheckService\PriceCheckServiceContract;
+use App\Services\Pricing\PricingService;
+use App\Services\Pricing\PricingServiceContract;
 use App\Services\TelegramBotService\TelegramBotContract;
 use App\Services\TelegramBotService\TelegramBotService;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -53,6 +55,7 @@ final class AppServiceProvider extends ServiceProvider
         PriceCheckServiceContract::class => PriceCheckService::class,
         LeagueCheckPickerServiceContract::class => LeagueCheckPickerService::class,
         LeagueRuleRepositoryContract::class => LeagueRuleRepository::class,
+        PricingServiceContract::class => PricingService::class,
     ];
 
     /**

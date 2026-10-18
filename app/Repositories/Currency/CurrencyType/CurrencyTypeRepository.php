@@ -5,11 +5,14 @@ namespace App\Repositories\Currency\CurrencyType;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithLeagueDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithPricesDto;
+use App\Models\Currency\CurrencyPrice;
 use App\Models\Currency\CurrencyType as CurrencyTypeModel;
 use App\Models\Currency\PriceCheckCore;
 use App\Services\Mapper\MapperService;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 final readonly class CurrencyTypeRepository implements CurrencyTypeRepositoryContract
 {
@@ -76,37 +79,6 @@ final readonly class CurrencyTypeRepository implements CurrencyTypeRepositoryCon
             ->where('poe_league_id', $leagueId)
             ->with(['prices' => static function (Relation $query) use ($coreId) {
                 $query->where('price_check_core_id', $coreId);
-            }])
-            ->get()
-            ->toBase()
-            ->map(function ($priceType) {
-                return $this->mapper->mapFromArray(
-                    CurrencyTypeWithPricesDto::class,
-                    $priceType->toArray()
-                );
-            });
-    }
-
-    /**
-     * @psalm-return Collection<int, CurrencyTypeWithPricesDto>
-     */
-    #[\Override]
-    public function getAllByLeagueWithLatestPrice(int $leagueId): Collection
-    {
-        //todo: зарефачить джойном
-        $latestCoreId = PriceCheckCore::query()
-            ->select('id')
-            ->where('poe_league_id', $leagueId)
-            ->orderByDesc('created_at')
-            ->orderByDesc('id')
-            ->limit(1);
-
-        return $this
-            ->model
-            ->newQuery()
-            ->where('poe_league_id', $leagueId)
-            ->with(['prices' => static function (Relation $query) use ($latestCoreId) {
-                $query->where('price_check_core_id', $latestCoreId);
             }])
             ->get()
             ->toBase()
