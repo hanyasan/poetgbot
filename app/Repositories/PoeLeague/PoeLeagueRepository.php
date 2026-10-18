@@ -118,13 +118,16 @@ final readonly class PoeLeagueRepository implements PoeLeagueRepositoryContract
     }
 
     #[\Override]
-    public function findByNameVersion(string $name, PoeVersionEnum $version): PoeLeagueDto
+    public function findActiveByNameVersion(string $name, PoeVersionEnum $version): PoeLeagueDto
     {
         return $this->mapper->mapFromArray(
             PoeLeagueDto::class,
             $this->model->newQuery()
-            ->where('poe_version', $version->value)
-            ->where('league_name', $name)
+            ->where([
+                ['is_active', '=', true],
+                ['poe_version', '=', $version->value],
+                ['league_name', '=', $name],
+            ])
             ->firstOrFail()
             ->toArray()
         );

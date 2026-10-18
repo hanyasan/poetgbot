@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Service;
+namespace Tests\Unit\Service\Pricing;
 
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyPriceDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithPricesDto;

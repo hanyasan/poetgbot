@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Repository\CurrencyPriceRepository;
+namespace Tests\Unit\Repository\Currency;
 
 use App\Enums\PoeVersionEnum;
 use App\Models\Currency\CurrencyPrice as CurrencyPriceModel;

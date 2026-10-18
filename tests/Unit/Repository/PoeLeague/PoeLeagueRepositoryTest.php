@@ -1,12 +1,11 @@
 <?php
 
-namespace Tests\Unit\Repository\PoeLeagueRepository;
+namespace Tests\Unit\Repository\PoeLeague;
 
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueWithLastCoreDto;
 use App\Enums\PoeVersionEnum;
 use App\Models\Currency\PriceCheckCore;
-use App\Models\PoeLeague;
 use App\Models\PoeLeague as PoeLeagueModel;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -20,6 +19,7 @@ class PoeLeagueRepositoryTest extends TestCase
     private PoeLeagueRepositoryContract $repository;
 
     private PoeLeagueModel $poeLeague;
+    private PoeLeagueModel $poeLeagueActive;
 
     public function setUp(): void
     {
@@ -30,6 +30,12 @@ class PoeLeagueRepositoryTest extends TestCase
         $this->poeLeague = $this->createPoeLeague([
             'league_name' => 'Test League',
             'poe_version' => PoeVersionEnum::POE_2->value,
+        ]);
+
+        $this->poeLeagueActive = $this->createPoeLeague([
+            'league_name' => 'Test active League',
+            'poe_version' => PoeVersionEnum::POE_2->value,
+            'is_active' => true,
         ]);
     }
 
@@ -52,6 +58,23 @@ class PoeLeagueRepositoryTest extends TestCase
         $this->expectException(ModelNotFoundException::class);
 
         $this->repository->find(PHP_INT_MAX);
+    }
+
+    public function test_find_active_by_name_version(): void
+    {
+        $league = $this->repository->findActiveByNameVersion($this->poeLeagueActive->league_name, PoeVersionEnum::from($this->poeLeagueActive->poe_version));
+
+        $this->assertSame($this->poeLeagueActive->id, $league->id);
+        $this->assertSame($this->poeLeagueActive->league_name, $league->league_name);
+        $this->assertSame($this->poeLeagueActive->poe_version, $league->poe_version);
+        $this->assertTrue($league->is_active);
+    }
+
+    public function test_find_active_by_name_version_throws_when_missing(): void
+    {
+        $this->expectException(ModelNotFoundException::class);
+
+        $this->repository->findActiveByNameVersion('cant find me', PoeVersionEnum::from($this->poeLeagueActive->poe_version));
     }
 
     public function test_get_all(): void
@@ -290,7 +313,7 @@ class PoeLeagueRepositoryTest extends TestCase
         DB::beginTransaction();
 
         try {
-            PoeLeague::query()->update(['is_active' => false]);
+            PoeLeagueModel::query()->update(['is_active' => false]);
 
             $result = $this->repository->getActiveWithLatestCore();
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Service\PriceCheckCoreService;
+namespace Tests\Unit\Service\DataServices\Currency;
 
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeCore;
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeItem;

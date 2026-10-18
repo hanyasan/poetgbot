@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Repository\CurrencyTypeRepository;
+namespace Tests\Unit\Repository\Currency;
 
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyPriceDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto;
@@ -163,7 +163,7 @@ class CurrencyTypeRepositoryTest extends TestCase
         $this->price($this->poe1Divine, $core, 10.0);
 
         $types = $this->repository->getAllByLeagueWithPriceByCore($this->poe1League->id, $core->id)->keyBy('id');
-        dump($types);
+
         $this->assertCount(2, $types);
         $this->assertCount(1, $types[$this->poe1Divine->id]->prices);
         $this->assertSame([], $types[$chaos->id]->prices);

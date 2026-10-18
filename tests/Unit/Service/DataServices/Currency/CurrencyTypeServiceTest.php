@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Service\CurrencyTypeService;
+namespace Tests\Unit\Service\DataServices\Currency;
 
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeCore;
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeItem;

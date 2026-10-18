@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Repository\PriceCheckCoreRepository;
+namespace Tests\Unit\Repository\Currency;
 
 use App\DataTransferObjects\RepositoryObjects\Currency\PriceCheckCoreDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\PriceCheckCoreTypeDto;
@@ -8,7 +8,6 @@ use App\Enums\PoeVersionEnum;
 use App\Models\Currency\PriceCheckCore as PriceCheckCoreModel;
 use App\Models\PoeLeague as PoeLeagueModel;
 use App\Repositories\Currency\PriceCheckCore\PriceCheckCoreRepositoryContract;
-use Error;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;

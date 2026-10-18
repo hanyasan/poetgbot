@@ -58,7 +58,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
     }
 
     #[\Override]
-    public function findByNameVersion(string $name, PoeVersionEnum $version): PoeLeagueDto
+    public function findActiveByNameVersion(string $name, PoeVersionEnum $version): PoeLeagueDto
     {
         return Cache::tags([
             CacheHelperService::generateCacheTag(self::$leagueVersionTag, $version->value),
@@ -68,7 +68,7 @@ final class PoeLeagueService implements PoeLeagueServiceContract
             'by_name_version:' . $name . ' ' . $version->value,
             CacheHelperService::setHourTtl(),
             function () use ($name, $version) {
-                return $this->repository->findByNameVersion($name, $version);
+                return $this->repository->findActiveByNameVersion($name, $version);
             }
         );
     }

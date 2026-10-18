@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Service\PoeLeagueService;
+namespace Tests\Unit\Service\DataServices\League;
 
 use App\DataTransferObjects\ParsingObjects\PoeNinjaLeague;
 use App\DataTransferObjects\ParsingObjects\PoeNinjaLeagueResponse;
@@ -60,10 +60,20 @@ class PoeLeagueServiceTest extends TestCase
     {
         $league = $this->league(1, 'Test League', PoeVersionEnum::POE_2);
 
-        $this->repository->expects('find')->with(1)->andReturns($league);
+        $this->repository->expects('find')->once()->with(1)->andReturns($league);
 
         $this->assertEquals($league, $this->service->find(1));
         $this->assertEquals($league, $this->service->find(1));
+    }
+
+    public function test_find_active_by_name_version_returns_repository_result_and_caches_it(): void
+    {
+        $league = $this->league(1, 'Test League', PoeVersionEnum::POE_2, true);
+
+        $this->repository->expects('findActiveByNameVersion')->once()->with('Test League', PoeVersionEnum::POE_2)->andReturns($league);
+
+        $this->assertEquals($league, $this->service->findActiveByNameVersion('Test League', PoeVersionEnum::POE_2));
+        $this->assertEquals($league, $this->service->findActiveByNameVersion('Test League', PoeVersionEnum::POE_2));
     }
 
     public function test_get_all_caches_result(): void

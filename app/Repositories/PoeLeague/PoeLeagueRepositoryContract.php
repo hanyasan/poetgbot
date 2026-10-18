@@ -57,7 +57,7 @@ interface PoeLeagueRepositoryContract
     /**
      * @throws ModelNotFoundException<Model> When the league does not exist
      */
-    public function findByNameVersion(string $name, PoeVersionEnum $version): PoeLeagueDto;
+    public function findActiveByNameVersion(string $name, PoeVersionEnum $version): PoeLeagueDto;
 
     /**
      * @param  array<int, array{

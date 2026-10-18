@@ -19,7 +19,7 @@ final class PricingController extends Controller
 
     public function latest(PricingLatestRequest $request): JsonResponse
     {
-        $league = $this->poeLeagueService->findByNameVersion(
+        $league = $this->poeLeagueService->findActiveByNameVersion(
             $request->league_name,
             PoeVersionEnum::from($request->poe_version)
         );

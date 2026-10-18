@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Repository\PoeLeagueRepository;
+namespace Tests\Unit\Repository\PoeLeague;
 
 use App\Enums\PoeVersionEnum;
 use App\Models\PoeLeague;

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\PoeVersionEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -15,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property-read null|LeagueCheckRule $check_rule
  *
  * @property string $league_name
- * @property PoeVersionEnum $poe_version
+ * @property string $poe_version
  * @property bool $is_active
  */
 final class PoeLeague extends Model

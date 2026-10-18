@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Service\LeagueCheckPickerService;
+namespace Tests\Unit\Service\PriceCheck;
 
 use App\DataTransferObjects\RepositoryObjects\League\LeagueCheckRuleDto;
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
