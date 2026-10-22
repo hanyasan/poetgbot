@@ -17,7 +17,7 @@ COPY --from=vendor /app/vendor ./vendor
 COPY . .
 RUN composer dump-autoload --no-dev --classmap-authoritative --no-scripts \
     && mkdir -p storage/framework/{cache,sessions,views} storage/logs bootstrap/cache \
-    && chown -R www-data:www-data storage bootstrap/cache
+    && chown -R www-data:www-data storage bootstrap/cache /config
 USER www-data
 
 # Development image: code is bind-mounted, dev dependencies installed at runtime.
