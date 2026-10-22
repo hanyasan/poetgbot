@@ -131,4 +131,57 @@ class CurrencyPriceRepositoryTest extends TestCase
                 ->count()
         );
     }
+
+    public function test_get_avg_core_prices_data_averages_rates_per_currency(): void
+    {
+        $this->repository->insert([
+            ['rate' => 10.0, 'price_check_core_id' => $this->core->id, 'currency_type_id' => $this->divine->id],
+            ['rate' => 20.0, 'price_check_core_id' => $this->otherCore->id, 'currency_type_id' => $this->divine->id],
+            ['rate' => 4.0, 'price_check_core_id' => $this->core->id, 'currency_type_id' => $this->chaos->id],
+        ]);
+
+        $result = collect($this->repository->getAvgCorePricesData([$this->core->id, $this->otherCore->id]))
+            ->keyBy('currency_trade_id');
+
+        $this->assertCount(2, $result);
+        $this->assertSame('Test Divine', $result['test-price-divine']['currency_type_name']);
+        $this->assertEqualsWithDelta(15.0, (float) $result['test-price-divine']['price_avg_rate'], 0.0001);
+        $this->assertSame('Test Chaos', $result['test-price-chaos']['currency_type_name']);
+        $this->assertEqualsWithDelta(4.0, (float) $result['test-price-chaos']['price_avg_rate'], 0.0001);
+    }
+
+    public function test_get_avg_core_prices_data_only_uses_given_cores(): void
+    {
+        $this->repository->insert([
+            ['rate' => 10.0, 'price_check_core_id' => $this->core->id, 'currency_type_id' => $this->divine->id],
+            ['rate' => 20.0, 'price_check_core_id' => $this->otherCore->id, 'currency_type_id' => $this->divine->id],
+            ['rate' => 4.0, 'price_check_core_id' => $this->otherCore->id, 'currency_type_id' => $this->chaos->id],
+        ]);
+
+        $result = $this->repository->getAvgCorePricesData([$this->core->id]);
+
+        $this->assertCount(1, $result);
+        $this->assertSame('test-price-divine', $result[0]['currency_trade_id']);
+        $this->assertEqualsWithDelta(10.0, (float) $result[0]['price_avg_rate'], 0.0001);
+    }
+
+    public function test_get_avg_core_prices_data_returns_expected_keys(): void
+    {
+        $this->repository->insert([
+            ['rate' => 1.0, 'price_check_core_id' => $this->core->id, 'currency_type_id' => $this->divine->id],
+        ]);
+
+        $result = $this->repository->getAvgCorePricesData([$this->core->id]);
+
+        $this->assertEqualsCanonicalizing(
+            ['price_avg_rate', 'currency_type_name', 'currency_trade_id'],
+            array_keys($result[0])
+        );
+    }
+
+    public function test_get_avg_core_prices_data_with_no_prices_is_empty(): void
+    {
+        $this->assertSame([], $this->repository->getAvgCorePricesData([$this->core->id]));
+        $this->assertSame([], $this->repository->getAvgCorePricesData([]));
+    }
 }

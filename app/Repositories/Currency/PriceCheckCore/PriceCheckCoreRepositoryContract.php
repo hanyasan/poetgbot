@@ -42,4 +42,14 @@ interface PriceCheckCoreRepositoryContract
         int $leagueId,
         array $types,
     ): PriceCheckCoreDto;
+
+    /**
+     * @param array<int, int> $coreIds
+     * @return array<int, array{
+     *     type_id: string,
+     *     name: string,
+     *     avg_rate: float,
+     * }>
+     */
+    public function getAvgCoreTypesData(array $coreIds): array;
 }

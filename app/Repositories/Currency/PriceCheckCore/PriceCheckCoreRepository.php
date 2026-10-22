@@ -4,9 +4,12 @@ namespace App\Repositories\Currency\PriceCheckCore;
 
 use App\DataTransferObjects\RepositoryObjects\Currency\PriceCheckCoreDto;
 use App\Models\Currency\PriceCheckCore;
+use App\Models\Currency\PriceCheckCoreType;
 use App\Services\Mapper\MapperService;
 use Carbon\Carbon;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @property-read PriceCheckCore $model
@@ -87,6 +90,40 @@ final class PriceCheckCoreRepository implements PriceCheckCoreRepositoryContract
             ->get()
             ->toBase()
             ->map(fn ($core) => $this->mapper->mapFromArray(PriceCheckCoreDto::class, $core->toArray()));
+    }
+
+    /**
+     * @param array<int, int> $coreIds
+     * @return array<int, array{
+     *     type_id: string,
+     *     name: string,
+     *     avg_rate: float,
+     * }>
+     */
+    #[\Override]
+    public function getAvgCoreTypesData(array $coreIds): array
+    {
+        $sub = PriceCheckCoreType::query()
+            ->select([
+                'type_id',
+                DB::raw('AVG(price_check_core_types.rate) as avg_rate'),
+            ])
+            ->whereIn('price_check_core_types.price_check_core_id', $coreIds)
+            ->groupBy('price_check_core_types.type_id');
+
+        return PriceCheckCoreType::query()
+            ->select([
+                'price_check_core_types.type_id',
+                'price_check_core_types.name',
+                'avg_rate'
+            ])
+            ->distinct()
+            ->rightJoinSub($sub, 'sub_ct', function (JoinClause $join) {
+                $join->on('sub_ct.type_id', '=', 'price_check_core_types.type_id');
+            })
+            ->get()
+            ->toBase()
+            ->toArray();
     }
 
     /**

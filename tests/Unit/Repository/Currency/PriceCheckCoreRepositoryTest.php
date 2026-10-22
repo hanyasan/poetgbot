@@ -185,4 +185,55 @@ class PriceCheckCoreRepositoryTest extends TestCase
 
         $this->assertCount(0, $core->priceCheckCoreTypes);
     }
+
+    public function test_get_avg_core_types_data_averages_rates_per_type(): void
+    {
+        $a = $this->core($this->league, '2024-01-01 00:00:00', [
+            $this->type('avg-test-divine', true, 10),
+            $this->type('avg-test-chaos', false, 2),
+        ]);
+        $b = $this->core($this->league, '2024-01-02 00:00:00', [
+            $this->type('avg-test-divine', true, 20),
+        ]);
+
+        $result = collect($this->repository->getAvgCoreTypesData([$a->id, $b->id]))->keyBy('type_id');
+
+        $this->assertCount(2, $result);
+        $this->assertSame('AVG-TEST-DIVINE', $result['avg-test-divine']['name']);
+        $this->assertEqualsWithDelta(15.0, (float) $result['avg-test-divine']['avg_rate'], 0.0001);
+        $this->assertSame('AVG-TEST-CHAOS', $result['avg-test-chaos']['name']);
+        $this->assertEqualsWithDelta(2.0, (float) $result['avg-test-chaos']['avg_rate'], 0.0001);
+    }
+
+    public function test_get_avg_core_types_data_only_uses_given_cores(): void
+    {
+        $a = $this->core($this->league, '2024-01-01 00:00:00', [$this->type('avg-test-divine', true, 10)]);
+        $this->core($this->league, '2024-01-02 00:00:00', [
+            $this->type('avg-test-divine', true, 30),
+            $this->type('avg-test-chaos', false, 2),
+        ]);
+
+        $result = $this->repository->getAvgCoreTypesData([$a->id]);
+
+        $this->assertCount(1, $result);
+        $this->assertSame('avg-test-divine', $result[0]['type_id']);
+        $this->assertEqualsWithDelta(10.0, (float) $result[0]['avg_rate'], 0.0001);
+    }
+
+    public function test_get_avg_core_types_data_returns_expected_keys(): void
+    {
+        $core = $this->core($this->league, '2024-01-01 00:00:00', [$this->type('avg-test-divine', true, 1)]);
+
+        $result = $this->repository->getAvgCoreTypesData([$core->id]);
+
+        $this->assertEqualsCanonicalizing(['type_id', 'name', 'avg_rate'], array_keys($result[0]));
+    }
+
+    public function test_get_avg_core_types_data_without_types_is_empty(): void
+    {
+        $core = $this->core($this->league, '2024-01-01 00:00:00');
+
+        $this->assertSame([], $this->repository->getAvgCoreTypesData([$core->id]));
+        $this->assertSame([], $this->repository->getAvgCoreTypesData([]));
+    }
 }
