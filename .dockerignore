@@ -13,3 +13,4 @@ storage/framework/views/*
 !.env.example
 docker/.env
 .phpunit.result.cache
+bootstrap/cache/*.php

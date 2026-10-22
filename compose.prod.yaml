@@ -17,6 +17,12 @@ services:
     <<: *prod
     profiles: !reset []
     command: sh -c "php artisan config:cache && exec php artisan schedule:work"
+  queue:
+    <<: *prod
+    command: sh -c "exec php artisan queue:work --queue=scheduled"
+  # PhpStorm-only helper; must not run in prod (it would build the dev target and bind-mount the checkout).
+  test:
+    profiles: !override ["dev"]
   postgres:
     restart: unless-stopped
   redis:

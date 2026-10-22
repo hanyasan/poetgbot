@@ -11,7 +11,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Roll each test back so tests that touch the real database stay isolated.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -20,7 +20,7 @@ abstract class TestCase extends BaseTestCase
         DB::beginTransaction();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         DB::rollBack();
 
