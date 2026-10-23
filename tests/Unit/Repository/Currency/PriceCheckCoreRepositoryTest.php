@@ -200,9 +200,9 @@ class PriceCheckCoreRepositoryTest extends TestCase
 
         $this->assertCount(2, $result);
         $this->assertSame('AVG-TEST-DIVINE', $result['avg-test-divine']['name']);
-        $this->assertEqualsWithDelta(15.0, (float) $result['avg-test-divine']['avg_rate'], 0.0001);
+        $this->assertEqualsWithDelta(15.0, (float) $result['avg-test-divine']['avg_type_rate'], 0.0001);
         $this->assertSame('AVG-TEST-CHAOS', $result['avg-test-chaos']['name']);
-        $this->assertEqualsWithDelta(2.0, (float) $result['avg-test-chaos']['avg_rate'], 0.0001);
+        $this->assertEqualsWithDelta(2.0, (float) $result['avg-test-chaos']['avg_type_rate'], 0.0001);
     }
 
     public function test_get_avg_core_types_data_only_uses_given_cores(): void
@@ -217,7 +217,7 @@ class PriceCheckCoreRepositoryTest extends TestCase
 
         $this->assertCount(1, $result);
         $this->assertSame('avg-test-divine', $result[0]['type_id']);
-        $this->assertEqualsWithDelta(10.0, (float) $result[0]['avg_rate'], 0.0001);
+        $this->assertEqualsWithDelta(10.0, (float) $result[0]['avg_type_rate'], 0.0001);
     }
 
     public function test_get_avg_core_types_data_returns_expected_keys(): void
@@ -226,7 +226,7 @@ class PriceCheckCoreRepositoryTest extends TestCase
 
         $result = $this->repository->getAvgCoreTypesData([$core->id]);
 
-        $this->assertEqualsCanonicalizing(['type_id', 'name', 'avg_rate'], array_keys($result[0]));
+        $this->assertEqualsCanonicalizing(['type_id', 'name', 'avg_type_rate'], array_keys($result[0]));
     }
 
     public function test_get_avg_core_types_data_without_types_is_empty(): void

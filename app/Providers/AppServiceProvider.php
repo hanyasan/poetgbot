@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Repositories\Currency\Compact\CurrencyCompactRepository;
+use App\Repositories\Currency\Compact\CurrencyCompactRepositoryContract;
 use App\Repositories\Currency\CurrencyPrice\CurrencyPriceRepository;
 use App\Repositories\Currency\CurrencyPrice\CurrencyPriceRepositoryContract;
 use App\Repositories\Currency\CurrencyType\CurrencyTypeRepository;
@@ -45,6 +47,7 @@ final class AppServiceProvider extends ServiceProvider
         PoeNinjaServiceContract::class => PoeNinjaService::class,
         TelegramBotContract::class => TelegramBotService::class,
         CurrencyTypeRepositoryContract::class => CurrencyTypeRepository::class,
+        CurrencyCompactRepositoryContract::class => CurrencyCompactRepository::class,
         MapperService::class => MapperService::class,
         CurrencyTypeServiceContract::class => CurrencyTypeService::class,
         CurrencyPriceRepositoryContract::class => CurrencyPriceRepository::class,

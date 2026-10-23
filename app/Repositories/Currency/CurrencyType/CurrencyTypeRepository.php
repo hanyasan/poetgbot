@@ -5,14 +5,10 @@ namespace App\Repositories\Currency\CurrencyType;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithLeagueDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithPricesDto;
-use App\Models\Currency\CurrencyPrice;
 use App\Models\Currency\CurrencyType as CurrencyTypeModel;
-use App\Models\Currency\PriceCheckCore;
 use App\Services\Mapper\MapperService;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 final readonly class CurrencyTypeRepository implements CurrencyTypeRepositoryContract
 {

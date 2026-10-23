@@ -48,7 +48,7 @@ interface PriceCheckCoreRepositoryContract
      * @return array<int, array{
      *     type_id: string,
      *     name: string,
-     *     avg_rate: float,
+     *     avg_type_rate: float,
      * }>
      */
     public function getAvgCoreTypesData(array $coreIds): array;

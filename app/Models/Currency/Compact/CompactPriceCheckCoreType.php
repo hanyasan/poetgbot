@@ -21,6 +21,8 @@ final class CompactPriceCheckCoreType extends Model
 
     protected $guarded = ['id'];
 
+    public $timestamps = false;
+
     public function core(): BelongsTo
     {
         return $this->belongsTo(CompactPriceCheckCore::class, 'core_id');

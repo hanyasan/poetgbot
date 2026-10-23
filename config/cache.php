@@ -1,5 +1,8 @@
 <?php
 
+use App\DataTransferObjects\RepositoryObjects\Currency\Compact\CompactCurrencyPriceDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\Compact\CompactPriceCheckCoreDto;
+use App\DataTransferObjects\RepositoryObjects\Currency\Compact\CompactPriceCheckCoreTypeDto;
 use App\DataTransferObjects\RepositoryObjects\League\LeagueCheckRuleDto;
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueWithLastCoreDto;
@@ -151,6 +154,9 @@ return [
         Carbon::class,
         LeagueCheckRuleDto::class,
         PoeLeagueWithLastCoreDto::class,
+        CompactPriceCheckCoreTypeDto::class,
+        CompactCurrencyPriceDto::class,
+        CompactPriceCheckCoreDto::class,
     ],
 
 ];

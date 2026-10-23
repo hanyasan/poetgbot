@@ -97,7 +97,7 @@ final class PriceCheckCoreRepository implements PriceCheckCoreRepositoryContract
      * @return array<int, array{
      *     type_id: string,
      *     name: string,
-     *     avg_rate: float,
+     *     avg_type_rate: float,
      * }>
      */
     #[\Override]
@@ -106,7 +106,7 @@ final class PriceCheckCoreRepository implements PriceCheckCoreRepositoryContract
         $sub = PriceCheckCoreType::query()
             ->select([
                 'type_id',
-                DB::raw('AVG(price_check_core_types.rate) as avg_rate'),
+                DB::raw('AVG(price_check_core_types.rate) as avg_type_rate'),
             ])
             ->whereIn('price_check_core_types.price_check_core_id', $coreIds)
             ->groupBy('price_check_core_types.type_id');
@@ -115,7 +115,7 @@ final class PriceCheckCoreRepository implements PriceCheckCoreRepositoryContract
             ->select([
                 'price_check_core_types.type_id',
                 'price_check_core_types.name',
-                'avg_rate'
+                'avg_type_rate'
             ])
             ->distinct()
             ->rightJoinSub($sub, 'sub_ct', function (JoinClause $join) {
