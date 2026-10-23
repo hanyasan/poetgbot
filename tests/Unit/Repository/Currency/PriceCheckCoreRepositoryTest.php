@@ -211,9 +211,9 @@ class PriceCheckCoreRepositoryTest extends TestCase
         $result = collect($this->repository->getAvgCoreTypesData([$a->id, $b->id]))->keyBy('type_id');
 
         $this->assertCount(2, $result);
-        $this->assertSame('AVG-TEST-DIVINE', $result['avg-test-divine']['name']);
+        $this->assertSame('AVG-TEST-DIVINE', $result['avg-test-divine']['type_name']);
         $this->assertEqualsWithDelta(15.0, (float) $result['avg-test-divine']['avg_type_rate'], 0.0001);
-        $this->assertSame('AVG-TEST-CHAOS', $result['avg-test-chaos']['name']);
+        $this->assertSame('AVG-TEST-CHAOS', $result['avg-test-chaos']['type_name']);
         $this->assertEqualsWithDelta(2.0, (float) $result['avg-test-chaos']['avg_type_rate'], 0.0001);
     }
 
@@ -238,7 +238,7 @@ class PriceCheckCoreRepositoryTest extends TestCase
 
         $result = $this->repository->getAvgCoreTypesData([$core->id]);
 
-        $this->assertEqualsCanonicalizing(['type_id', 'name', 'avg_type_rate'], array_keys($result[0]));
+        $this->assertEqualsCanonicalizing(['type_id', 'type_name', 'avg_type_rate'], array_keys($result[0]));
     }
 
     public function test_get_league_daily_periods_core_ids_returns_expected_keys(): void

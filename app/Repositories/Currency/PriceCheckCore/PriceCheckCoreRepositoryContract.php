@@ -15,6 +15,9 @@ interface PriceCheckCoreRepositoryContract
      */
     public function getAll(): Collection;
 
+    /** @param int[] $ids */
+    public function deleteMany(array $ids): void;
+
     /**
      * @return Collection<int, PriceCheckCoreDto>
      */
@@ -47,7 +50,7 @@ interface PriceCheckCoreRepositoryContract
      * @param array<int, int> $coreIds
      * @return array<int, array{
      *     type_id: string,
-     *     name: string,
+     *     type_name: string,
      *     avg_type_rate: float,
      * }>
      */

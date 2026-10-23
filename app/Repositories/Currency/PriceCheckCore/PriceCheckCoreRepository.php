@@ -45,6 +45,16 @@ final class PriceCheckCoreRepository implements PriceCheckCoreRepositoryContract
             ->map(fn ($core) => $this->mapper->mapFromArray(PriceCheckCoreDto::class, $core->toArray()));
     }
 
+    /** @param int[] $ids */
+    #[\Override]
+    public function deleteMany(array $ids): void {
+        $this
+            ->model
+            ->newQuery()
+            ->whereIn('id', $ids)
+            ->delete();
+    }
+
     /**
      * @psalm-return Collection<int, PriceCheckCoreDto>
      */
@@ -96,7 +106,7 @@ final class PriceCheckCoreRepository implements PriceCheckCoreRepositoryContract
      * @param array<int, int> $coreIds
      * @return array<int, array{
      *     type_id: string,
-     *     name: string,
+     *     type_name: string,
      *     avg_type_rate: float,
      * }>
      */
@@ -114,7 +124,7 @@ final class PriceCheckCoreRepository implements PriceCheckCoreRepositoryContract
         return PriceCheckCoreType::query()
             ->select([
                 'price_check_core_types.type_id',
-                'price_check_core_types.name',
+                'price_check_core_types.name as type_name',
                 'avg_type_rate'
             ])
             ->distinct()

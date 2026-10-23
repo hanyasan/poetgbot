@@ -16,8 +16,8 @@ return new class extends Migration
 
             $table->float('rate');
 
-            $table->foreignIdFor(\App\Models\Currency\CurrencyPrice::class, 'currency_type_id');
-            $table->foreignIdFor(\App\Models\Currency\PriceCheckCore::class, 'price_check_core_id');
+            $table->foreignIdFor(\App\Models\Currency\CurrencyType::class, 'currency_type_id')->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(\App\Models\Currency\PriceCheckCore::class, 'price_check_core_id')->constrained()->cascadeOnDelete();
         });
     }
 
