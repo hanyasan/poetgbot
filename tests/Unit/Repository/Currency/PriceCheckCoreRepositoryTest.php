@@ -55,6 +55,18 @@ class PriceCheckCoreRepositoryTest extends TestCase
         return $core;
     }
 
+    /**
+     * Plain insert: Eloquent would drop the UTC offset when formatting created_at.
+     */
+    private function coreIdAt(PoeLeagueModel $league, string $createdAt): int
+    {
+        return PriceCheckCoreModel::query()->insertGetId([
+            'poe_league_id' => $league->id,
+            'created_at' => $createdAt,
+            'updated_at' => $createdAt,
+        ]);
+    }
+
     private function type(string $typeId, bool $isPrimary = false, float $rate = 1): array
     {
         return [
@@ -227,6 +239,66 @@ class PriceCheckCoreRepositoryTest extends TestCase
         $result = $this->repository->getAvgCoreTypesData([$core->id]);
 
         $this->assertEqualsCanonicalizing(['type_id', 'name', 'avg_type_rate'], array_keys($result[0]));
+    }
+
+    public function test_get_league_daily_periods_core_ids_returns_expected_keys(): void
+    {
+        $core = $this->core($this->league, '2024-01-01 10:00:00+00');
+
+        $row = collect($this->repository->getLeagueDailyPeriodsCoreIds(Carbon::parse('2024-01-01 00:00:00.0 UTC')))
+            ->firstWhere('id', $core->id);
+
+        $this->assertNotNull($row);
+        $this->assertEqualsCanonicalizing(['id', 'poe_league_id', 'date'], array_keys($row));
+        $this->assertSame($this->league->id, $row['poe_league_id']);
+        $this->assertSame('2024-01-01', $row['date']);
+    }
+
+    public function test_get_league_daily_periods_core_ids_returns_cores_of_every_league_for_the_date(): void
+    {
+        $mine = $this->core($this->league, '2024-01-01 10:00:00+00');
+        $other = $this->core($this->otherLeague, '2024-01-01 15:00:00+00');
+
+        $rows = collect($this->repository->getLeagueDailyPeriodsCoreIds(Carbon::parse('2024-01-01 00:00:00.0 UTC')))->keyBy('id');
+
+        $this->assertSame($this->league->id, $rows[$mine->id]['poe_league_id']);
+        $this->assertSame($this->otherLeague->id, $rows[$other->id]['poe_league_id']);
+    }
+
+    public function test_get_league_daily_periods_core_ids_returns_cores_up_to_the_given_date(): void
+    {
+        $older = $this->coreIdAt($this->league, '2023-12-30 12:00:00+00');
+        $on = $this->coreIdAt($this->league, '2024-01-01 12:00:00+00');
+        $after = $this->coreIdAt($this->league, '2024-01-02 12:00:00+00');
+
+        $ids = array_column($this->repository->getLeagueDailyPeriodsCoreIds(Carbon::parse('2024-01-01 00:00:00.0 UTC')), 'id');
+
+        $this->assertContains($older, $ids);
+        $this->assertContains($on, $ids);
+        $this->assertNotContains($after, $ids);
+    }
+
+    public function test_get_league_daily_periods_core_ids_ignores_time_of_the_given_date(): void
+    {
+        $id = $this->coreIdAt($this->league, '2024-01-01 12:00:00+00');
+
+        $early = array_column($this->repository->getLeagueDailyPeriodsCoreIds(Carbon::parse('2024-01-01 00:00:00 UTC')), 'id');
+        $late = array_column($this->repository->getLeagueDailyPeriodsCoreIds(Carbon::parse('2024-01-02 00:00:00 UTC+3')), 'id');
+
+        $this->assertContains($id, $early);
+        $this->assertContains($id, $late);
+    }
+
+    public function test_get_league_daily_periods_core_ids_reports_utc_day_of_each_core(): void
+    {
+        $utc = $this->coreIdAt($this->league, '2024-01-01 12:00:00+00');
+        // 23:30 at UTC-5 is already 04:30 of the next day in UTC.
+        $offset = $this->coreIdAt($this->league, '2024-01-01 23:30:00-05:00');
+
+        $rows = collect($this->repository->getLeagueDailyPeriodsCoreIds(Carbon::parse('2024-01-05')))->keyBy('id');
+
+        $this->assertSame('2024-01-01', $rows[$utc]['date']);
+        $this->assertSame('2024-01-02', $rows[$offset]['date']);
     }
 
     public function test_get_avg_core_types_data_without_types_is_empty(): void

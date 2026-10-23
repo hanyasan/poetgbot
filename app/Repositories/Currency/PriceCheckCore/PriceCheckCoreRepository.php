@@ -127,6 +127,28 @@ final class PriceCheckCoreRepository implements PriceCheckCoreRepositoryContract
     }
 
     /**
+     * @param Carbon $date
+     * @return array<int, array{
+     *     id: int,
+     *     poe_league_id: int,
+     *     date: string,
+     * }>
+     */
+    #[\Override]
+    public function getLeagueDailyPeriodsCoreIds(Carbon $date): array
+    {
+        return $this->model->newQuery()
+            ->select([
+                'id',
+                'poe_league_id',
+                DB::raw("date(price_check_cores.created_at AT TIME ZONE 'UTC') as date"),
+            ])
+            ->whereDate(DB::raw("date(price_check_cores.created_at AT TIME ZONE 'UTC')"), '<=', $date->setTimezone('UTC'))
+            ->get()
+            ->toArray();
+    }
+
+    /**
      * @param int $leagueId
      * @param array<int, array{
      *      is_primary: bool,

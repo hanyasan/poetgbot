@@ -52,4 +52,14 @@ interface PriceCheckCoreRepositoryContract
      * }>
      */
     public function getAvgCoreTypesData(array $coreIds): array;
+
+    /**
+     * @param Carbon $date
+     * @return array<int, array{
+     *     id: int,
+     *     poe_league_id: int,
+     *     date: string,
+     * }>
+     */
+    public function getLeagueDailyPeriodsCoreIds(Carbon $date): array;
 }
