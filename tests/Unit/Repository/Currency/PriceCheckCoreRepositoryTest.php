@@ -5,6 +5,8 @@ namespace Tests\Unit\Repository\Currency;
 use App\DataTransferObjects\RepositoryObjects\Currency\PriceCheckCoreDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\PriceCheckCoreTypeDto;
 use App\Enums\PoeVersionEnum;
+use App\Models\Currency\CurrencyPrice as CurrencyPriceModel;
+use App\Models\Currency\CurrencyType as CurrencyTypeModel;
 use App\Models\Currency\PriceCheckCore as PriceCheckCoreModel;
 use App\Models\PoeLeague as PoeLeagueModel;
 use App\Repositories\Currency\PriceCheckCore\PriceCheckCoreRepositoryContract;
@@ -299,6 +301,72 @@ class PriceCheckCoreRepositoryTest extends TestCase
 
         $this->assertSame('2024-01-01', $rows[$utc]['date']);
         $this->assertSame('2024-01-02', $rows[$offset]['date']);
+    }
+
+    public function test_delete_many_removes_only_given_cores(): void
+    {
+        $a = $this->core($this->league, '2024-01-01 00:00:00');
+        $b = $this->core($this->league, '2024-01-02 00:00:00');
+        $keep = $this->core($this->otherLeague, '2024-01-03 00:00:00');
+
+        $this->repository->deleteMany([$a->id, $b->id]);
+
+        $this->assertDatabaseMissing('price_check_cores', ['id' => $a->id]);
+        $this->assertDatabaseMissing('price_check_cores', ['id' => $b->id]);
+        $this->assertDatabaseHas('price_check_cores', ['id' => $keep->id]);
+    }
+
+    public function test_delete_many_cascades_to_core_types(): void
+    {
+        $gone = $this->core($this->league, '2024-01-01 00:00:00', [$this->type('delete-test-divine', true)]);
+        $kept = $this->core($this->league, '2024-01-02 00:00:00', [$this->type('delete-test-chaos')]);
+
+        $this->repository->deleteMany([$gone->id]);
+
+        $this->assertDatabaseMissing('price_check_core_types', ['price_check_core_id' => $gone->id]);
+        $this->assertDatabaseHas('price_check_core_types', ['price_check_core_id' => $kept->id]);
+    }
+
+    public function test_delete_many_cascades_to_currency_prices(): void
+    {
+        $type = CurrencyTypeModel::create([
+            'currency_type_name' => 'Delete Test Orb',
+            'currency_trade_id' => 'delete-test-orb',
+            'currency_ninja_details_id' => 'delete-test-orb-details',
+            'poe_league_id' => $this->league->id,
+        ]);
+        $gone = $this->core($this->league, '2024-01-01 00:00:00');
+        $kept = $this->core($this->league, '2024-01-02 00:00:00');
+        foreach ([$gone, $kept] as $core) {
+            CurrencyPriceModel::query()->insert([
+                'rate' => 1,
+                'currency_type_id' => $type->id,
+                'price_check_core_id' => $core->id,
+            ]);
+        }
+
+        $this->repository->deleteMany([$gone->id]);
+
+        $this->assertDatabaseMissing('currency_prices', ['price_check_core_id' => $gone->id]);
+        $this->assertDatabaseHas('currency_prices', ['price_check_core_id' => $kept->id]);
+    }
+
+    public function test_delete_many_with_empty_ids_deletes_nothing(): void
+    {
+        $core = $this->core($this->league, '2024-01-01 00:00:00');
+
+        $this->repository->deleteMany([]);
+
+        $this->assertDatabaseHas('price_check_cores', ['id' => $core->id]);
+    }
+
+    public function test_delete_many_ignores_unknown_ids(): void
+    {
+        $core = $this->core($this->league, '2024-01-01 00:00:00');
+
+        $this->repository->deleteMany([PHP_INT_MAX]);
+
+        $this->assertDatabaseHas('price_check_cores', ['id' => $core->id]);
     }
 
     public function test_get_avg_core_types_data_without_types_is_empty(): void
