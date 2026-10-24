@@ -402,7 +402,7 @@ class PoeLeagueServiceTest extends TestCase
 
         Cache::tags([
             \App\Services\CacheHelperService::generateCacheTag(
-                \App\Services\DataServices\Currency\PriceCheckCoreService\PriceCheckCoreService::$coreTag
+                \App\Services\CacheHelperService::CORE_TAG
             ),
         ])->flush();
 
@@ -410,7 +410,7 @@ class PoeLeagueServiceTest extends TestCase
 
         Cache::tags([
             \App\Services\CacheHelperService::generateCacheTag(
-                \App\Services\DataServices\Currency\PriceCheckCoreService\PriceCheckCoreService::$coreGetTag
+                \App\Services\CacheHelperService::CORE_GET_TAG
             ),
         ])->flush();
 

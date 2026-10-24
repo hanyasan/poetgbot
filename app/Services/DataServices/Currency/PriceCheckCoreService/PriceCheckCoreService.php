@@ -14,25 +14,21 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
-final class PriceCheckCoreService implements PriceCheckCoreServiceContract
+final readonly class PriceCheckCoreService implements PriceCheckCoreServiceContract
 {
-    static string $coreTag = 'price_check_core';
-    static string $coreGetTag = 'price_check_core_get';
-    static string $coreIdTag = 'price_check_core_id';
-    static string $coreByLeagueTag = 'price_check_core_by_league';
 
     public function __construct(
-        private readonly PriceCheckCoreRepositoryContract $repository,
-        private readonly PoeNinjaServiceContract $ninjaService,
-        private readonly PoeLeagueServiceContract $leagueService,
+        private PriceCheckCoreRepositoryContract $repository,
+        private PoeNinjaServiceContract          $ninjaService,
+        private PoeLeagueServiceContract         $leagueService,
     ) {}
 
     #[\Override]
     public function find(int $id): PriceCheckCoreDto
     {
         return Cache::tags([
-            CacheHelperService::generateCacheTag(self::$coreTag),
-            CacheHelperService::generateCacheTag(self::$coreIdTag, $id),
+            CacheHelperService::generateCacheTag(CacheHelperService::CORE_TAG),
+            CacheHelperService::generateCacheTag(CacheHelperService::CORE_ID_TAG, $id),
         ])->remember(
             'by_id:' . $id,
             CacheHelperService::setHourTtl(),
@@ -49,8 +45,8 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
     public function getAll(): Collection
     {
         return Cache::tags([
-            CacheHelperService::generateCacheTag(self::$coreGetTag),
-            CacheHelperService::generateCacheTag(self::$coreTag),
+            CacheHelperService::generateCacheTag(CacheHelperService::CORE_GET_TAG),
+            CacheHelperService::generateCacheTag(CacheHelperService::CORE_TAG),
         ])->remember(
             'all',
             CacheHelperService::setHourTtl(),
@@ -67,8 +63,8 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
     public function getByLeague(int $leagueId): Collection
     {
         return Cache::tags([
-            CacheHelperService::generateCacheTag(self::$coreTag),
-            CacheHelperService::generateCacheTag(self::$coreByLeagueTag, $leagueId),
+            CacheHelperService::generateCacheTag(CacheHelperService::CORE_TAG),
+            CacheHelperService::generateCacheTag(CacheHelperService::CORE_BY_LEAGUE_TAG, $leagueId),
         ])->remember(
             'by_league:' . $leagueId,
             CacheHelperService::setHourTtl(),
@@ -82,8 +78,8 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
     public function getLatestByLeague(int $leagueId): PriceCheckCoreDto
     {
         return Cache::tags([
-            CacheHelperService::generateCacheTag(self::$coreTag),
-            CacheHelperService::generateCacheTag(self::$coreByLeagueTag, $leagueId),
+            CacheHelperService::generateCacheTag(CacheHelperService::CORE_TAG),
+            CacheHelperService::generateCacheTag(CacheHelperService::CORE_BY_LEAGUE_TAG, $leagueId),
         ])->remember(
             'latest_by_league:' . $leagueId,
             CacheHelperService::setHourTtl(),
@@ -100,8 +96,8 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
     public function getFromDateByLeague(Carbon $dateFrom, int $leagueId): Collection
     {
         return Cache::tags([
-            CacheHelperService::generateCacheTag(self::$coreTag),
-            CacheHelperService::generateCacheTag(self::$coreByLeagueTag, $leagueId),
+            CacheHelperService::generateCacheTag(CacheHelperService::CORE_TAG),
+            CacheHelperService::generateCacheTag(CacheHelperService::CORE_BY_LEAGUE_TAG, $leagueId),
         ])->remember(
             'from_date_by_league:' . $leagueId . ':' . $dateFrom->toIso8601String(),
             CacheHelperService::setHourTtl(),
@@ -164,7 +160,7 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
     public function flushAll(): void
     {
         Cache::tags([
-            CacheHelperService::generateCacheTag(self::$coreTag),
+            CacheHelperService::generateCacheTag(CacheHelperService::CORE_TAG),
         ])->flush();
     }
 
@@ -172,8 +168,8 @@ final class PriceCheckCoreService implements PriceCheckCoreServiceContract
     public function flushLeagueId(int $leagueId): void
     {
         Cache::tags([
-            CacheHelperService::generateCacheTag(self::$coreGetTag),
-            CacheHelperService::generateCacheTag(self::$coreByLeagueTag, $leagueId),
+            CacheHelperService::generateCacheTag(CacheHelperService::CORE_GET_TAG),
+            CacheHelperService::generateCacheTag(CacheHelperService::CORE_BY_LEAGUE_TAG, $leagueId),
         ])->flush();
     }
 }

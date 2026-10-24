@@ -5,6 +5,7 @@ namespace App\Services\DataServices\Currency\CurrencyCompactService;
 use App\Repositories\Currency\Compact\CurrencyCompactRepositoryContract;
 use App\Repositories\Currency\CurrencyPrice\CurrencyPriceRepositoryContract;
 use App\Repositories\Currency\PriceCheckCore\PriceCheckCoreRepositoryContract;
+use App\Services\DataServices\Currency\PriceCheckCoreService\PriceCheckCoreServiceContract;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +16,7 @@ final readonly class CurrencyCompactService implements CurrencyCompactServiceCon
         private PriceCheckCoreRepositoryContract $priceCheckCoreRepository,
         private CurrencyPriceRepositoryContract $currencyPriceRepository,
         private CurrencyCompactRepositoryContract $currencyCompactRepository,
+        private PriceCheckCoreServiceContract  $priceCheckCoreService,
     ) {
     }
 
@@ -51,6 +53,8 @@ final readonly class CurrencyCompactService implements CurrencyCompactServiceCon
                 );
 
                 $this->priceCheckCoreRepository->deleteMany($coreData['ids']);
+
+                $this->priceCheckCoreService->flushLeagueId($coreData['poe_league_id']);
             }
         } catch (\Throwable $exception) {
             DB::rollBack();

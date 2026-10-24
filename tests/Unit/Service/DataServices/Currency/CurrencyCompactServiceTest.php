@@ -7,6 +7,7 @@ use App\Repositories\Currency\Compact\CurrencyCompactRepositoryContract;
 use App\Repositories\Currency\CurrencyPrice\CurrencyPriceRepositoryContract;
 use App\Repositories\Currency\PriceCheckCore\PriceCheckCoreRepositoryContract;
 use App\Services\DataServices\Currency\CurrencyCompactService\CurrencyCompactService;
+use App\Services\DataServices\Currency\PriceCheckCoreService\PriceCheckCoreServiceContract;
 use Carbon\Carbon;
 use Mockery;
 use Mockery\MockInterface;
@@ -33,11 +34,13 @@ class CurrencyCompactServiceTest extends TestCase
         $this->coreRepository = Mockery::mock(PriceCheckCoreRepositoryContract::class);
         $this->priceRepository = Mockery::mock(CurrencyPriceRepositoryContract::class);
         $this->compactRepository = Mockery::mock(CurrencyCompactRepositoryContract::class);
+        $this->coreService = Mockery::mock(PriceCheckCoreServiceContract::class);
 
         $this->service = new CurrencyCompactService(
             $this->coreRepository,
             $this->priceRepository,
             $this->compactRepository,
+            $this->coreService,
         );
     }
 
@@ -110,6 +113,7 @@ class CurrencyCompactServiceTest extends TestCase
                 && $t === $types)
             ->andReturn($this->compactDto());
         $this->coreRepository->expects('deleteMany')->with([10, 11]);
+        $this->coreService->expects('flushLeagueId')->once();
 
         $this->service->compactCoreData();
     }
@@ -143,6 +147,8 @@ class CurrencyCompactServiceTest extends TestCase
             ->andReturnUsing(function (array $ids) use (&$deleted) {
                 $deleted[] = $ids;
             });
+
+        $this->coreService->expects('flushLeagueId')->times(3);
 
         $this->service->compactCoreData();
 
@@ -198,6 +204,7 @@ class CurrencyCompactServiceTest extends TestCase
         $this->coreRepository->allows('getAvgCoreTypesData')->andReturn([]);
         $this->compactRepository->allows('makeCompactCore')->andReturn($this->compactDto());
         $this->coreRepository->allows('deleteMany');
+        $this->coreService->expects('flushLeagueId')->once();
 
         $level = \DB::transactionLevel();
 

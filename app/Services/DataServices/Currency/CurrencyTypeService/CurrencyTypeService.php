@@ -15,18 +15,13 @@ use App\Services\PoeNinjaService\PoeNinjaServiceContract;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
-final class CurrencyTypeService implements CurrencyTypeServiceContract
+final readonly class CurrencyTypeService implements CurrencyTypeServiceContract
 {
-    static string $currencyTypeIdTad = 'currency_type_id';
-    static string $currencyTypeGetTag = 'currency_type_get';
-    static string $currencyTypeTag = 'currency_type';
-    static string $currencyTypeByLeagueTag = 'currency_type_by_league';
-    static string $currencyTypeByCoreTag = 'currency_type_by_core';
 
     public function __construct(
-        private readonly CurrencyTypeRepositoryContract $repository,
-        private readonly PoeNinjaServiceContract $ninjaService,
-        private readonly PoeLeagueServiceContract $leagueService,
+        private CurrencyTypeRepositoryContract $repository,
+        private PoeNinjaServiceContract        $ninjaService,
+        private PoeLeagueServiceContract       $leagueService,
     ) {}
 
     #[\Override]
@@ -44,8 +39,8 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
     public function getAll(): Collection
     {
         return Cache::tags([
-            CacheHelperService::generateCacheTag(self::$currencyTypeTag),
-            CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
+            CacheHelperService::generateCacheTag(CacheHelperService::CURRENCY_TYPE_TAG),
+            CacheHelperService::generateCacheTag(CacheHelperService::CURRENCY_TYPE_GET_TAG),
         ])->remember(
             'all',
             CacheHelperService::setHourTtl(),
@@ -62,9 +57,9 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
     public function getAllByLeague(int $leagueId): Collection
     {
         return Cache::tags([
-            CacheHelperService::generateCacheTag(self::$currencyTypeTag),
-            CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
-            CacheHelperService::generateCacheTag(self::$currencyTypeByLeagueTag, $leagueId),
+            CacheHelperService::generateCacheTag(CacheHelperService::CURRENCY_TYPE_TAG),
+            CacheHelperService::generateCacheTag(CacheHelperService::CURRENCY_TYPE_GET_TAG),
+            CacheHelperService::generateCacheTag(CacheHelperService::CURRENCY_TYPE_BY_LEAGUE_TAG, $leagueId),
         ])->remember(
             'all_by_league' . $leagueId,
             CacheHelperService::setHourTtl(),
@@ -120,10 +115,11 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
     public function getAllByLeagueWithPriceByCore(int $leagueId, int $coreId): Collection
     {
         return Cache::tags([
-            CacheHelperService::generateCacheTag(self::$currencyTypeTag),
-            CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
-            CacheHelperService::generateCacheTag(self::$currencyTypeByLeagueTag, $leagueId),
-            CacheHelperService::generateCacheTag(self::$currencyTypeByCoreTag, $coreId),
+            CacheHelperService::generateCacheTag(CacheHelperService::CURRENCY_TYPE_TAG),
+            CacheHelperService::generateCacheTag(CacheHelperService::CURRENCY_TYPE_GET_TAG),
+            CacheHelperService::generateCacheTag(CacheHelperService::CURRENCY_TYPE_BY_LEAGUE_TAG, $leagueId),
+            CacheHelperService::generateCacheTag(CacheHelperService::CORE_ID_TAG, $coreId),
+            CacheHelperService::generateCacheTag(CacheHelperService::CORE_BY_LEAGUE_TAG, $leagueId),
         ])->remember(
             'all_by_league_core' . $leagueId . '_' . $coreId,
             CacheHelperService::setHourTtl(),
@@ -162,7 +158,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
     public function flushAll(): void
     {
         Cache::tags([
-            CacheHelperService::generateCacheTag(self::$currencyTypeTag),
+            CacheHelperService::generateCacheTag(CacheHelperService::CURRENCY_TYPE_TAG),
         ])->flush();
     }
 
@@ -170,8 +166,8 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
     public function flushId(int $id): void
     {
         Cache::tags([
-            CacheHelperService::generateCacheTag(self::$currencyTypeIdTad, $id),
-            CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
+            CacheHelperService::generateCacheTag(CacheHelperService::CURRENCY_TYPE_ID_TAG, $id),
+            CacheHelperService::generateCacheTag(CacheHelperService::CURRENCY_TYPE_GET_TAG),
         ])->flush();
     }
 
@@ -179,8 +175,8 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
     public function flushLeagueId(int $id): void
     {
         Cache::tags([
-            CacheHelperService::generateCacheTag(self::$currencyTypeByLeagueTag, $id),
-            CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
+            CacheHelperService::generateCacheTag(CacheHelperService::CURRENCY_TYPE_BY_LEAGUE_TAG, $id),
+            CacheHelperService::generateCacheTag(CacheHelperService::CURRENCY_TYPE_GET_TAG),
         ])->flush();
     }
 
@@ -188,7 +184,7 @@ final class CurrencyTypeService implements CurrencyTypeServiceContract
     public function flushGet(): void
     {
         Cache::tags([
-            CacheHelperService::generateCacheTag(self::$currencyTypeGetTag),
+            CacheHelperService::generateCacheTag(CacheHelperService::CURRENCY_TYPE_GET_TAG),
         ])->flush();
     }
 }
