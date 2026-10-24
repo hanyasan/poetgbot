@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\CompactPrices;
 use App\Jobs\ImportLeagues;
 use App\Jobs\PriceCheck;
 use Illuminate\Console\Scheduling\Schedule;
@@ -70,6 +71,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     })
     ->withSchedule(function (Schedule $schedule): void {
+        $schedule->job(CompactPrices::class)->weekly();
         $schedule->job(ImportLeagues::class)->daily();
         $schedule->job(PriceCheck::class)->everyTenMinutes();
     })

@@ -29,8 +29,10 @@ final class ImportPickedLeagues extends Command
     {
         $service = app(PriceCheckServiceContract::class);
 
+        $this->info('Starting import prices for leagues');
+
         $service->importPickedLeaguesPrices();
 
-        $this->info('The command was successful!');
+        $this->info('Prices for leagues imported');
     }
 }

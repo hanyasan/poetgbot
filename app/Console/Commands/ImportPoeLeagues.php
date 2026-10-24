@@ -31,9 +31,11 @@ final class ImportPoeLeagues extends Command
         /** @var PoeLeagueServiceContract $service */
         $service = app(PoeLeagueServiceContract::class);
 
+        $this->info('Starting import leagues');
+
         $service->upsertByNinja(PoeVersionEnum::POE_1);
         $service->upsertByNinja(PoeVersionEnum::POE_2);
 
-        $this->info('The command was successful!');
+        $this->info('Leagues imported');
     }
 }

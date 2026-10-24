@@ -19,7 +19,7 @@ return new class extends Migration
             $table->float('avg_type_rate');
             $table->string('type_id');
 
-            $table->foreignIdFor(CompactPriceCheckCore::class, 'core_id')->constrained();
+            $table->foreignIdFor(CompactPriceCheckCore::class, 'core_id')->constrained()->cascadeOnDelete();
         });
     }
 

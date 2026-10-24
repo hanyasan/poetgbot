@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('currency_type_name');
             $table->string('currency_trade_id');
 
-            $table->foreignIdFor(CompactPriceCheckCore::class, 'core_id')->constrained();
+            $table->foreignIdFor(CompactPriceCheckCore::class, 'core_id')->constrained()->cascadeOnDelete();
         });
     }
 
