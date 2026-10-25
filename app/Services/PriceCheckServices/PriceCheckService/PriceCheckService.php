@@ -52,6 +52,9 @@ final readonly class PriceCheckService implements PriceCheckServiceContract
         return $prices;
     }
 
+    /**
+     * @throws \Throwable
+     */
     #[\Override]
     public function importLeagueLatestPrices(PoeLeagueDto $league): LeaguePricesDto
     {

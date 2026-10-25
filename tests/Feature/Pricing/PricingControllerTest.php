@@ -164,7 +164,7 @@ class PricingControllerTest extends TestCase
         $this->authenticated()
             ->getJson('/api/v1/pricing/latest?poe_version=poe2')
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['league_name']);
+            ->assertJsonValidationErrors(['league_name'], 'data.errors');
     }
 
     public function test_latest_requires_a_valid_poe_version(): void
@@ -174,7 +174,7 @@ class PricingControllerTest extends TestCase
         $this->authenticated()
             ->getJson('/api/v1/pricing/latest?league_name=Standard&poe_version=poe3')
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['poe_version']);
+            ->assertJsonValidationErrors(['poe_version'], 'data.errors');
     }
 
     public function test_latest_returns_not_found_when_the_league_does_not_exist(): void

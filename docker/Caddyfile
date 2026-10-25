@@ -4,6 +4,10 @@
 }
 
 :80 {
+      log {
+          output stdout
+          format console
+      }
 	root * /app/public
 	encode zstd gzip
 	php_server

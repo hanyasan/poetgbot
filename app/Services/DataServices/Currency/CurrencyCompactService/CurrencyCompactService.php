@@ -9,6 +9,7 @@ use App\Services\DataServices\Currency\PriceCheckCoreService\PriceCheckCoreServi
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 final readonly class CurrencyCompactService implements CurrencyCompactServiceContract
 {
@@ -20,6 +21,9 @@ final readonly class CurrencyCompactService implements CurrencyCompactServiceCon
     ) {
     }
 
+    /**
+     * @throws \Throwable
+     */
     #[\Override]
     public function compactCoreData(): void
     {
@@ -58,6 +62,9 @@ final readonly class CurrencyCompactService implements CurrencyCompactServiceCon
             }
         } catch (\Throwable $exception) {
             DB::rollBack();
+
+            Log::error('Compacting prices failed');
+            Log::error($exception->getMessage());
 
             throw $exception;
         }

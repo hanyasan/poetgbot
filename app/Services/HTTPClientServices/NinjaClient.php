@@ -4,6 +4,7 @@ namespace App\Services\HTTPClientServices;
 
 use App\Enums\PoeVersionEnum;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 
 final class NinjaClient implements NinjaClientContract
 {
@@ -16,6 +17,9 @@ final class NinjaClient implements NinjaClientContract
           ]);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     #[\Override]
     public function getCurrencyPrices(PoeVersionEnum $version, string $league): string
     {
@@ -30,6 +34,9 @@ final class NinjaClient implements NinjaClientContract
     }
 
 
+    /**
+     * @throws GuzzleException
+     */
     #[\Override]
     public function getAvailableLeagues(PoeVersionEnum $version): string
     {

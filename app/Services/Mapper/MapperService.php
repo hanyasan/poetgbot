@@ -2,6 +2,8 @@
 
 namespace App\Services\Mapper;
 
+use CuyZ\Valinor\Mapper\MappingError;
+use CuyZ\Valinor\Mapper\Source\Exception\InvalidSource;
 use CuyZ\Valinor\Mapper\TreeMapper;
 use CuyZ\Valinor\MapperBuilder;
 use CuyZ\Valinor\Mapper\Source\Source;
@@ -20,6 +22,7 @@ final readonly class MapperService
      * @param class-string<T> $dtoClass
      * @param array<array-key, mixed> $data
      * @return T
+     * @throws MappingError
      */
     public function mapFromArray(string $dtoClass, array $data): object
     {
@@ -35,6 +38,8 @@ final readonly class MapperService
      * @template T of object
      * @param class-string<T> $dtoClass
      * @return T
+     * @throws MappingError
+     * @throws InvalidSource
      */
     public function mapFromJson(string $dtoClass, string $data): object
     {
@@ -42,7 +47,7 @@ final readonly class MapperService
             ->mapper
             ->map(
                 $dtoClass,
-                Source::json($data)
+                Source::json($data)->camelCaseKeys()
             );
 
     }

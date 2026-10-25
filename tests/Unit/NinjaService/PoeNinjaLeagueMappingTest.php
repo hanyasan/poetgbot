@@ -4,6 +4,7 @@ namespace Tests\Unit\NinjaService;
 
 use App\Enums\PoeVersionEnum;
 use App\Services\HTTPClientServices\NinjaClientContract;
+use App\Services\Mapper\MapperService;
 use App\Services\PoeNinjaService\PoeNinjaService;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -33,6 +34,6 @@ class PoeNinjaLeagueMappingTest extends TestCase
         $client = Mockery::mock(NinjaClientContract::class);
         $client->allows('getAvailableLeagues')->andReturn($json);
 
-        return new PoeNinjaService($client);
+        return new PoeNinjaService($client, new MapperService());
     }
 }

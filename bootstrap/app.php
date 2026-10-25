@@ -3,12 +3,15 @@
 use App\Jobs\CompactPrices;
 use App\Jobs\ImportLeagues;
 use App\Jobs\PriceCheck;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -48,13 +51,22 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo('/home');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        if (config('app.env') === 'local') {
-            $exceptions->shouldRenderJsonWhen(
-                fn (Request $request) => $request->is('api/*') || $request->expectsJson()
-            );
+        $exceptions->render(function (ValidationException $exception) {
+            return response()->json([
+                'success' => false,
+                'data' => [
+                    'message' => $exception->getMessage(),
+                    'errors' => $exception->errors()
+                ],
+            ], $exception->status);
+        });
 
-            return;
-        }
+        $exceptions->render(function (AuthenticationException $exception) {
+            return response()->json([
+                'success' => false,
+                'data' => $exception->getMessage(),
+            ], 401);
+        });
 
         $exceptions->render(function (NotFoundHttpException $exception) {
             return response()->json([

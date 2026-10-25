@@ -6,16 +6,24 @@ use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeResponse;
 use App\DataTransferObjects\ParsingObjects\PoeNinjaLeagueResponse;
 use App\Enums\PoeVersionEnum;
 use App\Services\HTTPClientServices\NinjaClientContract;
-use CuyZ\Valinor\Mapper\Source\Source;
-use CuyZ\Valinor\MapperBuilder;
+use App\Services\Mapper\MapperService;
+use CuyZ\Valinor\Mapper\MappingError;
+use CuyZ\Valinor\Mapper\Source\Exception\InvalidSource;
+use GuzzleHttp\Exception\GuzzleException;
 
-final class PoeNinjaService implements PoeNinjaServiceContract
+final readonly class PoeNinjaService implements PoeNinjaServiceContract
 {
     public function __construct(
-        private readonly NinjaClientContract $client,
+        private NinjaClientContract $client,
+        private MapperService $mapperService,
     ) {
     }
 
+    /**
+     * @throws InvalidSource
+     * @throws MappingError
+     * @throws GuzzleException
+     */
     #[\Override]
     public function getCurrencyPrices(
         PoeVersionEnum $version,
@@ -23,27 +31,28 @@ final class PoeNinjaService implements PoeNinjaServiceContract
     ): PoeNinjaExchangeResponse {
         $response = $this->client->getCurrencyPrices($version, $league);
 
-        return (new MapperBuilder())
-            ->allowSuperfluousKeys()
-            ->mapper()
-            ->map(
+        return $this->mapperService
+            ->mapFromJson(
                 PoeNinjaExchangeResponse::class,
-                Source::json($response)->camelCaseKeys()
+                $response
             );
     }
 
+    /**
+     * @throws InvalidSource
+     * @throws MappingError
+     * @throws GuzzleException
+     */
     #[\Override]
     public function getAvailableLeagues(
         PoeVersionEnum $version,
     ): PoeNinjaLeagueResponse {
         $response = $this->client->getAvailableLeagues($version);
 
-        return (new MapperBuilder())
-            ->allowSuperfluousKeys()
-            ->mapper()
-            ->map(
+        return $this->mapperService
+            ->mapFromJson(
                 PoeNinjaLeagueResponse::class,
-                Source::json($response)->camelCaseKeys()
+                $response
             );
     }
 }

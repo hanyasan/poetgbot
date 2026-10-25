@@ -70,7 +70,7 @@ class AuthControllerTest extends TestCase
     {
         $this->postJson('/api/v1/auth/login', [])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['email', 'password']);
+            ->assertJsonValidationErrors(['email', 'password'], 'data.errors');
     }
 
     public function test_register_creates_the_user_and_returns_a_token(): void
@@ -98,7 +98,7 @@ class AuthControllerTest extends TestCase
     {
         $this->postJson('/api/v1/auth/register', [])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['name', 'email', 'password']);
+            ->assertJsonValidationErrors(['name', 'email', 'password'], 'data.errors');
     }
 
     public function test_register_rejects_a_duplicate_email(): void
@@ -111,7 +111,7 @@ class AuthControllerTest extends TestCase
             'password' => 'secret1',
         ])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['email']);
+            ->assertJsonValidationErrors(['email'], 'data.errors');
     }
 
     public function test_register_rejects_a_short_password(): void
@@ -122,7 +122,7 @@ class AuthControllerTest extends TestCase
             'password' => '12345',
         ])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['password']);
+            ->assertJsonValidationErrors(['password'], 'data.errors');
     }
 
     public function test_register_does_not_require_authentication(): void

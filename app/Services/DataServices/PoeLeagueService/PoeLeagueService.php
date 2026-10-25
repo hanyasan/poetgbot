@@ -10,6 +10,8 @@ use App\Repositories\PoeLeague\LeagueRuleRepositoryContract;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
 use App\Services\CacheHelperService;
 use App\Services\PoeNinjaService\PoeNinjaServiceContract;
+use CuyZ\Valinor\Mapper\MappingError;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -138,6 +140,10 @@ final readonly class PoeLeagueService implements PoeLeagueServiceContract
         );
     }
 
+    /**
+     * @throws GuzzleException
+     * @throws MappingError
+     */
     #[\Override]
     public function upsertByNinja(PoeVersionEnum $version): void
     {
