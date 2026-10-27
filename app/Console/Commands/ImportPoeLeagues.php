@@ -26,11 +26,8 @@ final class ImportPoeLeagues extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): void
+    public function handle(PoeLeagueServiceContract $service): void
     {
-        /** @var PoeLeagueServiceContract $service */
-        $service = app(PoeLeagueServiceContract::class);
-
         $this->info('Starting import leagues');
 
         $service->upsertByNinja(PoeVersionEnum::POE_1);

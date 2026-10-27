@@ -25,10 +25,8 @@ final class ImportPickedLeagues extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): void
+    public function handle(PriceCheckServiceContract $service): void
     {
-        $service = app(PriceCheckServiceContract::class);
-
         $this->info('Starting import prices for leagues');
 
         $service->importPickedLeaguesPrices();

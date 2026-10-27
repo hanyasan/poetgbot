@@ -25,11 +25,8 @@ final class CompactPrices extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): void
+    public function handle(CurrencyCompactServiceContract $service): void
     {
-        /** @var CurrencyCompactServiceContract $service */
-        $service = app(CurrencyCompactServiceContract::class);
-
         $this->info('Compacting old price checks');
 
         $service->compactCoreData();

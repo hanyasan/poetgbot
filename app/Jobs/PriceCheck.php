@@ -2,11 +2,14 @@
 
 namespace App\Jobs;
 
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Support\Facades\Artisan;
 
-final class PriceCheck implements ShouldQueue
+#[Tries(1)]
+final class PriceCheck implements ShouldQueue, ShouldBeUnique
 {
     use Queueable;
 
