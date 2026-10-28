@@ -8,6 +8,7 @@ use App\Enums\PoeVersionEnum;
 use App\Models\Currency\PriceCheckCore;
 use App\Models\PoeLeague as PoeLeagueModel;
 use App\Services\Mapper\MapperService;
+use CuyZ\Valinor\Mapper\MappingError;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -107,6 +108,7 @@ final readonly class PoeLeagueRepository implements PoeLeagueRepositoryContract
 
     /**
      * {@inheritDoc}
+     * @throws MappingError
      */
     #[\Override]
     public function find(int $id): PoeLeagueDto
@@ -117,6 +119,9 @@ final readonly class PoeLeagueRepository implements PoeLeagueRepositoryContract
         );
     }
 
+    /**
+     * @throws MappingError
+     */
     #[\Override]
     public function findActiveByNameVersion(string $name, PoeVersionEnum $version): PoeLeagueDto
     {

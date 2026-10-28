@@ -6,6 +6,7 @@ namespace App\Repositories\PoeLeague;
 use App\DataTransferObjects\RepositoryObjects\League\LeagueCheckRuleDto;
 use App\Models\LeagueCheckRule;
 use App\Services\Mapper\MapperService;
+use CuyZ\Valinor\Mapper\MappingError;
 
 final readonly class LeagueRuleRepository implements LeagueRuleRepositoryContract
 {
@@ -18,6 +19,7 @@ final readonly class LeagueRuleRepository implements LeagueRuleRepositoryContrac
      * @param int|null $minutesToCheck
      * @param int $leagueId
      * @return LeagueCheckRuleDto
+     * @throws MappingError
      */
     #[\Override]
     public function updateOrCreate(int|null $minutesToCheck, int $leagueId): LeagueCheckRuleDto

@@ -6,6 +6,7 @@ use App\DataTransferObjects\RepositoryObjects\Currency\Compact\CompactPriceCheck
 use App\Models\Currency\Compact\CompactPriceCheckCore;
 use App\Services\Mapper\MapperService;
 use Carbon\Carbon;
+use CuyZ\Valinor\Mapper\MappingError;
 
 final readonly class CurrencyCompactRepository implements CurrencyCompactRepositoryContract
 {
@@ -29,6 +30,7 @@ final readonly class CurrencyCompactRepository implements CurrencyCompactReposit
      * }> $types
      *
      * @return CompactPriceCheckCoreDto
+     * @throws MappingError
      */
     #[\Override]
     public function makeCompactCore(
