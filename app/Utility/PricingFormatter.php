@@ -61,7 +61,7 @@ final readonly class PricingFormatter
         foreach ($coreTypes as $coreType) {
             if (empty($currencyType->prices)) break;
 
-            $value = bcmul((string) $coreType->rate, (string) $currencyType->prices[0]->rate, 10);
+            $value = bcmul(self::formatToStr($coreType->rate), self::formatToStr($currencyType->prices[0]->rate), 10);
 
             $prices[] = [
                 'is_primary' => $coreType->is_primary,
@@ -78,5 +78,10 @@ final readonly class PricingFormatter
             'currency_ninja_details_id' => $currencyType->currency_ninja_details_id,
             'prices' => $prices,
         ];
+    }
+
+    private static function formatToStr(int|float $num): string
+    {
+        return number_format($num, 10, '.', '');
     }
 }
