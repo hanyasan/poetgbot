@@ -61,6 +61,7 @@ final readonly class PricingFormatter
         foreach ($coreTypes as $coreType) {
             if (empty($currencyType->prices)) break;
 
+            /** @psalm-suppress ArgumentTypeCoercion */
             $value = bcmul(self::formatToStr($coreType->rate), self::formatToStr($currencyType->prices[0]->rate), 10);
 
             $prices[] = [
