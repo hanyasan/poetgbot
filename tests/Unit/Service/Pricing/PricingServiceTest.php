@@ -10,7 +10,7 @@ use App\DataTransferObjects\ServiceObjects\LeagueLatestPricesDto;
 use App\Enums\PoeVersionEnum;
 use App\Services\DataServices\Currency\CurrencyTypeService\CurrencyTypeServiceContract;
 use App\Services\DataServices\Currency\PriceCheckCoreService\PriceCheckCoreServiceContract;
-use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
+use App\Services\DataServices\PoeLeague\PoeLeagueServiceContract;
 use App\Services\Pricing\PricingService;
 use App\Services\Pricing\PricingServiceContract;
 use Carbon\Carbon;

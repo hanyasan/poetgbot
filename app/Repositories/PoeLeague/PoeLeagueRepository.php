@@ -7,7 +7,7 @@ use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueWithLastCoreDto;
 use App\Enums\PoeVersionEnum;
 use App\Models\Currency\PriceCheckCore;
 use App\Models\PoeLeague as PoeLeagueModel;
-use App\Services\Mapper\MapperService;
+use App\Utility\MapperService;
 use CuyZ\Valinor\Mapper\MappingError;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;

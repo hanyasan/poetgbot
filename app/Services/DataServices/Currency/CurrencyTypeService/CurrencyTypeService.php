@@ -9,9 +9,9 @@ use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithPricesDto
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\Currency\CurrencyType\CurrencyTypeRepositoryContract;
-use App\Services\CacheHelperService;
-use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
-use App\Services\PoeNinjaService\PoeNinjaServiceContract;
+use App\Services\DataServices\PoeLeague\PoeLeagueServiceContract;
+use App\Services\PoeNinja\PoeNinjaServiceContract;
+use App\Utility\CacheHelperService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 

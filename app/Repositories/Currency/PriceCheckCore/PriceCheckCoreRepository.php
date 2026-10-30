@@ -5,7 +5,7 @@ namespace App\Repositories\Currency\PriceCheckCore;
 use App\DataTransferObjects\RepositoryObjects\Currency\PriceCheckCoreDto;
 use App\Models\Currency\PriceCheckCore;
 use App\Models\Currency\PriceCheckCoreType;
-use App\Services\Mapper\MapperService;
+use App\Utility\MapperService;
 use Carbon\Carbon;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;

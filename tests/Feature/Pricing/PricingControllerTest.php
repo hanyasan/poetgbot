@@ -10,7 +10,7 @@ use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 use App\DataTransferObjects\ServiceObjects\LeagueLatestPricesDto;
 use App\Enums\PoeVersionEnum;
 use App\Models\User;
-use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
+use App\Services\DataServices\PoeLeague\PoeLeagueServiceContract;
 use App\Services\Pricing\PricingServiceContract;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Carbon;

@@ -6,7 +6,7 @@ use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithPricesDto
 use App\DataTransferObjects\ServiceObjects\LeagueLatestPricesDto;
 use App\Services\DataServices\Currency\CurrencyTypeService\CurrencyTypeServiceContract;
 use App\Services\DataServices\Currency\PriceCheckCoreService\PriceCheckCoreServiceContract;
-use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
+use App\Services\DataServices\PoeLeague\PoeLeagueServiceContract;
 
 final readonly class PricingService implements PricingServiceContract
 {

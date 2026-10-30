@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Services\Mapper;
+namespace App\Utility;
 
 use CuyZ\Valinor\Mapper\MappingError;
 use CuyZ\Valinor\Mapper\Source\Exception\InvalidSource;
+use CuyZ\Valinor\Mapper\Source\Source;
 use CuyZ\Valinor\Mapper\TreeMapper;
 use CuyZ\Valinor\MapperBuilder;
-use CuyZ\Valinor\Mapper\Source\Source;
 
 final readonly class MapperService
 {
@@ -47,8 +47,7 @@ final readonly class MapperService
             ->mapper
             ->map(
                 $dtoClass,
-                Source::json($data)->camelCaseKeys()
+                Source::json($data)
             );
-
     }
 }

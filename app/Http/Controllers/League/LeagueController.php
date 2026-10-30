@@ -4,7 +4,7 @@ namespace App\Http\Controllers\League;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\League\PoeLeagueResource;
-use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
+use App\Services\DataServices\PoeLeague\PoeLeagueServiceContract;
 use Illuminate\Http\JsonResponse;
 
 final class LeagueController extends Controller

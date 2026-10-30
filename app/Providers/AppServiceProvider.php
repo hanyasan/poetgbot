@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\HTTPClients\NinjaClient;
+use App\HTTPClients\NinjaClientContract;
 use App\Repositories\Currency\Compact\CurrencyCompactRepository;
 use App\Repositories\Currency\Compact\CurrencyCompactRepositoryContract;
 use App\Repositories\Currency\CurrencyPrice\CurrencyPriceRepository;
@@ -20,25 +22,20 @@ use App\Services\DataServices\Currency\CurrencyTypeService\CurrencyTypeService;
 use App\Services\DataServices\Currency\CurrencyTypeService\CurrencyTypeServiceContract;
 use App\Services\DataServices\Currency\PriceCheckCoreService\PriceCheckCoreService;
 use App\Services\DataServices\Currency\PriceCheckCoreService\PriceCheckCoreServiceContract;
-use App\Services\DataServices\PoeLeagueService\PoeLeagueService;
-use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
-use App\Services\HTTPClientServices\NinjaClient;
-use App\Services\HTTPClientServices\NinjaClientContract;
-use App\Services\Mapper\MapperService;
-use App\Services\PoeNinjaService\PoeNinjaService;
-use App\Services\PoeNinjaService\PoeNinjaServiceContract;
-use App\Services\PriceCheckServices\LeagueCheckPickerService\LeagueCheckPickerService;
-use App\Services\PriceCheckServices\LeagueCheckPickerService\LeagueCheckPickerServiceContract;
-use App\Services\PriceCheckServices\PriceCheckService\PriceCheckService;
-use App\Services\PriceCheckServices\PriceCheckService\PriceCheckServiceContract;
+use App\Services\DataServices\PoeLeague\PoeLeagueService;
+use App\Services\DataServices\PoeLeague\PoeLeagueServiceContract;
+use App\Services\PoeNinja\PoeNinjaService;
+use App\Services\PoeNinja\PoeNinjaServiceContract;
+use App\Services\PriceCheck\PriceCheckService;
+use App\Services\PriceCheck\PriceCheckServiceContract;
 use App\Services\Pricing\PricingService;
 use App\Services\Pricing\PricingServiceContract;
-use App\Services\TelegramBotService\TelegramBotContract;
-use App\Services\TelegramBotService\TelegramBotService;
+use App\Services\TelegramBot\TelegramBotContract;
+use App\Services\TelegramBot\TelegramBotService;
+use App\Utility\MapperService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\ServiceProvider;
 
 /** @psalm-suppress UnusedClass */
@@ -58,7 +55,6 @@ final class AppServiceProvider extends ServiceProvider
         PriceCheckCoreRepositoryContract::class => PriceCheckCoreRepository::class,
         PriceCheckCoreServiceContract::class => PriceCheckCoreService::class,
         PriceCheckServiceContract::class => PriceCheckService::class,
-        LeagueCheckPickerServiceContract::class => LeagueCheckPickerService::class,
         LeagueRuleRepositoryContract::class => LeagueRuleRepository::class,
         PricingServiceContract::class => PricingService::class,
         CurrencyCompactServiceContract::class => CurrencyCompactService::class,

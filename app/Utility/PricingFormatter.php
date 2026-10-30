@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services\Pricing;
+namespace App\Utility;
 
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithPricesDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\PriceCheckCoreTypeDto;
 
-final readonly class PricingFormatterService
+final readonly class PricingFormatter
 {
     /**
      * @param array<int, PriceCheckCoreTypeDto> $coreTypes

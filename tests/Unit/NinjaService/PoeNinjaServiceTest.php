@@ -3,8 +3,8 @@
 namespace Tests\Unit\NinjaService;
 
 use App\Enums\PoeVersionEnum;
-use App\Services\PoeNinjaService\PoeNinjaService;
-use App\Services\PoeNinjaService\PoeNinjaServiceContract;
+use App\Services\PoeNinja\PoeNinjaService;
+use App\Services\PoeNinja\PoeNinjaServiceContract;
 use Tests\TestCase;
 
 class PoeNinjaServiceTest extends TestCase

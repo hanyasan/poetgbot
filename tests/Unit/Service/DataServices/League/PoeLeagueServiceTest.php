@@ -10,8 +10,8 @@ use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueWithLastCoreDto;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\PoeLeague\LeagueRuleRepositoryContract;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
-use App\Services\DataServices\PoeLeagueService\PoeLeagueService;
-use App\Services\PoeNinjaService\PoeNinjaServiceContract;
+use App\Services\DataServices\PoeLeague\PoeLeagueService;
+use App\Services\PoeNinja\PoeNinjaServiceContract;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -401,16 +401,16 @@ class PoeLeagueServiceTest extends TestCase
         $this->service->getActiveWithLatestCore();
 
         Cache::tags([
-            \App\Services\CacheHelperService::generateCacheTag(
-                \App\Services\CacheHelperService::CORE_TAG
+            \App\Utility\CacheHelperService::generateCacheTag(
+                \App\Utility\CacheHelperService::CORE_TAG
             ),
         ])->flush();
 
         $this->service->getActiveWithLatestCore();
 
         Cache::tags([
-            \App\Services\CacheHelperService::generateCacheTag(
-                \App\Services\CacheHelperService::CORE_GET_TAG
+            \App\Utility\CacheHelperService::generateCacheTag(
+                \App\Utility\CacheHelperService::CORE_GET_TAG
             ),
         ])->flush();
 

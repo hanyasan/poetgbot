@@ -3,9 +3,9 @@
 namespace Tests\Unit\NinjaService;
 
 use App\Enums\PoeVersionEnum;
-use App\Services\HTTPClientServices\NinjaClientContract;
-use App\Services\Mapper\MapperService;
-use App\Services\PoeNinjaService\PoeNinjaService;
+use App\HTTPClients\NinjaClientContract;
+use App\Services\PoeNinja\PoeNinjaService;
+use App\Utility\MapperService;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 

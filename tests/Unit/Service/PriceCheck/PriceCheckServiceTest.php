@@ -11,7 +11,9 @@ use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyPriceDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithPricesDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\PriceCheckCoreDto;
+use App\DataTransferObjects\RepositoryObjects\League\LeagueCheckRuleDto;
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueWithLastCoreDto;
 use App\DataTransferObjects\ServiceObjects\LeaguePricesDto;
 use App\Enums\PoeVersionEnum;
 use App\Models\Currency\PriceCheckCore as PriceCheckCoreModel;
@@ -19,9 +21,10 @@ use App\Models\PoeLeague as PoeLeagueModel;
 use App\Repositories\Currency\CurrencyPrice\CurrencyPriceRepositoryContract;
 use App\Services\DataServices\Currency\CurrencyTypeService\CurrencyTypeServiceContract;
 use App\Services\DataServices\Currency\PriceCheckCoreService\PriceCheckCoreServiceContract;
-use App\Services\PoeNinjaService\PoeNinjaServiceContract;
-use App\Services\PriceCheckServices\LeagueCheckPickerService\LeagueCheckPickerServiceContract;
-use App\Services\PriceCheckServices\PriceCheckService\PriceCheckService;
+use App\Services\DataServices\PoeLeague\PoeLeagueServiceContract;
+use App\Services\PoeNinja\PoeNinjaServiceContract;
+use App\Services\PriceCheck\PriceCheckService;
+use App\Utility\MapperService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Mockery;
@@ -35,8 +38,6 @@ class PriceCheckServiceTest extends TestCase
 
     private const CORE_ID = 77;
 
-    private MockInterface|LeagueCheckPickerServiceContract $pickerService;
-
     private MockInterface|CurrencyTypeServiceContract $currencyTypeService;
 
     private MockInterface|PriceCheckCoreServiceContract $coreService;
@@ -45,30 +46,52 @@ class PriceCheckServiceTest extends TestCase
 
     private MockInterface|CurrencyPriceRepositoryContract $priceRepository;
 
+    private MockInterface|PoeLeagueServiceContract $leagueService;
+
     private PriceCheckService $service;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->pickerService = Mockery::mock(LeagueCheckPickerServiceContract::class);
         $this->currencyTypeService = Mockery::mock(CurrencyTypeServiceContract::class);
         $this->coreService = Mockery::mock(PriceCheckCoreServiceContract::class);
         $this->ninjaService = Mockery::mock(PoeNinjaServiceContract::class);
         $this->priceRepository = Mockery::mock(CurrencyPriceRepositoryContract::class);
+        $this->leagueService = Mockery::mock(PoeLeagueServiceContract::class);
 
         $this->service = new PriceCheckService(
             $this->currencyTypeService,
             $this->coreService,
             $this->ninjaService,
             $this->priceRepository,
-            $this->pickerService,
+            $this->leagueService,
+            new MapperService(),
+        );
+    }
+
+    private function makeLeagueWithCore(
+        PoeLeagueDto $leagueDto,
+    ): PoeLeagueWithLastCoreDto {
+        $now = Carbon::now()->toDateTimeString();
+
+        return new PoeLeagueWithLastCoreDto(
+            $leagueDto->id,
+            $leagueDto->created_at,
+            $leagueDto->updated_at,
+            $leagueDto->league_name,
+            $leagueDto->poe_version,
+            $leagueDto->is_active,
+            Carbon::now()->subMinutes(10)->toDateTimeString(),
+            rand(1, 100),
+            new LeagueCheckRuleDto($leagueDto->id, 10, $now, $now),
         );
     }
 
     private function league(int $id = self::LEAGUE_ID, PoeVersionEnum $version = PoeVersionEnum::POE_2, string $name = 'Test League'): PoeLeagueDto
     {
-        return new PoeLeagueDto($id, Carbon::now()->toDateTimeString(), Carbon::now()->toDateTimeString(), $name, $version->value, true);
+        $now = Carbon::now()->toDateTimeString();
+        return new PoeLeagueDto($id, Carbon::now()->toDateTimeString(), Carbon::now()->toDateTimeString(), $name, $version->value, true, new LeagueCheckRuleDto($id, 10, $now, $now));
     }
 
     private function core(int $id = self::CORE_ID): PriceCheckCoreDto
@@ -334,23 +357,27 @@ class PriceCheckServiceTest extends TestCase
         $poe1 = $this->league(1, PoeVersionEnum::POE_1, 'Settlers');
         $poe2 = $this->league(2, PoeVersionEnum::POE_2, 'Dawn');
 
-        $this->pickerService->expects('pickLeaguesForCheck')->andReturn(collect([$poe1, $poe2]));
         $this->stubLeagueImport($poe1, 11);
         $this->stubLeagueImport($poe2, 22);
+
+        $po1withCore = $this->makeLeagueWithCore($poe1);
+        $po2withCore = $this->makeLeagueWithCore($poe2);
+
+        $this->leagueService->expects('getActiveWithLatestCore')->andReturn(collect([$po1withCore, $po2withCore]));
 
         $result = $this->service->importPickedLeaguesPrices();
 
         $this->assertCount(2, $result);
         $this->assertContainsOnlyInstancesOf(LeaguePricesDto::class, $result);
-        $this->assertSame($poe1, $result[0]->poeLeague);
-        $this->assertSame(11, $result[0]->core->id);
-        $this->assertSame($poe2, $result[1]->poeLeague);
-        $this->assertSame(22, $result[1]->core->id);
+        $this->assertEquals($poe1, $result[0]->poeLeague);
+        $this->assertEquals(11, $result[0]->core->id);
+        $this->assertEquals($poe2, $result[1]->poeLeague);
+        $this->assertEquals(22, $result[1]->core->id);
     }
 
     public function test_import_picked_leagues_returns_empty_collection_when_nothing_is_picked(): void
     {
-        $this->pickerService->expects('pickLeaguesForCheck')->andReturn(collect());
+        $this->leagueService->expects('getActiveWithLatestCore')->andReturn(collect());
         $this->ninjaService->expects('getCurrencyPrices')->never();
 
         $result = $this->service->importPickedLeaguesPrices();
@@ -363,7 +390,10 @@ class PriceCheckServiceTest extends TestCase
         $broken = $this->league(1, PoeVersionEnum::POE_1, 'Broken');
         $healthy = $this->league(2, PoeVersionEnum::POE_2, 'Healthy');
 
-        $this->pickerService->expects('pickLeaguesForCheck')->andReturn(collect([$broken, $healthy]));
+        $brokenWithCore = $this->makeLeagueWithCore($broken);
+        $healthyWithCore = $this->makeLeagueWithCore($healthy);
+
+        $this->leagueService->expects('getActiveWithLatestCore')->andReturn(collect([$brokenWithCore, $healthyWithCore]));
         $this->ninjaService->expects('getCurrencyPrices')
             ->with(PoeVersionEnum::POE_1, 'Broken')->andThrow(new RuntimeException('poe.ninja is down'));
         $this->stubLeagueImport($healthy, 22);
@@ -371,7 +401,7 @@ class PriceCheckServiceTest extends TestCase
         $result = $this->service->importPickedLeaguesPrices();
 
         $this->assertCount(1, $result);
-        $this->assertSame($healthy, $result->first()->poeLeague);
+        $this->assertEquals($healthy, $result->first()->poeLeague);
     }
 
     public function test_import_picked_leagues_returns_empty_collection_when_every_league_fails(): void
@@ -379,7 +409,10 @@ class PriceCheckServiceTest extends TestCase
         $first = $this->league(1, PoeVersionEnum::POE_1, 'First');
         $second = $this->league(2, PoeVersionEnum::POE_2, 'Second');
 
-        $this->pickerService->expects('pickLeaguesForCheck')->andReturn(collect([$first, $second]));
+        $firstWithCore = $this->makeLeagueWithCore($first);
+        $secondWithCore = $this->makeLeagueWithCore($second);
+
+        $this->leagueService->expects('getActiveWithLatestCore')->andReturn(collect([$firstWithCore, $secondWithCore]));
         $this->ninjaService->expects('getCurrencyPrices')->twice()->andThrow(new RuntimeException('poe.ninja is down'));
 
         $this->assertCount(0, $this->service->importPickedLeaguesPrices());
@@ -389,7 +422,9 @@ class PriceCheckServiceTest extends TestCase
     {
         $league = $this->league(1, PoeVersionEnum::POE_1, 'Broken');
 
-        $this->pickerService->expects('pickLeaguesForCheck')->andReturn(collect([$league]));
+        $leagueWithCore = $this->makeLeagueWithCore($league);
+
+        $this->leagueService->expects('getActiveWithLatestCore')->andReturn(collect([$leagueWithCore]));
         $this->ninjaService->expects('getCurrencyPrices')->andThrow(new RuntimeException('poe.ninja is down'));
         $levelBefore = DB::transactionLevel();
 

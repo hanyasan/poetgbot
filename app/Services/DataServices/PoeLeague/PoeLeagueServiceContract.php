@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\DataServices\PoeLeagueService;
+namespace App\Services\DataServices\PoeLeague;
 
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueWithLastCoreDto;

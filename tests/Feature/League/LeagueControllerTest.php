@@ -6,7 +6,7 @@ use App\DataTransferObjects\RepositoryObjects\League\LeagueCheckRuleDto;
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 use App\Enums\PoeVersionEnum;
 use App\Models\User;
-use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
+use App\Services\DataServices\PoeLeague\PoeLeagueServiceContract;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Mockery\MockInterface;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Telegram\Hook;
 
-use App\Services\TelegramBotService\TelegramBotContract;
+use App\Services\TelegramBot\TelegramBotContract;
 use Illuminate\Routing\Controller as BaseController;
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Exception\TelegramLogException;

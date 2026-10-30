@@ -3,7 +3,7 @@
 namespace App\Http\Resources\Pricing;
 
 use App\DataTransferObjects\ServiceObjects\LeagueLatestPricesDto;
-use App\Services\Pricing\PricingFormatterService;
+use App\Utility\PricingFormatter;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 final class LatestLeaguePricingResource extends JsonResource
@@ -16,7 +16,7 @@ final class LatestLeaguePricingResource extends JsonResource
 
         return [
             'priced_at' => $resource->core->created_at,
-            'priced_currency' => PricingFormatterService::formatPrices(
+            'priced_currency' => PricingFormatter::formatPrices(
                 $resource->core->price_check_core_types,
                 $resource->prices,
             ),

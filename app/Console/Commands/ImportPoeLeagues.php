@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Enums\PoeVersionEnum;
-use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
+use App\Services\DataServices\PoeLeague\PoeLeagueServiceContract;
 use Illuminate\Console\Command;
 
 /** @psalm-suppress UnusedClass, PropertyNotSetInConstructor */

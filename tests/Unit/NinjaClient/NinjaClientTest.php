@@ -3,7 +3,7 @@
 namespace Tests\Unit\NinjaClient;
 
 use App\Enums\PoeVersionEnum;
-use App\Services\HTTPClientServices\NinjaClient;
+use App\HTTPClients\NinjaClient;
 use Tests\TestCase;
 
 class NinjaClientTest extends TestCase

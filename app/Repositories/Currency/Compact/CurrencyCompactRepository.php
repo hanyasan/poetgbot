@@ -4,7 +4,7 @@ namespace App\Repositories\Currency\Compact;
 
 use App\DataTransferObjects\RepositoryObjects\Currency\Compact\CompactPriceCheckCoreDto;
 use App\Models\Currency\Compact\CompactPriceCheckCore;
-use App\Services\Mapper\MapperService;
+use App\Utility\MapperService;
 use Carbon\Carbon;
 use CuyZ\Valinor\Mapper\MappingError;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\DataServices\PoeLeagueService;
+namespace App\Services\DataServices\PoeLeague;
 
 use App\DataTransferObjects\ParsingObjects\PoeNinjaLeague;
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
@@ -8,8 +8,8 @@ use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueWithLastCoreDto;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\PoeLeague\LeagueRuleRepositoryContract;
 use App\Repositories\PoeLeague\PoeLeagueRepositoryContract;
-use App\Services\CacheHelperService;
-use App\Services\PoeNinjaService\PoeNinjaServiceContract;
+use App\Services\PoeNinja\PoeNinjaServiceContract;
+use App\Utility\CacheHelperService;
 use CuyZ\Valinor\Mapper\MappingError;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Collection;

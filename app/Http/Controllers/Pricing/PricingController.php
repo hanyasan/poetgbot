@@ -6,7 +6,7 @@ use App\Enums\PoeVersionEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pricing\PricingLatestRequest;
 use App\Http\Resources\Pricing\LatestLeaguePricingResource;
-use App\Services\DataServices\PoeLeagueService\PoeLeagueServiceContract;
+use App\Services\DataServices\PoeLeague\PoeLeagueServiceContract;
 use App\Services\Pricing\PricingServiceContract;
 use Illuminate\Http\JsonResponse;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\PoeNinjaService;
+namespace App\Services\PoeNinja;
 
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeResponse;
 use App\DataTransferObjects\ParsingObjects\PoeNinjaLeagueResponse;

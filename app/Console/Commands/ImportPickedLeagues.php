@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\PriceCheckServices\PriceCheckService\PriceCheckServiceContract;
+use App\Services\PriceCheck\PriceCheckServiceContract;
 use Illuminate\Console\Command;
 
 /** @psalm-suppress UnusedClass, PropertyNotSetInConstructor */

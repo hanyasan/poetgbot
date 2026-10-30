@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\HTTPClientServices;
+namespace App\HTTPClients;
 
 use App\Enums\PoeVersionEnum;
 use GuzzleHttp\Client;

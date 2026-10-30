@@ -5,7 +5,7 @@ namespace Tests\Unit\Service\Pricing;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyPriceDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeWithPricesDto;
 use App\DataTransferObjects\RepositoryObjects\Currency\PriceCheckCoreTypeDto;
-use App\Services\Pricing\PricingFormatterService;
+use App\Utility\PricingFormatter;
 use Carbon\Carbon;
 use Tests\TestCase;
 
@@ -79,7 +79,7 @@ class PricingFormatterServiceTest extends TestCase
 
     public function test_format_price(): void
     {
-        $data = PricingFormatterService::formatPrice(
+        $data = PricingFormatter::formatPrice(
             $this->currencyTypes()[0],
             $this->coreTypes(),
         );
@@ -90,7 +90,7 @@ class PricingFormatterServiceTest extends TestCase
 
     public function test_format_prices(): void
     {
-        $data = PricingFormatterService::formatPrices(
+        $data = PricingFormatter::formatPrices(
             $this->coreTypes(),
             $this->currencyTypes(),
         );

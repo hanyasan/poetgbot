@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\PriceCheckServices\PriceCheckService;
+namespace App\Services\PriceCheck;
 
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
 use App\DataTransferObjects\ServiceObjects\LeaguePricesDto;
@@ -14,4 +14,9 @@ interface PriceCheckServiceContract
      * @return Collection<int, LeaguePricesDto>
      */
     public function importPickedLeaguesPrices(): Collection;
+
+    /**
+     * @return Collection<int, PoeLeagueDto>
+     */
+    public function pickLeaguesForCheck(): Collection;
 }

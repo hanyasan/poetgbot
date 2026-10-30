@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Services\PoeNinjaService;
+namespace App\Services\PoeNinja;
 
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeResponse;
 use App\DataTransferObjects\ParsingObjects\PoeNinjaLeagueResponse;
 use App\Enums\PoeVersionEnum;
-use App\Services\HTTPClientServices\NinjaClientContract;
-use App\Services\Mapper\MapperService;
+use App\HTTPClients\NinjaClientContract;
+use App\Utility\MapperService;
 use CuyZ\Valinor\Mapper\MappingError;
 use CuyZ\Valinor\Mapper\Source\Exception\InvalidSource;
 use GuzzleHttp\Exception\GuzzleException;

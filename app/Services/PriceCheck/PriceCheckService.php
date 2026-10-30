@@ -1,18 +1,21 @@
 <?php
 
-namespace App\Services\PriceCheckServices\PriceCheckService;
+namespace App\Services\PriceCheck;
 
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeItem;
 use App\DataTransferObjects\ParsingObjects\Currency\PoeNinjaExchangeLine;
 use App\DataTransferObjects\RepositoryObjects\Currency\CurrencyTypeDto;
 use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueDto;
+use App\DataTransferObjects\RepositoryObjects\League\PoeLeagueWithLastCoreDto;
 use App\DataTransferObjects\ServiceObjects\LeaguePricesDto;
 use App\Enums\PoeVersionEnum;
 use App\Repositories\Currency\CurrencyPrice\CurrencyPriceRepositoryContract;
 use App\Services\DataServices\Currency\CurrencyTypeService\CurrencyTypeServiceContract;
 use App\Services\DataServices\Currency\PriceCheckCoreService\PriceCheckCoreServiceContract;
-use App\Services\PoeNinjaService\PoeNinjaServiceContract;
-use App\Services\PriceCheckServices\LeagueCheckPickerService\LeagueCheckPickerServiceContract;
+use App\Services\DataServices\PoeLeague\PoeLeagueServiceContract;
+use App\Services\PoeNinja\PoeNinjaServiceContract;
+use App\Utility\MapperService;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -24,7 +27,8 @@ final readonly class PriceCheckService implements PriceCheckServiceContract
         private PriceCheckCoreServiceContract $priceCheckCoreService,
         private PoeNinjaServiceContract $poeNinjaService,
         private CurrencyPriceRepositoryContract $currencyPriceRepository,
-        private LeagueCheckPickerServiceContract  $leagueCheckPickerService,
+        private PoeLeagueServiceContract  $poeLeagueService,
+        private MapperService $mapperService,
     ) {}
 
     /**
@@ -33,7 +37,7 @@ final readonly class PriceCheckService implements PriceCheckServiceContract
     #[\Override]
     public function importPickedLeaguesPrices(): Collection
     {
-        $leagues = $this->leagueCheckPickerService->pickLeaguesForCheck();
+        $leagues = $this->pickLeaguesForCheck();
         $prices = collect();
 
         Log::info('Start import picked leagues prices');
@@ -115,6 +119,29 @@ final readonly class PriceCheckService implements PriceCheckServiceContract
         Log::info($league->league_name . ' league prices imported');
 
         return $prices;
+    }
+
+    /**
+     * @return Collection<int, PoeLeagueDto>
+     */
+    #[\Override]
+    public function pickLeaguesForCheck(): Collection
+    {
+        return $this->poeLeagueService->getActiveWithLatestCore()
+            ->filter(function (PoeLeagueWithLastCoreDto $poeLeagueDto) {
+                $minutesCheck = $poeLeagueDto->check_rule?->minutes_check;
+
+                // No rule (or a null interval) means the league is not scheduled for checks.
+                if ($minutesCheck === null) {
+                    return false;
+                }
+
+                return is_null($poeLeagueDto->last_core_created_at) || CarbonImmutable::now()->greaterThanOrEqualTo(
+                    CarbonImmutable::parse($poeLeagueDto->last_core_created_at)->addMinutes($minutesCheck)
+                );
+            })
+            ->map(fn (PoeLeagueWithLastCoreDto $league) => $this->mapperService->mapFromArray(PoeLeagueDto::class, get_object_vars($league)))
+            ;
     }
 
     /**
